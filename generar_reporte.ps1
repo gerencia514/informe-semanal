@@ -10,7 +10,8 @@ param(
   [string]$ExcelPath = (Join-Path $PSScriptRoot "2026.08.19_reporte de ventas.xlsx"),
   [string]$SheetName = "VENTAS 2026",
   [string]$OutputPath = (Join-Path $PSScriptRoot "index.html"),
-  [datetime]$FechaCorte = (Get-Date)
+  [datetime]$FechaCorte = (Get-Date),
+  [string]$LogoPath = (Join-Path $PSScriptRoot "logo_vemolca.png")
 )
 
 $ErrorActionPreference = "Stop"
@@ -25,6 +26,15 @@ $MESES = @("Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Di
 # Entidades HTML para evitar problemas de codificacion con tildes en este script
 $e_a = "&aacute;"; $e_e = "&eacute;"; $e_i = "&iacute;"; $e_o = "&oacute;"; $e_u = "&uacute;"
 $e_n = "&ntilde;"; $e_ud = "&uuml;"
+
+$logoImgTag = ""
+if (Test-Path $LogoPath) {
+  $logoBytes = [System.IO.File]::ReadAllBytes($LogoPath)
+  $logoB64 = [Convert]::ToBase64String($logoBytes)
+  $ext = [System.IO.Path]::GetExtension($LogoPath).TrimStart(".").ToLower()
+  if ($ext -eq "jpg") { $ext = "jpeg" }
+  $logoImgTag = "<img src=`"data:image/$ext;base64,$logoB64`" alt=`"Vemolca`" class=`"logo`">"
+}
 
 if (-not (Test-Path $ExcelPath)) {
   throw "No se encontro el archivo de Excel: $ExcelPath"
@@ -284,37 +294,39 @@ $html = @"
 <title>Ventas $($FechaCorte.Year) &mdash; Informe de Gerencia</title>
 <style>
 *{box-sizing:border-box}
-body{font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:#1c2733}
+body{font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:#263832}
 .wrap{max-width:1080px;margin:0 auto;padding:32px 24px 64px}
-header{background:linear-gradient(135deg,#0f3057,#16537e);color:#fff;padding:34px 28px;border-radius:12px}
+header{background:linear-gradient(135deg,#00453e,#008275);color:#fff;padding:34px 28px;border-radius:12px}
+header .logo{background:#fff;padding:8px 14px;border-radius:8px;height:28px;display:inline-block;margin-bottom:16px}
 header h1{margin:0 0 6px;font-size:26px;letter-spacing:.3px}
 header p{margin:0;opacity:.85;font-size:14px}
-h2{font-size:17px;margin:38px 0 12px;padding-bottom:8px;border-bottom:2px solid #dbe2e8;color:#0f3057}
+h2{font-size:17px;margin:38px 0 12px;padding-bottom:8px;border-bottom:2px solid #d7e6e3;color:#00453e}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:18px}
-.kpi{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 3px rgba(16,35,60,.10);border-left:4px solid #16537e}
-.kpi .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#6b7c8d;font-weight:600}
-.kpi .val{font-size:24px;font-weight:700;margin-top:4px;color:#0f3057}
-.kpi .sub{font-size:12px;color:#6b7c8d;margin-top:3px}
+.kpi{background:#fff;border-radius:10px;padding:16px 18px;box-shadow:0 1px 3px rgba(0,50,45,.10);border-left:4px solid #008275}
+.kpi .lbl{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:#667873;font-weight:600}
+.kpi .val{font-size:24px;font-weight:700;margin-top:4px;color:#00453e}
+.kpi .sub{font-size:12px;color:#667873;margin-top:3px}
 .kpi.ok{border-left-color:#1e874b} .kpi.warn{border-left-color:#d98324} .kpi.bad{border-left-color:#b4232a}
-table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(16,35,60,.10);font-size:13px}
-th{background:#0f3057;color:#fff;text-align:left;padding:10px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
-td{padding:9px 12px;border-top:1px solid #eef2f5}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,50,45,.10);font-size:13px}
+th{background:#00453e;color:#fff;text-align:left;padding:10px 12px;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+td{padding:9px 12px;border-top:1px solid #eef2f0}
 td.n{text-align:right;font-variant-numeric:tabular-nums}
-tbody tr:nth-child(even){background:#fafbfc}
-tfoot td{font-weight:700;background:#eef2f5;border-top:2px solid #cfd8e0}
-td.bar{width:180px} td.bar div{height:10px;background:linear-gradient(90deg,#16537e,#4a90c2);border-radius:5px}
-.note{background:#fff;border-radius:10px;padding:18px 22px;box-shadow:0 1px 3px rgba(16,35,60,.10);font-size:14px;line-height:1.65}
+tbody tr:nth-child(even){background:#f6faf9}
+tfoot td{font-weight:700;background:#eaf2f0;border-top:2px solid #cfe1dc}
+td.bar{width:180px} td.bar div{height:10px;background:linear-gradient(90deg,#008275,#5fc0b3);border-radius:5px}
+.note{background:#fff;border-radius:10px;padding:18px 22px;box-shadow:0 1px 3px rgba(0,50,45,.10);font-size:14px;line-height:1.65}
 .note li{margin-bottom:9px}
-footer{margin-top:40px;font-size:11px;color:#8494a3;text-align:center}
-.tabs{display:flex;gap:8px;margin:34px 0 0;border-bottom:2px solid #dbe2e8}
-.tab-btn{appearance:none;border:none;background:none;font:inherit;font-weight:700;font-size:14px;color:#6b7c8d;padding:10px 18px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
-.tab-btn:hover{color:#16537e}
-.tab-btn.active{color:#0f3057;border-bottom-color:#16537e}
+footer{margin-top:40px;font-size:11px;color:#8a9a95;text-align:center}
+.tabs{display:flex;gap:8px;margin:34px 0 0;border-bottom:2px solid #d7e6e3}
+.tab-btn{appearance:none;border:none;background:none;font:inherit;font-weight:700;font-size:14px;color:#667873;padding:10px 18px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab-btn:hover{color:#008275}
+.tab-btn.active{color:#00453e;border-bottom-color:#008275}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
 @media print{body{background:#fff} .wrap{padding:0} .tabs{display:none} .tab-panel{display:block !important}}
 </style></head><body><div class="wrap">
 <header>
+$logoImgTag
 <h1>VENTAS $($FechaCorte.Year) &mdash; INFORME DE GERENCIA</h1>
 <p>Fuente: hoja "VENTAS $($FechaCorte.Year)" $([char]0xB7) $docsTotal documentos $([char]0xB7) Datos con corte al $fechaCorteTxt $([char]0xB7) Cifras en USD</p>
 </header>
