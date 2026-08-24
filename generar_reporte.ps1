@@ -159,11 +159,43 @@ if ($etiquetas.ContainsKey("FACTURADO Y COBRADO") -and $tieneNoCobrado) {
   }
 }
 
+# ---------- Hoja "CC INPROCCA": estado de cuenta detallado de ese cliente ----------
+$inproccaRows = New-Object System.Collections.Generic.List[object]
+$inproccaFechas = @("", "", "")
+$hojaInprocca = $null
+foreach ($hoja in $wb.Worksheets) { if ($hoja.Name -eq "CC INPROCCA") { $hojaInprocca = $hoja } }
+if ($hojaInprocca) {
+  $wsi = $hojaInprocca
+  $rowsI = $wsi.UsedRange.Rows.Count
+  $inproccaFechas = @(
+    ($wsi.Cells.Item(4, 5).Text).Trim(),
+    ($wsi.Cells.Item(4, 7).Text).Trim(),
+    ($wsi.Cells.Item(4, 9).Text).Trim()
+  )
+  for ($ri = 5; $ri -le $rowsI; $ri++) {
+    $fecha = ($wsi.Cells.Item($ri, 2).Text).Trim()
+    $doc   = ($wsi.Cells.Item($ri, 3).Text).Trim()
+    $monto = ($wsi.Cells.Item($ri, 4).Text).Trim()
+    $ab1   = ($wsi.Cells.Item($ri, 5).Text).Trim()
+    $cr1   = ($wsi.Cells.Item($ri, 6).Text).Trim()
+    $ab2   = ($wsi.Cells.Item($ri, 7).Text).Trim()
+    $cr2   = ($wsi.Cells.Item($ri, 8).Text).Trim()
+    $ab3   = ($wsi.Cells.Item($ri, 9).Text).Trim()
+    $cr3   = ($wsi.Cells.Item($ri, 10).Text).Trim()
+    if ($fecha -eq "" -and $doc -eq "" -and $monto -eq "") { continue }
+    $inproccaRows.Add([PSCustomObject]@{
+      Fecha = $fecha; Doc = $doc; Monto = $monto
+      Ab1 = $ab1; Cr1 = $cr1; Ab2 = $ab2; Cr2 = $cr2; Ab3 = $ab3; Cr3 = $cr3
+    }) | Out-Null
+  }
+}
+
 $wb.Close($false)
 $excel.Quit()
 [System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel) | Out-Null
 
 Write-Host "Filas leidas: $($raw.Count)"
+Write-Host "Filas leidas de CC INPROCCA: $($inproccaRows.Count)"
 if ($clasificacionOficial) {
   Write-Host "Clasificacion de cobranza: usando el resumen oficial de la hoja (coincide con el cuadre de Excel)."
 } else {
@@ -268,6 +300,14 @@ $filasAging = ($tramos.GetEnumerator() | ForEach-Object {
   "<tr><td>$($_.Key)</td><td class=n>$(Fmt0 $_.Value)</td><td class=n>$(Fmt1Pct $pct)</td></tr>"
 }) -join "`n"
 
+# ---------- Estado de cuenta INPROCCA (hoja "CC INPROCCA") ----------
+$filasInprocca = ($inproccaRows | ForEach-Object {
+  $esResumen = $_.Doc -match "(?i)deuda|saldo|conciliado"
+  $docHtml = if ($esResumen) { "<b>$($_.Doc)</b>" } else { $_.Doc }
+  $rowClass = if ($esResumen) { " class='resumen'" } else { "" }
+  "<tr$rowClass><td>$($_.Fecha)</td><td>$docHtml</td><td class=n>$($_.Monto)</td><td class=n>$($_.Ab1)</td><td class=n>$($_.Cr1)</td><td class=n>$($_.Ab2)</td><td class=n>$($_.Cr2)</td><td class=n>$($_.Ab3)</td><td class=n>$($_.Cr3)</td></tr>"
+}) -join "`n"
+
 # ---------- Mes de mayor actividad ----------
 $mesTop = $mensual | Sort-Object Monto -Descending | Select-Object -First 1
 $mesTopPct = if ($mesTop) { Pct $mesTop.Monto $totalVentas } else { 0 }
@@ -288,6 +328,27 @@ $montoPendienteCaja = $montoPorCobrar + $montoSinFactura
 $pctFacturado = Pct $montoFacturado $totalVentas
 
 $fechaCorteTxt = $FechaCorte.ToString("dd/MM/yyyy")
+
+$inproccaTabBtnHtml = ""
+$inproccaPanelHtml = ""
+if ($inproccaRows.Count -gt 0) {
+  $inproccaTabBtnHtml = "<button class=`"tab-btn`" data-tab=`"tab-inprocca`" onclick=`"mostrarTab('tab-inprocca', this)`">INPROCCA</button>"
+  $inproccaPanelHtml = @"
+<div id="tab-inprocca" class="tab-panel">
+<h2>Estado de cuenta &mdash; INPROCCA</h2>
+<p style="font-size:12.5px;color:#667873">Detalle del historial de cr${e_e}dito, abonos y saldo de INPROCCA seg${e_u}n la hoja "CC INPROCCA" del Excel. Estos montos son el registro manual de la cuenta y pueden no coincidir exactamente con el resumen agregado de la pesta${e_n}a "Cuentas por cobrar".</p>
+<div class="table-scroll">
+<table><thead>
+<tr><th></th><th></th><th></th><th colspan=2>$($inproccaFechas[0])</th><th colspan=2>$($inproccaFechas[1])</th><th colspan=2>$($inproccaFechas[2])</th></tr>
+<tr><th>Fecha</th><th>Documento</th><th class=n>Monto</th><th class=n>Abonos</th><th class=n>Cr${e_e}dito</th><th class=n>Abonos</th><th class=n>Cr${e_e}dito</th><th class=n>Abonos</th><th class=n>Cr${e_e}dito</th></tr>
+</thead>
+<tbody>
+$filasInprocca
+</tbody></table>
+</div>
+</div>
+"@
+}
 
 $html = @"
 <!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
@@ -312,6 +373,7 @@ th{background:#00453e;color:#fff;text-align:left;padding:10px 12px;font-size:11p
 td{padding:9px 12px;border-top:1px solid #eef2f0}
 td.n{text-align:right;font-variant-numeric:tabular-nums}
 tbody tr:nth-child(even){background:#f6faf9}
+tbody tr.resumen{background:#eaf2f0;font-weight:700}
 tfoot td{font-weight:700;background:#eaf2f0;border-top:2px solid #cfe1dc}
 td.bar{width:180px} td.bar div{height:10px;background:linear-gradient(90deg,#008275,#5fc0b3);border-radius:5px}
 .note{background:#fff;border-radius:10px;padding:18px 22px;box-shadow:0 1px 3px rgba(0,50,45,.10);font-size:14px;line-height:1.65}
@@ -323,6 +385,8 @@ footer{margin-top:40px;font-size:11px;color:#8a9a95;text-align:center}
 .tab-btn.active{color:#00453e;border-bottom-color:#008275}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
+.table-scroll{overflow-x:auto;border-radius:10px}
+.table-scroll table{border-radius:0}
 @media print{body{background:#fff} .wrap{padding:0} .tabs{display:none} .tab-panel{display:block !important}}
 </style></head><body><div class="wrap">
 <header>
@@ -349,6 +413,7 @@ $logoImgTag
 <div class="tabs">
 <button class="tab-btn active" data-tab="tab-ventas" onclick="mostrarTab('tab-ventas', this)">Ventas</button>
 <button class="tab-btn" data-tab="tab-cobranza" onclick="mostrarTab('tab-cobranza', this)">Cuentas por cobrar</button>
+$inproccaTabBtnHtml
 </div>
 
 <div id="tab-ventas" class="tab-panel active">
@@ -394,6 +459,8 @@ $filasAging
 </tbody>
 <tfoot><tr><td>TOTAL POR COBRAR</td><td class=n>$(Fmt0 $montoPorCobrar)</td><td class=n>100,0%</td></tr></tfoot></table>
 </div>
+
+$inproccaPanelHtml
 
 <h2>Conclusiones y recomendaciones</h2>
 <div class="note"><ul>

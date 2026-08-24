@@ -20,6 +20,7 @@ th{background:#00453e;color:#fff;text-align:left;padding:10px 12px;font-size:11p
 td{padding:9px 12px;border-top:1px solid #eef2f0}
 td.n{text-align:right;font-variant-numeric:tabular-nums}
 tbody tr:nth-child(even){background:#f6faf9}
+tbody tr.resumen{background:#eaf2f0;font-weight:700}
 tfoot td{font-weight:700;background:#eaf2f0;border-top:2px solid #cfe1dc}
 td.bar{width:180px} td.bar div{height:10px;background:linear-gradient(90deg,#008275,#5fc0b3);border-radius:5px}
 .note{background:#fff;border-radius:10px;padding:18px 22px;box-shadow:0 1px 3px rgba(0,50,45,.10);font-size:14px;line-height:1.65}
@@ -31,6 +32,8 @@ footer{margin-top:40px;font-size:11px;color:#8a9a95;text-align:center}
 .tab-btn.active{color:#00453e;border-bottom-color:#008275}
 .tab-panel{display:none}
 .tab-panel.active{display:block}
+.table-scroll{overflow-x:auto;border-radius:10px}
+.table-scroll table{border-radius:0}
 @media print{body{background:#fff} .wrap{padding:0} .tabs{display:none} .tab-panel{display:block !important}}
 </style></head><body><div class="wrap">
 <header>
@@ -57,6 +60,7 @@ footer{margin-top:40px;font-size:11px;color:#8a9a95;text-align:center}
 <div class="tabs">
 <button class="tab-btn active" data-tab="tab-ventas" onclick="mostrarTab('tab-ventas', this)">Ventas</button>
 <button class="tab-btn" data-tab="tab-cobranza" onclick="mostrarTab('tab-cobranza', this)">Cuentas por cobrar</button>
+<button class="tab-btn" data-tab="tab-inprocca" onclick="mostrarTab('tab-inprocca', this)">INPROCCA</button>
 </div>
 
 <div id="tab-ventas" class="tab-panel active">
@@ -140,6 +144,36 @@ footer{margin-top:40px;font-size:11px;color:#8a9a95;text-align:center}
 <tfoot><tr><td>TOTAL POR COBRAR</td><td class=n>373.326</td><td class=n>100,0%</td></tr></tfoot></table>
 </div>
 
+<div id="tab-inprocca" class="tab-panel">
+<h2>Estado de cuenta &mdash; INPROCCA</h2>
+<p style="font-size:12.5px;color:#667873">Detalle del historial de cr&eacute;dito, abonos y saldo de INPROCCA seg&uacute;n la hoja "CC INPROCCA" del Excel. Estos montos son el registro manual de la cuenta y pueden no coincidir exactamente con el resumen agregado de la pesta&ntilde;a "Cuentas por cobrar".</p>
+<div class="table-scroll">
+<table><thead>
+<tr><th></th><th></th><th></th><th colspan=2>07/05/2026</th><th colspan=2>14/07/2026</th><th colspan=2>06/08/2026</th></tr>
+<tr><th>Fecha</th><th>Documento</th><th class=n>Monto</th><th class=n>Abonos</th><th class=n>Cr&eacute;dito</th><th class=n>Abonos</th><th class=n>Cr&eacute;dito</th><th class=n>Abonos</th><th class=n>Cr&eacute;dito</th></tr>
+</thead>
+<tbody>
+<tr><td>04/08/2025</td><td>1068-2025</td><td class=n>$     14.260,00</td><td class=n>$    1.285,00</td><td class=n>$  12.975,00</td><td class=n>$    1.206,00</td><td class=n>$        11.769,00</td><td class=n>$  10.000,00</td><td class=n>$          1.769,00</td></tr>
+<tr><td>22/08/2025</td><td>1069-2025</td><td class=n>$        6.800,00</td><td class=n>$    6.800,00</td><td class=n>$                 -</td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
+<tr><td>29/08/2025</td><td>1070-2025</td><td class=n>$     10.360,00</td><td class=n></td><td class=n>$  10.360,00</td><td class=n>$  10.360,00</td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
+<tr><td>12/07/2025</td><td>1066-2025</td><td class=n>$     16.915,00</td><td class=n>$  16.915,00</td><td class=n>$                 -</td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
+<tr><td>23/07/2025</td><td>1067-2025</td><td class=n>$        6.800,00</td><td class=n></td><td class=n>$    6.800,00</td><td class=n></td><td class=n>$          6.800,00</td><td class=n></td><td class=n>$          6.800,00</td></tr>
+<tr class='resumen'><td></td><td><b>deuda 2025:</b></td><td class=n>$     55.135,00</td><td class=n>$  25.000,00</td><td class=n>$  30.135,00</td><td class=n>$  11.566,00</td><td class=n>$        18.569,00</td><td class=n>$  10.000,00</td><td class=n>$          8.569,00</td></tr>
+<tr><td>07/05/2026</td><td>abono</td><td class=n>$     25.000,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
+<tr><td>14/07/2026</td><td>abono</td><td class=n>$     25.000,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
+<tr class='resumen'><td></td><td><b>saldo:</b></td><td class=n>$        5.135,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
+<tr><td></td><td>0006-2026</td><td class=n>$        4.934,38</td><td class=n></td><td class=n></td><td class=n>$    4.934,38</td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
+<tr><td></td><td>0007-2026</td><td class=n>$        1.200,00</td><td class=n></td><td class=n></td><td class=n>$    1.200,00</td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
+<tr><td></td><td>0009-2026</td><td class=n>$        7.299,62</td><td class=n></td><td class=n></td><td class=n>$    7.299,62</td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
+<tr><td></td><td>0010-2026</td><td class=n>$     10.770,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$        10.770,00</td><td class=n></td><td class=n>$        10.770,00</td></tr>
+<tr><td>06/08/2026</td><td>abono</td><td class=n>$     10.000,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n></td><td class=n></td><td class=n></td></tr>
+<tr class='resumen'><td></td><td><b>conciliado</b></td><td class=n>$     19.339,00</td><td class=n>$  25.000,00</td><td class=n>$  30.135,00</td><td class=n>$  25.000,00</td><td class=n>$        29.339,00</td><td class=n>$  10.000,00</td><td class=n>$        19.339,00</td></tr>
+<tr><td></td><td>0011-2026</td><td class=n>$   109.555,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$      109.555,00</td><td class=n></td><td class=n>$     109.555,00</td></tr>
+<tr><td></td><td>0012-2026</td><td class=n>$        3.000,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$          3.000,00</td><td class=n></td><td class=n>$          3.000,00</td></tr>
+</tbody></table>
+</div>
+</div>
+
 <h2>Conclusiones y recomendaciones</h2>
 <div class="note"><ul>
 <li><b>Acelerar la facturaci&oacute;n pendiente.</b> Existen 9 operaciones a&uacute;n sin facturar por USD 360.118. Emitir estos documentos es la acci&oacute;n de mayor impacto inmediato sobre el flujo de caja.</li>
@@ -147,7 +181,7 @@ footer{margin-top:40px;font-size:11px;color:#8a9a95;text-align:center}
 <li><b>Diversificaci&oacute;n de cartera.</b> Con 73,8% de la venta en los tres primeros clientes, conviene desarrollar nuevos contratos para reducir la dependencia de pocos clientes.</li>
 <li><b>Seguimiento por PO.</b> Varias &oacute;rdenes se facturan en partes; un control por PO evitar&iacute;a saldos abiertos no facturados.</li>
 </ul></div>
-<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 24/08/2026 17:27</footer>
+<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 24/08/2026 17:32</footer>
 </div>
 <script>
 function mostrarTab(id, btn) {
