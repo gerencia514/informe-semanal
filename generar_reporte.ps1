@@ -216,9 +216,24 @@ $porCliente = $raw | Group-Object Cliente | ForEach-Object {
   }
 } | Sort-Object VentaTotal -Descending
 
-$filasCliente = ($porCliente | ForEach-Object {
+$filasClienteVentas = ($porCliente | ForEach-Object {
   $pct = Pct $_.VentaTotal $totalVentas
-  "<tr><td><b>$($_.Cliente)</b></td><td class=n>$($_.Docs)</td><td class=n>$(Fmt0 $_.VentaTotal)</td><td class=n>$(Fmt1Pct $pct)</td><td class=n>$(Fmt0 $_.Cobrado)</td><td class=n>$(Fmt0 $_.PorCobrar)</td><td class=n>$(Fmt0 $_.SinFacturar)</td></tr>"
+  "<tr><td><b>$($_.Cliente)</b></td><td class=n>$($_.Docs)</td><td class=n>$(Fmt0 $_.VentaTotal)</td><td class=n>$(Fmt1Pct $pct)</td></tr>"
+}) -join "`n"
+
+$carteraCliente = $porCliente | ForEach-Object {
+  $pend = $_.PorCobrar + $_.SinFacturar
+  [PSCustomObject]@{
+    Cliente = $_.Cliente
+    Cobrado = $_.Cobrado
+    PorCobrar = $_.PorCobrar
+    SinFacturar = $_.SinFacturar
+    Pendiente = $pend
+  }
+} | Sort-Object Pendiente -Descending
+
+$filasCarteraCliente = ($carteraCliente | ForEach-Object {
+  "<tr><td><b>$($_.Cliente)</b></td><td class=n>$(Fmt0 $_.Cobrado)</td><td class=n>$(Fmt0 $_.PorCobrar)</td><td class=n>$(Fmt0 $_.SinFacturar)</td><td class=n>$(Fmt0 $_.Pendiente)</td></tr>"
 }) -join "`n"
 
 $top3Pct = Pct (($porCliente | Select-Object -First 3 | Measure-Object VentaTotal -Sum).Sum) $totalVentas
@@ -291,7 +306,13 @@ td.bar{width:180px} td.bar div{height:10px;background:linear-gradient(90deg,#165
 .note{background:#fff;border-radius:10px;padding:18px 22px;box-shadow:0 1px 3px rgba(16,35,60,.10);font-size:14px;line-height:1.65}
 .note li{margin-bottom:9px}
 footer{margin-top:40px;font-size:11px;color:#8494a3;text-align:center}
-@media print{body{background:#fff} .wrap{padding:0}}
+.tabs{display:flex;gap:8px;margin:34px 0 0;border-bottom:2px solid #dbe2e8}
+.tab-btn{appearance:none;border:none;background:none;font:inherit;font-weight:700;font-size:14px;color:#6b7c8d;padding:10px 18px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab-btn:hover{color:#16537e}
+.tab-btn.active{color:#0f3057;border-bottom-color:#16537e}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+@media print{body{background:#fff} .wrap{padding:0} .tabs{display:none} .tab-panel{display:block !important}}
 </style></head><body><div class="wrap">
 <header>
 <h1>VENTAS $($FechaCorte.Year) &mdash; INFORME DE GERENCIA</h1>
@@ -305,7 +326,7 @@ footer{margin-top:40px;font-size:11px;color:#8494a3;text-align:center}
 <div class="kpi bad"><div class="lbl">Pendiente de facturar</div><div class="val">$(Fmt0 $montoSinFactura)</div><div class="sub">$(Fmt1Pct $pctSinFactura) de las ventas</div></div>
 <div class="kpi"><div class="lbl">Impuestos gestionados</div><div class="val">$(Fmt0 $totalImpuestos)</div><div class="sub">IVA $(Fmt0 $totalIVA) $([char]0xB7) IGTF $(Fmt0 $totalIGTF)</div></div>
 </div>
-<h2>1. Resumen ejecutivo</h2>
+<h2>Resumen ejecutivo</h2>
 <div class="note"><ul>
 <li>Las ventas acumuladas del ejercicio $($FechaCorte.Year) alcanzan <b>USD $(Fmt0 $totalVentas)</b> distribuidas en <b>$docsTotal operaciones</b>, de las cuales <b>$docsFacturados</b> ya est${e_a}n facturadas (<b>$(Fmt0 $montoFacturado)</b>, $(Fmt1Pct $pctFacturado)).</li>
 <li>La conversi${e_o}n a caja es el punto cr${e_i}tico: solo <b>$(Fmt1Pct $pctCobrado)</b> de la venta est$e_a efectivamente cobrada. Entre cuentas por cobrar ($(Fmt0 $montoPorCobrar)) y ventas sin facturar ($(Fmt0 $montoSinFactura)) hay <b>USD $(Fmt0 $montoPendienteCaja)</b> pendientes de convertir en efectivo ($(Fmt1Pct $pctPendienteCaja) del total).</li>
@@ -313,20 +334,34 @@ footer{margin-top:40px;font-size:11px;color:#8494a3;text-align:center}
 <li>El mes de mayor actividad fue <b>$($mesTop.Label)</b> con $(Fmt0 $mesTop.Monto) ($(Fmt1Pct $mesTopPct) del a${e_n}o).</li>
 <li>La estructura tributaria muestra <b>$(Fmt0 $totalIVA)</b> de IVA y <b>$(Fmt0 $totalIGTF)</b> de IGTF; el rubro exento asciende a $(Fmt0 $totalExento) ($(Fmt1Pct (Pct $totalExento $totalVentas))).</li>
 </ul></div>
-<h2>2. Evoluci${e_o}n mensual de las ventas</h2>
+<div class="tabs">
+<button class="tab-btn active" data-tab="tab-ventas" onclick="mostrarTab('tab-ventas', this)">Ventas</button>
+<button class="tab-btn" data-tab="tab-cobranza" onclick="mostrarTab('tab-cobranza', this)">Cuentas por cobrar</button>
+</div>
+
+<div id="tab-ventas" class="tab-panel active">
+<h2>Evoluci${e_o}n mensual de las ventas</h2>
 <table><thead><tr><th>Mes</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% del a${e_n}o</th><th>Peso relativo</th></tr></thead>
 <tbody>
 $filasMensual
 </tbody>
 <tfoot><tr><td>TOTAL</td><td class=n>$docsTotal</td><td class=n>$(Fmt0 $totalVentas)</td><td class=n>100,0%</td><td></td></tr></tfoot></table>
 <p style="font-size:12.5px;color:#6b7c8d">Los documentos a${e_u}n no facturados se asignan al mes de su orden de compra (PO), por no disponer de fecha de factura.</p>
-<h2>3. An${e_a}lisis por cliente</h2>
-<table><thead><tr><th>Cliente</th><th class=n>Docs.</th><th class=n>Venta total</th><th class=n>% part.</th><th class=n>Cobrado</th><th class=n>Por cobrar</th><th class=n>Sin facturar</th></tr></thead>
+<h2>Ventas por cliente</h2>
+<table><thead><tr><th>Cliente</th><th class=n>Docs.</th><th class=n>Venta total</th><th class=n>% part.</th></tr></thead>
 <tbody>
-$filasCliente
+$filasClienteVentas
 </tbody>
-<tfoot><tr><td>TOTAL</td><td class=n>$docsTotal</td><td class=n>$(Fmt0 $totalVentas)</td><td class=n>100,0%</td><td class=n>$(Fmt0 $montoCobrado)</td><td class=n>$(Fmt0 $montoPorCobrar)</td><td class=n>$(Fmt0 $montoSinFactura)</td></tr></tfoot></table>
-<h2>4. Situaci${e_o}n de facturaci${e_o}n y cobranza</h2>
+<tfoot><tr><td>TOTAL</td><td class=n>$docsTotal</td><td class=n>$(Fmt0 $totalVentas)</td><td class=n>100,0%</td></tr></tfoot></table>
+<h2>Diez operaciones de mayor monto</h2>
+<table><thead><tr><th>Documento</th><th>Cliente</th><th>Concepto</th><th class=n>Monto USD</th><th>Estado</th></tr></thead>
+<tbody>
+$filasTop10
+</tbody></table>
+</div>
+
+<div id="tab-cobranza" class="tab-panel">
+<h2>Situaci${e_o}n de facturaci${e_o}n y cobranza</h2>
 <table><thead><tr><th>Estado</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% del total</th></tr></thead>
 <tbody>
 <tr><td>Facturado y cobrado</td><td class=n>$($grpCobrado.Count)</td><td class=n>$(Fmt0 $montoCobrado)</td><td class=n>$(Fmt1Pct $pctCobrado)</td></tr>
@@ -334,18 +369,21 @@ $filasCliente
 <tr><td>Sin facturar</td><td class=n>$($grpSinFactura.Count)</td><td class=n>$(Fmt0 $montoSinFactura)</td><td class=n>$(Fmt1Pct $pctSinFactura)</td></tr>
 </tbody>
 <tfoot><tr><td>TOTAL</td><td class=n>$docsTotal</td><td class=n>$(Fmt0 $totalVentas)</td><td class=n>100,0%</td></tr></tfoot></table>
-<h2>5. Antig${e_ud}edad de las cuentas por cobrar</h2>
+<h2>Cartera pendiente por cliente</h2>
+<table><thead><tr><th>Cliente</th><th class=n>Cobrado</th><th class=n>Por cobrar</th><th class=n>Sin facturar</th><th class=n>Total pendiente</th></tr></thead>
+<tbody>
+$filasCarteraCliente
+</tbody>
+<tfoot><tr><td>TOTAL</td><td class=n>$(Fmt0 $montoCobrado)</td><td class=n>$(Fmt0 $montoPorCobrar)</td><td class=n>$(Fmt0 $montoSinFactura)</td><td class=n>$(Fmt0 $montoPendienteCaja)</td></tr></tfoot></table>
+<h2>Antig${e_ud}edad de las cuentas por cobrar</h2>
 <table><thead><tr><th>Tramo (d${e_i}as desde la factura)</th><th class=n>Monto USD</th><th class=n>% de la cartera</th></tr></thead>
 <tbody>
 $filasAging
 </tbody>
 <tfoot><tr><td>TOTAL POR COBRAR</td><td class=n>$(Fmt0 $montoPorCobrar)</td><td class=n>100,0%</td></tr></tfoot></table>
-<h2>6. Diez operaciones de mayor monto</h2>
-<table><thead><tr><th>Documento</th><th>Cliente</th><th>Concepto</th><th class=n>Monto USD</th><th>Estado</th></tr></thead>
-<tbody>
-$filasTop10
-</tbody></table>
-<h2>7. Conclusiones y recomendaciones</h2>
+</div>
+
+<h2>Conclusiones y recomendaciones</h2>
 <div class="note"><ul>
 <li><b>Acelerar la facturaci${e_o}n pendiente.</b> Existen $($grpSinFactura.Count) operaciones a${e_u}n sin facturar por USD $(Fmt0 $montoSinFactura). Emitir estos documentos es la acci${e_o}n de mayor impacto inmediato sobre el flujo de caja.</li>
 <li><b>Gesti${e_o}n de cobranza focalizada.</b> Concentrar el esfuerzo en los saldos de mayor antig${e_ud}edad y en los clientes con mayor exposici${e_o}n por cobrar.</li>
@@ -353,7 +391,16 @@ $filasTop10
 <li><b>Seguimiento por PO.</b> Varias ${e_o}rdenes se facturan en partes; un control por PO evitar${e_i}a saldos abiertos no facturados.</li>
 </ul></div>
 <footer>Informe generado autom${e_a}ticamente a partir de "$([System.IO.Path]::GetFileName($ExcelPath))" $([char]0x2014) hoja $SheetName. $([char]0xB7) $(Get-Date -Format "dd/MM/yyyy HH:mm")</footer>
-</div></body></html>
+</div>
+<script>
+function mostrarTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body></html>
 "@
 
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
