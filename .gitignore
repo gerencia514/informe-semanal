@@ -1,0 +1,5 @@
+# Los archivos de Excel se quedan locales (contienen datos mas detallados/sensibles
+# que el dashboard publicado: bancos, referencias de pago, nombres de contacto).
+*.xlsx
+*.xls
+~$*
