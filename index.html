@@ -61,6 +61,7 @@ footer{margin-top:40px;font-size:11px;color:#8a9a95;text-align:center}
 <button class="tab-btn active" data-tab="tab-ventas" onclick="mostrarTab('tab-ventas', this)">Ventas</button>
 <button class="tab-btn" data-tab="tab-cobranza" onclick="mostrarTab('tab-cobranza', this)">Cuentas por cobrar</button>
 <button class="tab-btn" data-tab="tab-inprocca" onclick="mostrarTab('tab-inprocca', this)">INPROCCA</button>
+<button class="tab-btn" data-tab="tab-dispo" onclick="mostrarTab('tab-dispo', this)">Disponibilidad</button>
 </div>
 
 <div id="tab-ventas" class="tab-panel active">
@@ -154,24 +155,37 @@ footer{margin-top:40px;font-size:11px;color:#8a9a95;text-align:center}
 </thead>
 <tbody>
 <tr><td>04/08/2025</td><td>1068-2025</td><td class=n>$     14.260,00</td><td class=n>$    1.285,00</td><td class=n>$  12.975,00</td><td class=n>$    1.206,00</td><td class=n>$        11.769,00</td><td class=n>$  10.000,00</td><td class=n>$          1.769,00</td></tr>
-<tr><td>22/08/2025</td><td>1069-2025</td><td class=n>$        6.800,00</td><td class=n>$    6.800,00</td><td class=n>$                 -</td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
-<tr><td>29/08/2025</td><td>1070-2025</td><td class=n>$     10.360,00</td><td class=n></td><td class=n>$  10.360,00</td><td class=n>$  10.360,00</td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
-<tr><td>12/07/2025</td><td>1066-2025</td><td class=n>$     16.915,00</td><td class=n>$  16.915,00</td><td class=n>$                 -</td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
-<tr><td>23/07/2025</td><td>1067-2025</td><td class=n>$        6.800,00</td><td class=n></td><td class=n>$    6.800,00</td><td class=n></td><td class=n>$          6.800,00</td><td class=n></td><td class=n>$          6.800,00</td></tr>
-<tr class='resumen'><td></td><td><b>deuda 2025:</b></td><td class=n>$     55.135,00</td><td class=n>$  25.000,00</td><td class=n>$  30.135,00</td><td class=n>$  11.566,00</td><td class=n>$        18.569,00</td><td class=n>$  10.000,00</td><td class=n>$          8.569,00</td></tr>
-<tr><td>07/05/2026</td><td>abono</td><td class=n>$     25.000,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
-<tr><td>14/07/2026</td><td>abono</td><td class=n>$     25.000,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
-<tr class='resumen'><td></td><td><b>saldo:</b></td><td class=n>$        5.135,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
-<tr><td></td><td>0006-2026</td><td class=n>$        4.934,38</td><td class=n></td><td class=n></td><td class=n>$    4.934,38</td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
-<tr><td></td><td>0007-2026</td><td class=n>$        1.200,00</td><td class=n></td><td class=n></td><td class=n>$    1.200,00</td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
-<tr><td></td><td>0009-2026</td><td class=n>$        7.299,62</td><td class=n></td><td class=n></td><td class=n>$    7.299,62</td><td class=n>$                       -</td><td class=n></td><td class=n></td></tr>
-<tr><td></td><td>0010-2026</td><td class=n>$     10.770,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$        10.770,00</td><td class=n></td><td class=n>$        10.770,00</td></tr>
+<tr><td>22/08/2025</td><td>1069-2025</td><td class=n>$       6.800,00</td><td class=n>$    6.800,00</td><td class=n>$                -</td><td class=n></td><td class=n>$                      -</td><td class=n></td><td class=n></td></tr>
+<tr><td>29/08/2025</td><td>1070-2025</td><td class=n>$     10.360,00</td><td class=n></td><td class=n>$  10.360,00</td><td class=n>$  10.360,00</td><td class=n>$                      -</td><td class=n></td><td class=n></td></tr>
+<tr><td>12/07/2025</td><td>1066-2025</td><td class=n>$     16.915,00</td><td class=n>$  16.915,00</td><td class=n>$                -</td><td class=n></td><td class=n>$                      -</td><td class=n></td><td class=n></td></tr>
+<tr><td>23/07/2025</td><td>1067-2025</td><td class=n>$       6.800,00</td><td class=n></td><td class=n>$    6.800,00</td><td class=n></td><td class=n>$          6.800,00</td><td class=n></td><td class=n>$          6.800,00</td></tr>
+<tr class='resumen'><td></td><td><b>deuda 2025:</b></td><td class=n>$     55.135,00</td><td class=n>$ 25.000,00</td><td class=n>$ 30.135,00</td><td class=n>$ 11.566,00</td><td class=n>$        18.569,00</td><td class=n>$ 10.000,00</td><td class=n>$         8.569,00</td></tr>
+<tr class='resumen'><td></td><td><b>saldo:</b></td><td class=n>$       5.135,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$                      -</td><td class=n></td><td class=n></td></tr>
+<tr><td></td><td>0006-2026</td><td class=n>$       4.934,38</td><td class=n></td><td class=n></td><td class=n>$    4.934,38</td><td class=n>$                      -</td><td class=n></td><td class=n></td></tr>
+<tr><td></td><td>0007-2026</td><td class=n>$       1.200,00</td><td class=n></td><td class=n></td><td class=n>$    1.200,00</td><td class=n>$                      -</td><td class=n></td><td class=n></td></tr>
+<tr><td></td><td>0009-2026</td><td class=n>$       7.299,62</td><td class=n></td><td class=n></td><td class=n>$    7.299,62</td><td class=n>$                      -</td><td class=n></td><td class=n></td></tr>
+<tr><td></td><td>0010-2026</td><td class=n>$     10.770,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$        10.770,00</td><td class=n></td><td class=n>$       10.770,00</td></tr>
 <tr><td>06/08/2026</td><td>abono</td><td class=n>$     10.000,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n></td><td class=n></td><td class=n></td></tr>
-<tr class='resumen'><td></td><td><b>conciliado</b></td><td class=n>$     19.339,00</td><td class=n>$  25.000,00</td><td class=n>$  30.135,00</td><td class=n>$  25.000,00</td><td class=n>$        29.339,00</td><td class=n>$  10.000,00</td><td class=n>$        19.339,00</td></tr>
+<tr class='resumen'><td></td><td><b>conciliado</b></td><td class=n>$     19.339,00</td><td class=n>$ 25.000,00</td><td class=n>$ 30.135,00</td><td class=n>$ 25.000,00</td><td class=n>$        29.339,00</td><td class=n>$ 10.000,00</td><td class=n>$       19.339,00</td></tr>
 <tr><td></td><td>0011-2026</td><td class=n>$   109.555,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$      109.555,00</td><td class=n></td><td class=n>$     109.555,00</td></tr>
-<tr><td></td><td>0012-2026</td><td class=n>$        3.000,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$          3.000,00</td><td class=n></td><td class=n>$          3.000,00</td></tr>
+<tr><td></td><td>0012-2026</td><td class=n>$       3.000,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$          3.000,00</td><td class=n></td><td class=n>$          3.000,00</td></tr>
 </tbody></table>
 </div>
+</div>
+
+<div id="tab-dispo" class="tab-panel">
+<h2>DISPONIBILIDAD AL 24/08/2026</h2>
+<p style="font-size:12.5px;color:#667873">Tasa COP: <b>COP  3.192</b> · Tasa USDT: <b>Bs        900</b></p>
+<table><thead><tr><th>Cuenta</th><th class=n>Importe moneda origen</th><th class=n>Importe USD</th></tr></thead>
+<tbody>
+<tr><td><b>Banesco Vzla</b></td><td class=n>Bs                        1.276.118</td><td class=n>$           1.418</td></tr>
+<tr><td><b>Bancolombia</b></td><td class=n>COP                     1.451.648</td><td class=n>$              455</td></tr>
+<tr><td><b>Efectivo en Caja</b></td><td class=n>$                                  2.138</td><td class=n>$           2.138</td></tr>
+<tr><td><b>Banesco Panamá</b></td><td class=n>$                              165.577</td><td class=n>$       165.577</td></tr>
+<tr><td><b>Bajo Custodia IA</b></td><td class=n>$                                     628</td><td class=n>$              628</td></tr>
+<tr><td><b>Bajo Custodia DV</b></td><td class=n>$                                  2.222</td><td class=n>$           2.222</td></tr>
+</tbody>
+<tfoot><tr><td colspan=2>TOTAL DISPONIBLE</td><td class=n>172.437</td></tr></tfoot></table>
 </div>
 
 <h2>Conclusiones y recomendaciones</h2>
@@ -181,7 +195,7 @@ footer{margin-top:40px;font-size:11px;color:#8a9a95;text-align:center}
 <li><b>Diversificaci&oacute;n de cartera.</b> Con 73,8% de la venta en los tres primeros clientes, conviene desarrollar nuevos contratos para reducir la dependencia de pocos clientes.</li>
 <li><b>Seguimiento por PO.</b> Varias &oacute;rdenes se facturan en partes; un control por PO evitar&iacute;a saldos abiertos no facturados.</li>
 </ul></div>
-<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 24/08/2026 17:32</footer>
+<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 24/08/2026 20:48</footer>
 </div>
 <script>
 function mostrarTab(id, btn) {

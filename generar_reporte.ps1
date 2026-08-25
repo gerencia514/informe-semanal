@@ -190,12 +190,35 @@ if ($hojaInprocca) {
   }
 }
 
+# ---------- Hoja "DISPONIBILIDAD": efectivo/bancos disponibles ----------
+$dispoRows = New-Object System.Collections.Generic.List[object]
+$dispoTitulo = ""
+$dispoTasaCOP = ""
+$dispoTasaUSDT = ""
+$hojaDispo = $null
+foreach ($hoja in $wb.Worksheets) { if ($hoja.Name -eq "DISPONIBILIDAD") { $hojaDispo = $hoja } }
+if ($hojaDispo) {
+  $wsd = $hojaDispo
+  $rowsD = $wsd.UsedRange.Rows.Count
+  $dispoTasaCOP = ($wsd.Cells.Item(2, 3).Text).Trim()
+  $dispoTasaUSDT = ($wsd.Cells.Item(3, 3).Text).Trim()
+  $dispoTitulo = ($wsd.Cells.Item(5, 1).Text).Trim()
+  for ($rd = 7; $rd -le $rowsD; $rd++) {
+    $cuenta = ($wsd.Cells.Item($rd, 1).Text).Trim()
+    $origen = ($wsd.Cells.Item($rd, 2).Text).Trim()
+    $usd    = ($wsd.Cells.Item($rd, 3).Text).Trim()
+    if ($cuenta -eq "" -and $origen -eq "" -and $usd -eq "") { continue }
+    $dispoRows.Add([PSCustomObject]@{ Cuenta = $cuenta; Origen = $origen; UsdTexto = $usd; UsdValor = [double]$wsd.Cells.Item($rd, 3).Value2 }) | Out-Null
+  }
+}
+
 $wb.Close($false)
 $excel.Quit()
 [System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel) | Out-Null
 
 Write-Host "Filas leidas: $($raw.Count)"
 Write-Host "Filas leidas de CC INPROCCA: $($inproccaRows.Count)"
+Write-Host "Filas leidas de DISPONIBILIDAD: $($dispoRows.Count)"
 if ($clasificacionOficial) {
   Write-Host "Clasificacion de cobranza: usando el resumen oficial de la hoja (coincide con el cuadre de Excel)."
 } else {
@@ -301,11 +324,18 @@ $filasAging = ($tramos.GetEnumerator() | ForEach-Object {
 }) -join "`n"
 
 # ---------- Estado de cuenta INPROCCA (hoja "CC INPROCCA") ----------
-$filasInprocca = ($inproccaRows | ForEach-Object {
+$fechasOcultarInprocca = @("07/05/2026", "14/07/2026")
+$filasInprocca = ($inproccaRows | Where-Object { $fechasOcultarInprocca -notcontains $_.Fecha } | ForEach-Object {
   $esResumen = $_.Doc -match "(?i)deuda|saldo|conciliado"
   $docHtml = if ($esResumen) { "<b>$($_.Doc)</b>" } else { $_.Doc }
   $rowClass = if ($esResumen) { " class='resumen'" } else { "" }
   "<tr$rowClass><td>$($_.Fecha)</td><td>$docHtml</td><td class=n>$($_.Monto)</td><td class=n>$($_.Ab1)</td><td class=n>$($_.Cr1)</td><td class=n>$($_.Ab2)</td><td class=n>$($_.Cr2)</td><td class=n>$($_.Ab3)</td><td class=n>$($_.Cr3)</td></tr>"
+}) -join "`n"
+
+# ---------- Disponibilidad (hoja "DISPONIBILIDAD") ----------
+$totalDispoUSD = ($dispoRows | Measure-Object UsdValor -Sum).Sum
+$filasDispo = ($dispoRows | ForEach-Object {
+  "<tr><td><b>$($_.Cuenta)</b></td><td class=n>$($_.Origen)</td><td class=n>$($_.UsdTexto)</td></tr>"
 }) -join "`n"
 
 # ---------- Mes de mayor actividad ----------
@@ -346,6 +376,23 @@ if ($inproccaRows.Count -gt 0) {
 $filasInprocca
 </tbody></table>
 </div>
+</div>
+"@
+}
+
+$dispoTabBtnHtml = ""
+$dispoPanelHtml = ""
+if ($dispoRows.Count -gt 0) {
+  $dispoTabBtnHtml = "<button class=`"tab-btn`" data-tab=`"tab-dispo`" onclick=`"mostrarTab('tab-dispo', this)`">Disponibilidad</button>"
+  $dispoPanelHtml = @"
+<div id="tab-dispo" class="tab-panel">
+<h2>$dispoTitulo</h2>
+<p style="font-size:12.5px;color:#667873">Tasa COP: <b>$dispoTasaCOP</b> $([char]0xB7) Tasa USDT: <b>$dispoTasaUSDT</b></p>
+<table><thead><tr><th>Cuenta</th><th class=n>Importe moneda origen</th><th class=n>Importe USD</th></tr></thead>
+<tbody>
+$filasDispo
+</tbody>
+<tfoot><tr><td colspan=2>TOTAL DISPONIBLE</td><td class=n>$(Fmt0 $totalDispoUSD)</td></tr></tfoot></table>
 </div>
 "@
 }
@@ -414,6 +461,7 @@ $logoImgTag
 <button class="tab-btn active" data-tab="tab-ventas" onclick="mostrarTab('tab-ventas', this)">Ventas</button>
 <button class="tab-btn" data-tab="tab-cobranza" onclick="mostrarTab('tab-cobranza', this)">Cuentas por cobrar</button>
 $inproccaTabBtnHtml
+$dispoTabBtnHtml
 </div>
 
 <div id="tab-ventas" class="tab-panel active">
@@ -461,6 +509,8 @@ $filasAging
 </div>
 
 $inproccaPanelHtml
+
+$dispoPanelHtml
 
 <h2>Conclusiones y recomendaciones</h2>
 <div class="note"><ul>
