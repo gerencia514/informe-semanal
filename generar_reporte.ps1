@@ -358,6 +358,7 @@ $montoPendienteCaja = $montoPorCobrar + $montoSinFactura
 $pctFacturado = Pct $montoFacturado $totalVentas
 
 $fechaCorteTxt = $FechaCorte.ToString("dd/MM/yyyy")
+$generadoTs = Get-Date -Format "dd/MM/yyyy HH:mm"
 
 $inproccaTabBtnHtml = ""
 $inproccaPanelHtml = ""
@@ -405,7 +406,14 @@ $html = @"
 body{font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;margin:0;background:#f4f6f8;color:#263832}
 .wrap{max-width:1080px;margin:0 auto;padding:32px 24px 64px}
 header{background:linear-gradient(135deg,#00453e,#008275);color:#fff;padding:34px 28px;border-radius:12px}
-header .logo{background:#fff;padding:8px 14px;border-radius:8px;height:28px;display:inline-block;margin-bottom:16px}
+.header-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+header .logo{background:#fff;padding:8px 14px;border-radius:8px;height:28px;display:inline-block}
+.refresh-block{display:flex;align-items:center;gap:10px}
+.refresh-ts{font-size:11px;color:#fff;opacity:.8;text-align:right;line-height:1.4}
+.refresh-btn{appearance:none;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.45);color:#fff;font:inherit;font-weight:600;font-size:12px;padding:7px 14px;border-radius:7px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:background .15s}
+.refresh-btn:hover{background:rgba(255,255,255,.26)}
+.refresh-btn:active .refresh-ic{transform:rotate(180deg)}
+.refresh-ic{display:inline-block;transition:transform .4s ease}
 header h1{margin:0 0 6px;font-size:26px;letter-spacing:.3px}
 header p{margin:0;opacity:.85;font-size:14px}
 h2{font-size:17px;margin:38px 0 12px;padding-bottom:8px;border-bottom:2px solid #d7e6e3;color:#00453e}
@@ -437,7 +445,15 @@ footer{margin-top:40px;font-size:11px;color:#8a9a95;text-align:center}
 @media print{body{background:#fff} .wrap{padding:0} .tabs{display:none} .tab-panel{display:block !important}}
 </style></head><body><div class="wrap">
 <header>
+<div class="header-top">
 $logoImgTag
+<div class="refresh-block">
+<span class="refresh-ts">${e_u}ltima actualizaci${e_o}n del dashboard<br><b>$generadoTs</b></span>
+<button class="refresh-btn" onclick="actualizarDashboard(this)" title="Vuelve a cargar la ${e_u}ltima versi${e_o}n publicada de este dashboard">
+<span class="refresh-ic">&#8635;</span> Actualizar
+</button>
+</div>
+</div>
 <h1>VENTAS $($FechaCorte.Year) &mdash; INFORME DE GERENCIA</h1>
 <p>Fuente: hoja "VENTAS $($FechaCorte.Year)" $([char]0xB7) $docsTotal documentos $([char]0xB7) Datos con corte al $fechaCorteTxt $([char]0xB7) Cifras en USD</p>
 </header>
@@ -519,9 +535,14 @@ $dispoPanelHtml
 <li><b>Diversificaci${e_o}n de cartera.</b> Con $(Fmt1Pct $top3Pct) de la venta en los tres primeros clientes, conviene desarrollar nuevos contratos para reducir la dependencia de pocos clientes.</li>
 <li><b>Seguimiento por PO.</b> Varias ${e_o}rdenes se facturan en partes; un control por PO evitar${e_i}a saldos abiertos no facturados.</li>
 </ul></div>
-<footer>Informe generado autom${e_a}ticamente a partir de "$([System.IO.Path]::GetFileName($ExcelPath))" $([char]0x2014) hoja $SheetName. $([char]0xB7) $(Get-Date -Format "dd/MM/yyyy HH:mm")</footer>
+<footer>Informe generado autom${e_a}ticamente a partir de "$([System.IO.Path]::GetFileName($ExcelPath))" $([char]0x2014) hoja $SheetName. $([char]0xB7) $generadoTs</footer>
 </div>
 <script>
+function actualizarDashboard(btn) {
+  btn.disabled = true;
+  var url = window.location.pathname + '?_=' + Date.now() + window.location.hash;
+  window.location.replace(url);
+}
 function mostrarTab(id, btn) {
   document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
   document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
