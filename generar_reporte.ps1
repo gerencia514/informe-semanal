@@ -434,7 +434,7 @@ td.bar{width:180px} td.bar div{height:10px;background:linear-gradient(90deg,#008
 .note{background:#fff;border-radius:10px;padding:18px 22px;box-shadow:0 1px 3px rgba(0,50,45,.10);font-size:14px;line-height:1.65}
 .note li{margin-bottom:9px}
 footer{margin-top:40px;font-size:11px;color:#8a9a95;text-align:center}
-.tabs{display:flex;gap:8px;margin:34px 0 0;border-bottom:2px solid #d7e6e3}
+.tabs{display:flex;gap:8px;margin:24px 0 28px;border-bottom:2px solid #d7e6e3}
 .tab-btn{appearance:none;border:none;background:none;font:inherit;font-weight:700;font-size:14px;color:#667873;padding:10px 18px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
 .tab-btn:hover{color:#008275}
 .tab-btn.active{color:#00453e;border-bottom-color:#008275}
@@ -457,6 +457,12 @@ $logoImgTag
 <h1>VENTAS $($FechaCorte.Year) &mdash; INFORME DE GERENCIA</h1>
 <p>Fuente: hoja "VENTAS $($FechaCorte.Year)" $([char]0xB7) $docsTotal documentos $([char]0xB7) Datos con corte al $fechaCorteTxt $([char]0xB7) Cifras en USD</p>
 </header>
+<div class="tabs">
+<button class="tab-btn active" data-tab="tab-ventas" onclick="mostrarTab('tab-ventas', this)">Ventas</button>
+<button class="tab-btn" data-tab="tab-cobranza" onclick="mostrarTab('tab-cobranza', this)">Cuentas por cobrar</button>
+$inproccaTabBtnHtml
+$dispoTabBtnHtml
+</div>
 <div class="kpis">
 <div class="kpi"><div class="lbl">Ventas totales (con IVA e IGTF)</div><div class="val">$(Fmt0 $totalVentas)</div><div class="sub">$docsTotal operaciones $([char]0xB7) ticket promedio $(Fmt0 $ticketProm)</div></div>
 <div class="kpi"><div class="lbl">Base imponible + exento</div><div class="val">$(Fmt0 $totalBaseExe)</div><div class="sub">Ingreso neto de impuestos</div></div>
@@ -473,12 +479,6 @@ $logoImgTag
 <li>El mes de mayor actividad fue <b>$($mesTop.Label)</b> con $(Fmt0 $mesTop.Monto) ($(Fmt1Pct $mesTopPct) del a${e_n}o).</li>
 <li>La estructura tributaria muestra <b>$(Fmt0 $totalIVA)</b> de IVA y <b>$(Fmt0 $totalIGTF)</b> de IGTF; el rubro exento asciende a $(Fmt0 $totalExento) ($(Fmt1Pct (Pct $totalExento $totalVentas))).</li>
 </ul></div>
-<div class="tabs">
-<button class="tab-btn active" data-tab="tab-ventas" onclick="mostrarTab('tab-ventas', this)">Ventas</button>
-<button class="tab-btn" data-tab="tab-cobranza" onclick="mostrarTab('tab-cobranza', this)">Cuentas por cobrar</button>
-$inproccaTabBtnHtml
-$dispoTabBtnHtml
-</div>
 
 <div id="tab-ventas" class="tab-panel active">
 <h2>Evoluci${e_o}n mensual de las ventas</h2>
