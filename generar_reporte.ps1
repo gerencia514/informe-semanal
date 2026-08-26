@@ -389,17 +389,20 @@ if ($dispoRows.Count -gt 0) {
 <div id="tab-dispo" class="tab-panel">
 <h2>$dispoTitulo</h2>
 <p style="font-size:12.5px;color:#667873">Tasa COP: <b>$dispoTasaCOP</b> $([char]0xB7) Tasa USDT: <b>$dispoTasaUSDT</b></p>
+<div class="table-scroll">
 <table><thead><tr><th>Cuenta</th><th class=n>Importe moneda origen</th><th class=n>Importe USD</th></tr></thead>
 <tbody>
 $filasDispo
 </tbody>
 <tfoot><tr><td colspan=2>TOTAL DISPONIBLE</td><td class=n>$(Fmt0 $totalDispoUSD)</td></tr></tfoot></table>
 </div>
+</div>
 "@
 }
 
 $html = @"
 <!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ventas $($FechaCorte.Year) &mdash; Informe de Gerencia</title>
 <style>
 *{box-sizing:border-box}
@@ -442,6 +445,25 @@ footer{margin-top:40px;font-size:11px;color:#8a9a95;text-align:center}
 .tab-panel.active{display:block}
 .table-scroll{overflow-x:auto;border-radius:10px}
 .table-scroll table{border-radius:0}
+@media (max-width:640px){
+.wrap{padding:16px 12px 40px}
+header{padding:20px 16px;border-radius:10px}
+header h1{font-size:20px}
+header p{font-size:12.5px}
+.header-top{margin-bottom:12px}
+.refresh-block{width:100%;justify-content:space-between}
+.refresh-ts{text-align:left}
+h2{font-size:15px;margin:26px 0 10px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.kpi{padding:12px 14px}
+.kpi .val{font-size:19px}
+.note{padding:14px 16px;font-size:13px}
+.tabs{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+.tab-btn{padding:9px 13px;font-size:13px;white-space:nowrap;flex:0 0 auto}
+table{font-size:12px}
+th,td{padding:7px 9px}
+td.bar{width:90px}
+}
 @media print{body{background:#fff} .wrap{padding:0} .tabs{display:none} .tab-panel{display:block !important}}
 </style></head><body><div class="wrap">
 <header>
@@ -482,27 +504,34 @@ $dispoTabBtnHtml
 
 <div id="tab-ventas" class="tab-panel active">
 <h2>Evoluci${e_o}n mensual de las ventas</h2>
+<div class="table-scroll">
 <table><thead><tr><th>Mes</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% del a${e_n}o</th><th>Peso relativo</th></tr></thead>
 <tbody>
 $filasMensual
 </tbody>
 <tfoot><tr><td>TOTAL</td><td class=n>$docsTotal</td><td class=n>$(Fmt0 $totalVentas)</td><td class=n>100,0%</td><td></td></tr></tfoot></table>
+</div>
 <p style="font-size:12.5px;color:#6b7c8d">Los documentos a${e_u}n no facturados se asignan al mes de su orden de compra (PO), por no disponer de fecha de factura.</p>
 <h2>Ventas por cliente</h2>
+<div class="table-scroll">
 <table><thead><tr><th>Cliente</th><th class=n>Docs.</th><th class=n>Venta total</th><th class=n>% part.</th></tr></thead>
 <tbody>
 $filasClienteVentas
 </tbody>
 <tfoot><tr><td>TOTAL</td><td class=n>$docsTotal</td><td class=n>$(Fmt0 $totalVentas)</td><td class=n>100,0%</td></tr></tfoot></table>
+</div>
 <h2>Diez operaciones de mayor monto</h2>
+<div class="table-scroll">
 <table><thead><tr><th>Documento</th><th>Cliente</th><th>Concepto</th><th class=n>Monto USD</th><th>Estado</th></tr></thead>
 <tbody>
 $filasTop10
 </tbody></table>
 </div>
+</div>
 
 <div id="tab-cobranza" class="tab-panel">
 <h2>Situaci${e_o}n de facturaci${e_o}n y cobranza</h2>
+<div class="table-scroll">
 <table><thead><tr><th>Estado</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% del total</th></tr></thead>
 <tbody>
 <tr><td>Facturado y cobrado</td><td class=n>$($grpCobrado.Count)</td><td class=n>$(Fmt0 $montoCobrado)</td><td class=n>$(Fmt1Pct $pctCobrado)</td></tr>
@@ -510,18 +539,23 @@ $filasTop10
 <tr><td>Sin facturar</td><td class=n>$($grpSinFactura.Count)</td><td class=n>$(Fmt0 $montoSinFactura)</td><td class=n>$(Fmt1Pct $pctSinFactura)</td></tr>
 </tbody>
 <tfoot><tr><td>TOTAL</td><td class=n>$docsTotal</td><td class=n>$(Fmt0 $totalVentas)</td><td class=n>100,0%</td></tr></tfoot></table>
+</div>
 <h2>Cartera pendiente por cliente</h2>
+<div class="table-scroll">
 <table><thead><tr><th>Cliente</th><th class=n>Cobrado</th><th class=n>Por cobrar</th><th class=n>Sin facturar</th><th class=n>Total pendiente</th></tr></thead>
 <tbody>
 $filasCarteraCliente
 </tbody>
 <tfoot><tr><td>TOTAL</td><td class=n>$(Fmt0 $montoCobrado)</td><td class=n>$(Fmt0 $montoPorCobrar)</td><td class=n>$(Fmt0 $montoSinFactura)</td><td class=n>$(Fmt0 $montoPendienteCaja)</td></tr></tfoot></table>
+</div>
 <h2>Antig${e_ud}edad de las cuentas por cobrar</h2>
+<div class="table-scroll">
 <table><thead><tr><th>Tramo (d${e_i}as desde la factura)</th><th class=n>Monto USD</th><th class=n>% de la cartera</th></tr></thead>
 <tbody>
 $filasAging
 </tbody>
 <tfoot><tr><td>TOTAL POR COBRAR</td><td class=n>$(Fmt0 $montoPorCobrar)</td><td class=n>100,0%</td></tr></tfoot></table>
+</div>
 </div>
 
 $inproccaPanelHtml
