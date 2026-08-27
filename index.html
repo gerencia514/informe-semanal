@@ -81,9 +81,20 @@ td.bar{width:160px} td.bar div{height:8px;background:var(--brand-teal);border-ra
 .bar-rect.peak{fill:var(--brand-teal-dark)}
 .bar-hit{fill:transparent;cursor:pointer;outline:none}
 .bar-hit:hover + .bar-rect,.bar-hit:focus + .bar-rect{opacity:.72}
-.chart-tooltip{position:absolute;pointer-events:none;background:var(--brand-teal-deep);color:#fff;font-family:var(--font-body);font-size:12px;padding:6px 10px;border-radius:6px;opacity:0;transition:opacity .1s;transform:translate(-50%,-100%);white-space:nowrap;z-index:5}
+.chart-tooltip{position:absolute;pointer-events:none;background:var(--brand-teal-deep);color:#fff;font-family:var(--font-body);font-size:12px;padding:7px 11px;border-radius:6px;opacity:0;transition:opacity .1s;transform:translate(-50%,-100%);white-space:nowrap;z-index:5;text-align:left}
 .chart-tooltip.show{opacity:1}
 .chart-tooltip b{font-family:var(--font-mono)}
+.tooltip-title{font-weight:600;margin-bottom:3px}
+.tooltip-row{display:flex;align-items:center;gap:6px}
+.seg-cobrado{fill:var(--green-600)}
+.seg-porcobrar{fill:var(--amber-600)}
+.seg-sinfacturar{fill:var(--red-600)}
+.chart-legend{display:flex;gap:16px;padding:0 4px 8px;font-size:11.5px;color:var(--slate-600)}
+.legend-item{display:inline-flex;align-items:center;gap:6px}
+.legend-swatch{width:10px;height:10px;border-radius:2px;display:inline-block;flex:0 0 auto}
+.swatch-cobrado{background:var(--green-600)}
+.swatch-porcobrar{background:var(--amber-600)}
+.swatch-sinfacturar{background:var(--red-600)}
 .zero{color:var(--slate-400)}
 .neg{color:var(--red-600)}
 .badge{display:inline-block;border-radius:20px;padding:3px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
@@ -123,7 +134,7 @@ td.bar{width:80px}
 <div class="header-right">
 <div class="corte-label">Corte al 27/08/2026</div>
 <div class="refresh-row">
-<span class="refresh-ts">Actualizado 27/08/2026 15:40</span>
+<span class="refresh-ts">Actualizado 27/08/2026 16:58</span>
 <button class="refresh-btn" onclick="actualizarDashboard(this)" title="Vuelve a cargar la &uacute;ltima versi&oacute;n publicada de este dashboard">
 <span class="refresh-ic">&#8635;</span> Actualizar
 </button>
@@ -135,6 +146,7 @@ td.bar{width:80px}
 <div class="tabs">
 <button class="tab-btn active" data-tab="tab-ventas" onclick="mostrarTab('tab-ventas', this)">Ventas</button>
 <button class="tab-btn" data-tab="tab-cobranza" onclick="mostrarTab('tab-cobranza', this)">Cuentas por cobrar</button>
+<button class="tab-btn" data-tab="tab-sinfacturar" onclick="mostrarTab('tab-sinfacturar', this)">Ventas no facturadas</button>
 <button class="tab-btn" data-tab="tab-inprocca" onclick="mostrarTab('tab-inprocca', this)">INPROCCA</button>
 <button class="tab-btn" data-tab="tab-dispo" onclick="mostrarTab('tab-dispo', this)">Disponibilidad</button>
 </div>
@@ -194,6 +206,28 @@ td.bar{width:80px}
 <tfoot><tr><td>TOTAL</td><td class=n>78</td><td class=n>1.845.259</td><td class=n>100,0%</td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">Cartera</div><h2>Ventas por cliente</h2><p class="panel-desc">Participaci&oacute;n de cada cliente sobre el total facturado.</p></div>
+<div class="chart-card">
+<svg viewBox="0 0 900 336" class="chart-svg" role="img" aria-label="Ranking de clientes por venta">
+<line x1='96' y1='10' x2='96' y2='310' class='chart-grid'></line><text x='96' y='326' text-anchor='middle' class='chart-ylabel'>0</text>
+<line x1='281' y1='10' x2='281' y2='310' class='chart-grid'></line><text x='281' y='326' text-anchor='middle' class='chart-ylabel'>250.000</text>
+<line x1='466' y1='10' x2='466' y2='310' class='chart-grid'></line><text x='466' y='326' text-anchor='middle' class='chart-ylabel'>500.000</text>
+<line x1='651' y1='10' x2='651' y2='310' class='chart-grid'></line><text x='651' y='326' text-anchor='middle' class='chart-ylabel'>750.000</text>
+<line x1='836' y1='10' x2='836' y2='310' class='chart-grid'></line><text x='836' y='326' text-anchor='middle' class='chart-ylabel'>1.000.000</text>
+
+<rect class='bar-hit' tabindex='0' x='0' y='10' width='900' height='30' data-label='UNICEF' data-value='691.104' data-docs='25'></rect><rect class='bar-rect peak' x='96' y='15' width='511.4' height='20' rx='4'></rect><text x='88' y='29' text-anchor='end' class='chart-xlabel mono'>UNICEF</text><text x='615.4' y='29' text-anchor='start' class='chart-toplabel'>691.104</text>
+<rect class='bar-hit' tabindex='0' x='0' y='40' width='900' height='30' data-label='AECID' data-value='349.013' data-docs='1'></rect><rect class='bar-rect' x='96' y='45' width='258.3' height='20' rx='4'></rect><text x='88' y='59' text-anchor='end' class='chart-xlabel mono'>AECID</text>
+<rect class='bar-hit' tabindex='0' x='0' y='70' width='900' height='30' data-label='WVV' data-value='323.941' data-docs='6'></rect><rect class='bar-rect' x='96' y='75' width='239.7' height='20' rx='4'></rect><text x='88' y='89' text-anchor='end' class='chart-xlabel mono'>WVV</text>
+<rect class='bar-hit' tabindex='0' x='0' y='100' width='900' height='30' data-label='MAURELL' data-value='273.820' data-docs='4'></rect><rect class='bar-rect' x='96' y='105' width='202.6' height='20' rx='4'></rect><text x='88' y='119' text-anchor='end' class='chart-xlabel mono'>MAURELL</text>
+<rect class='bar-hit' tabindex='0' x='0' y='130' width='900' height='30' data-label='INPROCCA' data-value='133.759' data-docs='5'></rect><rect class='bar-rect' x='96' y='135' width='99' height='20' rx='4'></rect><text x='88' y='149' text-anchor='end' class='chart-xlabel mono'>INPROCCA</text>
+<rect class='bar-hit' tabindex='0' x='0' y='160' width='900' height='30' data-label='SCI' data-value='50.347' data-docs='19'></rect><rect class='bar-rect' x='96' y='165' width='37.3' height='20' rx='4'></rect><text x='88' y='179' text-anchor='end' class='chart-xlabel mono'>SCI</text>
+<rect class='bar-hit' tabindex='0' x='0' y='190' width='900' height='30' data-label='CNR' data-value='18.999' data-docs='6'></rect><rect class='bar-rect' x='96' y='195' width='14.1' height='20' rx='4'></rect><text x='88' y='209' text-anchor='end' class='chart-xlabel mono'>CNR</text>
+<rect class='bar-hit' tabindex='0' x='0' y='220' width='900' height='30' data-label='PALUZ' data-value='1.603' data-docs='3'></rect><rect class='bar-rect' x='96' y='225' width='1.2' height='20' rx='4'></rect><text x='88' y='239' text-anchor='end' class='chart-xlabel mono'>PALUZ</text>
+<rect class='bar-hit' tabindex='0' x='0' y='250' width='900' height='30' data-label='ACCF' data-value='1.357' data-docs='5'></rect><rect class='bar-rect' x='96' y='255' width='1' height='20' rx='4'></rect><text x='88' y='269' text-anchor='end' class='chart-xlabel mono'>ACCF</text>
+<rect class='bar-hit' tabindex='0' x='0' y='280' width='900' height='30' data-label='IRC' data-value='1.316' data-docs='4'></rect><rect class='bar-rect' x='96' y='285' width='1' height='20' rx='4'></rect><text x='88' y='299' text-anchor='end' class='chart-xlabel mono'>IRC</text>
+
+</svg>
+<div class="chart-tooltip"></div>
+</div>
 <div class="table-scroll">
 <table><thead><tr><th>Cliente</th><th class=n>Docs.</th><th class=n>Venta total</th><th class=n>% part.</th></tr></thead>
 <tbody>
@@ -240,6 +274,33 @@ td.bar{width:80px}
 <tfoot><tr><td>TOTAL</td><td class=n>78</td><td class=n>1.845.259</td><td class=n>100,0%</td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">Cobranza</div><h2>Cartera pendiente por cliente</h2><p class="panel-desc">Saldo cobrado, por cobrar y sin facturar por cliente.</p></div>
+<div class="chart-card">
+<div class="chart-legend">
+<span class="legend-item"><span class="legend-swatch swatch-cobrado"></span>Cobrado</span>
+<span class="legend-item"><span class="legend-swatch swatch-porcobrar"></span>Por cobrar</span>
+<span class="legend-item"><span class="legend-swatch swatch-sinfacturar"></span>Sin facturar</span>
+</div>
+<svg viewBox="0 0 900 360" class="chart-svg" role="img" aria-label="Detalle de cartera por cliente">
+<line x1='96' y1='34' x2='96' y2='334' class='chart-grid'></line><text x='96' y='350' text-anchor='middle' class='chart-ylabel'>0</text>
+<line x1='294' y1='34' x2='294' y2='334' class='chart-grid'></line><text x='294' y='350' text-anchor='middle' class='chart-ylabel'>250.000</text>
+<line x1='492' y1='34' x2='492' y2='334' class='chart-grid'></line><text x='492' y='350' text-anchor='middle' class='chart-ylabel'>500.000</text>
+<line x1='690' y1='34' x2='690' y2='334' class='chart-grid'></line><text x='690' y='350' text-anchor='middle' class='chart-ylabel'>750.000</text>
+<line x1='888' y1='34' x2='888' y2='334' class='chart-grid'></line><text x='888' y='350' text-anchor='middle' class='chart-ylabel'>1.000.000</text>
+
+<rect class='bar-hit' tabindex='0' x='0' y='34' width='900' height='30' data-label='UNICEF' data-cobrado='392.903' data-porcobrar='209.924' data-sinfacturar='88.276'></rect><rect class='seg-cobrado' x='96' y='39' width='309.2' height='20' rx='3'></rect><rect class='seg-porcobrar' x='409.2' y='39' width='164.3' height='20' rx='3'></rect><rect class='seg-sinfacturar' x='577.4' y='39' width='67.9' height='20' rx='3'></rect><text x='88' y='53' text-anchor='end' class='chart-xlabel mono'>UNICEF</text>
+<rect class='bar-hit' tabindex='0' x='0' y='64' width='900' height='30' data-label='MAURELL' data-cobrado='17.490' data-porcobrar='6.903' data-sinfacturar='249.427'></rect><rect class='seg-cobrado' x='96' y='69' width='11.9' height='20' rx='3'></rect><rect class='seg-porcobrar' x='111.9' y='69' width='3.5' height='20' rx='3'></rect><rect class='seg-sinfacturar' x='119.3' y='69' width='195.5' height='20' rx='3'></rect><text x='88' y='83' text-anchor='end' class='chart-xlabel mono'>MAURELL</text>
+<rect class='bar-hit' tabindex='0' x='0' y='94' width='900' height='30' data-label='INPROCCA' data-cobrado='13.434' data-porcobrar='120.325' data-sinfacturar='0'></rect><rect class='seg-cobrado' x='96' y='99' width='8.6' height='20' rx='3'></rect><rect class='seg-porcobrar' x='108.6' y='99' width='93.3' height='20' rx='3'></rect><text x='88' y='113' text-anchor='end' class='chart-xlabel mono'>INPROCCA</text>
+<rect class='bar-hit' tabindex='0' x='0' y='124' width='900' height='30' data-label='WVV' data-cobrado='278.858' data-porcobrar='35.625' data-sinfacturar='9.458'></rect><rect class='seg-cobrado' x='96' y='129' width='218.9' height='20' rx='3'></rect><rect class='seg-porcobrar' x='318.9' y='129' width='26.2' height='20' rx='3'></rect><rect class='seg-sinfacturar' x='349.1' y='129' width='5.5' height='20' rx='3'></rect><text x='88' y='143' text-anchor='end' class='chart-xlabel mono'>WVV</text>
+<rect class='bar-hit' tabindex='0' x='0' y='154' width='900' height='30' data-label='CNR' data-cobrado='6.992' data-porcobrar='0' data-sinfacturar='12.007'></rect><rect class='seg-cobrado' x='96' y='159' width='3.5' height='20' rx='3'></rect><rect class='seg-sinfacturar' x='103.5' y='159' width='7.5' height='20' rx='3'></rect><text x='88' y='173' text-anchor='end' class='chart-xlabel mono'>CNR</text>
+<rect class='bar-hit' tabindex='0' x='0' y='184' width='900' height='30' data-label='SCI' data-cobrado='48.519' data-porcobrar='1.216' data-sinfacturar='612'></rect><rect class='seg-cobrado' x='96' y='189' width='36.4' height='20' rx='3'></rect><rect class='seg-porcobrar' x='136.4' y='189' width='0' height='20' rx='3'></rect><rect class='seg-sinfacturar' x='139.4' y='189' width='0' height='20' rx='3'></rect><text x='88' y='203' text-anchor='end' class='chart-xlabel mono'>SCI</text>
+<rect class='bar-hit' tabindex='0' x='0' y='214' width='900' height='30' data-label='IRC' data-cobrado='718' data-porcobrar='598' data-sinfacturar='0'></rect><rect class='seg-cobrado' x='96' y='219' width='0' height='20' rx='3'></rect><rect class='seg-porcobrar' x='98.6' y='219' width='0' height='20' rx='3'></rect><text x='88' y='233' text-anchor='end' class='chart-xlabel mono'>IRC</text>
+<rect class='bar-hit' tabindex='0' x='0' y='244' width='900' height='30' data-label='ACCF' data-cobrado='1.019' data-porcobrar='0' data-sinfacturar='338'></rect><rect class='seg-cobrado' x='96' y='249' width='0' height='20' rx='3'></rect><rect class='seg-sinfacturar' x='98.8' y='249' width='0' height='20' rx='3'></rect><text x='88' y='263' text-anchor='end' class='chart-xlabel mono'>ACCF</text>
+<rect class='bar-hit' tabindex='0' x='0' y='274' width='900' height='30' data-label='PALUZ' data-cobrado='1.603' data-porcobrar='0' data-sinfacturar='0'></rect><rect class='seg-cobrado' x='96' y='279' width='0' height='20' rx='3'></rect><text x='88' y='293' text-anchor='end' class='chart-xlabel mono'>PALUZ</text>
+<rect class='bar-hit' tabindex='0' x='0' y='304' width='900' height='30' data-label='AECID' data-cobrado='349.013' data-porcobrar='0' data-sinfacturar='0'></rect><rect class='seg-cobrado' x='96' y='309' width='274.4' height='20' rx='3'></rect><text x='88' y='323' text-anchor='end' class='chart-xlabel mono'>AECID</text>
+
+</svg>
+<div class="chart-tooltip"></div>
+</div>
 <div class="table-scroll">
 <table><thead><tr><th>Cliente</th><th class=n>Cobrado</th><th class=n>Por cobrar</th><th class=n>Sin facturar</th><th class=n>Total pendiente</th></tr></thead>
 <tbody>
@@ -266,6 +327,55 @@ td.bar{width:80px}
 <tr><td>+90 dias</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
 </tbody>
 <tfoot><tr><td>TOTAL POR COBRAR</td><td class=n>374.591</td><td class=n>100,0%</td></tr></tfoot></table>
+</div>
+</div>
+
+<div id="tab-sinfacturar" class="tab-panel">
+<div class="panel-head"><div class="eyebrow">Pendiente</div><h2>Ventas no facturadas</h2><p class="panel-desc">Operaciones ejecutadas a&uacute;n sin facturar, desglosadas por cliente.</p></div>
+<div class="chart-card">
+<svg viewBox="0 0 900 216" class="chart-svg" role="img" aria-label="Ranking de ventas sin facturar por cliente">
+<line x1='96' y1='10' x2='96' y2='190' class='chart-grid'></line><text x='96' y='206' text-anchor='middle' class='chart-ylabel'>0</text>
+<line x1='281' y1='10' x2='281' y2='190' class='chart-grid'></line><text x='281' y='206' text-anchor='middle' class='chart-ylabel'>125.000</text>
+<line x1='466' y1='10' x2='466' y2='190' class='chart-grid'></line><text x='466' y='206' text-anchor='middle' class='chart-ylabel'>250.000</text>
+<line x1='651' y1='10' x2='651' y2='190' class='chart-grid'></line><text x='651' y='206' text-anchor='middle' class='chart-ylabel'>375.000</text>
+<line x1='836' y1='10' x2='836' y2='190' class='chart-grid'></line><text x='836' y='206' text-anchor='middle' class='chart-ylabel'>500.000</text>
+
+<rect class='bar-hit' tabindex='0' x='0' y='10' width='900' height='30' data-label='MAURELL' data-value='249.427' data-docs='1'></rect><rect class='bar-rect peak' x='96' y='15' width='369.2' height='20' rx='4'></rect><text x='88' y='29' text-anchor='end' class='chart-xlabel mono'>MAURELL</text><text x='473.2' y='29' text-anchor='start' class='chart-toplabel'>249.427</text>
+<rect class='bar-hit' tabindex='0' x='0' y='40' width='900' height='30' data-label='UNICEF' data-value='88.276' data-docs='2'></rect><rect class='bar-rect' x='96' y='45' width='130.6' height='20' rx='4'></rect><text x='88' y='59' text-anchor='end' class='chart-xlabel mono'>UNICEF</text>
+<rect class='bar-hit' tabindex='0' x='0' y='70' width='900' height='30' data-label='CNR' data-value='12.007' data-docs='1'></rect><rect class='bar-rect' x='96' y='75' width='17.8' height='20' rx='4'></rect><text x='88' y='89' text-anchor='end' class='chart-xlabel mono'>CNR</text>
+<rect class='bar-hit' tabindex='0' x='0' y='100' width='900' height='30' data-label='WVV' data-value='9.458' data-docs='3'></rect><rect class='bar-rect' x='96' y='105' width='14' height='20' rx='4'></rect><text x='88' y='119' text-anchor='end' class='chart-xlabel mono'>WVV</text>
+<rect class='bar-hit' tabindex='0' x='0' y='130' width='900' height='30' data-label='SCI' data-value='612' data-docs='1'></rect><rect class='bar-rect' x='96' y='135' width='1' height='20' rx='4'></rect><text x='88' y='149' text-anchor='end' class='chart-xlabel mono'>SCI</text>
+<rect class='bar-hit' tabindex='0' x='0' y='160' width='900' height='30' data-label='ACCF' data-value='338' data-docs='1'></rect><rect class='bar-rect' x='96' y='165' width='1' height='20' rx='4'></rect><text x='88' y='179' text-anchor='end' class='chart-xlabel mono'>ACCF</text>
+
+</svg>
+<div class="chart-tooltip"></div>
+</div>
+<div class="table-scroll">
+<table><thead><tr><th>Cliente</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% part.</th></tr></thead>
+<tbody>
+<tr><td><b>MAURELL</b></td><td class=n>1</td><td class=n>249.427</td><td class=n>69,3%</td></tr>
+<tr><td><b>UNICEF</b></td><td class=n>2</td><td class=n>88.276</td><td class=n>24,5%</td></tr>
+<tr><td><b>CNR</b></td><td class=n>1</td><td class=n>12.007</td><td class=n>3,3%</td></tr>
+<tr><td><b>WVV</b></td><td class=n>3</td><td class=n>9.458</td><td class=n>2,6%</td></tr>
+<tr><td><b>SCI</b></td><td class=n>1</td><td class=n>612</td><td class=n>0,2%</td></tr>
+<tr><td><b>ACCF</b></td><td class=n>1</td><td class=n>338</td><td class=n>0,1%</td></tr>
+</tbody>
+<tfoot><tr><td>TOTAL</td><td class=n>9</td><td class=n>360.118</td><td class=n>100,0%</td></tr></tfoot></table>
+</div>
+<div class="panel-head"><div class="eyebrow">Detalle</div><h2>Detalle por documento</h2></div>
+<div class="table-scroll">
+<table><thead><tr><th>Cliente</th><th>PO</th><th>Descripci&oacute;n</th><th>Fecha PO</th><th class=n>Monto USD</th></tr></thead>
+<tbody>
+<tr><td><b>ACCF</b></td><td class=mono>ORD0003129</td><td>INSUMOS VARIOS</td><td class=mono>11/08/2026</td><td class=n>338</td></tr>
+<tr><td><b>CNR</b></td><td class=mono>MCB1362_REFRIGERIOS_ICLA_PFV_EDC</td><td>MCB1362_REFRIGERIOS_ICLA_PFV_EDC</td><td class=mono>12/06/2026</td><td class=n>12.007</td></tr>
+<tr><td><b>MAURELL</b></td><td class=mono>PDC-PRDL-2026P-0006-2</td><td>ADQ. MAT. FERROSOS PTEROREGIONAL DEL LAGO</td><td class=mono>28/07/2026</td><td class=n>249.427</td></tr>
+<tr><td><b>SCI</b></td><td class=mono>OC-VEN-MAR-NORAD-2026-329</td><td>REFRIGERIOS</td><td class=mono>17/08/2026</td><td class=n>612</td></tr>
+<tr><td><b>UNICEF</b></td><td class=mono>PO81155123</td><td>KIT VARIOS</td><td class=mono>25/03/2026</td><td class=n>65.396</td></tr>
+<tr><td><b>UNICEF</b></td><td class=mono>PO8115850</td><td>KIT DE AULA REGULAR</td><td class=mono>07/07/2026</td><td class=n>22.880</td></tr>
+<tr><td><b>WVV</b></td><td class=mono></td><td>4 KIT DE PRIMEROS AUXILIOS</td><td class=mono>20/08/2026</td><td class=n>4.359</td></tr>
+<tr><td><b>WVV</b></td><td class=mono>LCO-2723894</td><td>884 KIT DE ALBERGUE, parte 1</td><td class=mono>14/07/2026</td><td class=n>3.399</td></tr>
+<tr><td><b>WVV</b></td><td class=mono>LCO2728789</td><td>116 KIT DE ALBERGUE, parte 2.</td><td class=mono>03/07/2026</td><td class=n>1.700</td></tr>
+</tbody></table>
 </div>
 </div>
 
@@ -322,7 +432,7 @@ td.bar{width:80px}
 <li><b>Diversificaci&oacute;n de cartera.</b> Con 73,9% de la venta en los tres primeros clientes, conviene desarrollar nuevos contratos para reducir la dependencia de pocos clientes.</li>
 <li><b>Seguimiento por PO.</b> Varias &oacute;rdenes se facturan en partes; un control por PO evitar&iacute;a saldos abiertos no facturados.</li>
 </ul></div>
-<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 27/08/2026 15:40</footer>
+<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 27/08/2026 16:58</footer>
 </div>
 <script>
 function actualizarDashboard(btn) {
@@ -336,13 +446,41 @@ document.querySelectorAll('.chart-card').forEach(function (card) {
   card.querySelectorAll('.bar-hit').forEach(function (hit) {
     function mostrar() {
       var label = hit.getAttribute('data-label');
-      var value = hit.getAttribute('data-value');
-      var docs = hit.getAttribute('data-docs');
       tooltip.textContent = '';
-      var strong = document.createElement('b');
-      strong.textContent = value;
-      tooltip.appendChild(strong);
-      tooltip.appendChild(document.createTextNode(' USD  ' + String.fromCharCode(183) + '  ' + label + '  ' + String.fromCharCode(183) + '  ' + docs + ' docs.'));
+      var titleEl = document.createElement('div');
+      titleEl.className = 'tooltip-title';
+      titleEl.textContent = label;
+      tooltip.appendChild(titleEl);
+      if (hit.hasAttribute('data-cobrado')) {
+        var filas = [
+          ['Cobrado', hit.getAttribute('data-cobrado'), 'swatch-cobrado'],
+          ['Por cobrar', hit.getAttribute('data-porcobrar'), 'swatch-porcobrar'],
+          ['Sin facturar', hit.getAttribute('data-sinfacturar'), 'swatch-sinfacturar']
+        ];
+        filas.forEach(function (f) {
+          var fila = document.createElement('div');
+          fila.className = 'tooltip-row';
+          var sw = document.createElement('span');
+          sw.className = 'legend-swatch ' + f[2];
+          fila.appendChild(sw);
+          fila.appendChild(document.createTextNode(f[0] + ': '));
+          var strong = document.createElement('b');
+          strong.textContent = f[1];
+          fila.appendChild(strong);
+          tooltip.appendChild(fila);
+        });
+      } else {
+        var value = hit.getAttribute('data-value');
+        var docs = hit.getAttribute('data-docs');
+        var fila = document.createElement('div');
+        var strong = document.createElement('b');
+        strong.textContent = value;
+        fila.appendChild(strong);
+        var resto = ' USD';
+        if (docs) { resto += '  ' + String.fromCharCode(183) + '  ' + docs + ' docs.'; }
+        fila.appendChild(document.createTextNode(resto));
+        tooltip.appendChild(fila);
+      }
       tooltip.classList.add('show');
       var cardRect = card.getBoundingClientRect();
       var hitRect = hit.getBoundingClientRect();

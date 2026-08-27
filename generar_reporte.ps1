@@ -35,6 +35,56 @@ function Get-NiceMax($v) {
   if ($frac -le 1) { $niceFrac = 1 } elseif ($frac -le 2) { $niceFrac = 2 } elseif ($frac -le 5) { $niceFrac = 5 }
   return $niceFrac * $base
 }
+function New-RankingChartSvg($items, $ariaLabel) {
+  $chartW = 900
+  $rowH = 30
+  $marginL = 96
+  $marginR = 64
+  $marginT = 10
+  $marginB = 26
+  $rows = [math]::Max($items.Count, 1)
+  $plotH = $rows * $rowH
+  $chartH = $marginT + $plotH + $marginB
+  $plotW = $chartW - $marginL - $marginR
+  $niceMax = Get-NiceMax (($items | Measure-Object Value -Maximum).Maximum)
+  $barThick = 20
+
+  $barsSvg = ""
+  $i = 0
+  foreach ($it in $items) {
+    $rowY = $marginT + ($i * $rowH)
+    $barCy = $rowY + ($rowH / 2)
+    $w = if ($niceMax -gt 0) { $plotW * ($it.Value / $niceMax) } else { 0 }
+    if ($w -lt 1 -and $it.Value -gt 0) { $w = 1 }
+    $barY = $barCy - ($barThick / 2)
+    $isTop = $i -eq 0
+    $barClass = if ($isTop) { "bar-rect peak" } else { "bar-rect" }
+    $labelSvg = ""
+    if ($isTop) {
+      $labelSvg = "<text x='$([math]::Round($marginL + $w + 8,1))' y='$([math]::Round($barCy + 4,1))' text-anchor='start' class='chart-toplabel'>$(Fmt0 $it.Value)</text>"
+    }
+    $docsAttr = if ($it.PSObject.Properties.Name -contains 'Docs') { " data-docs='$($it.Docs)'" } else { "" }
+    $barsSvg += "<rect class='bar-hit' tabindex='0' x='0' y='$([math]::Round($rowY,1))' width='$chartW' height='$rowH' data-label='$($it.Label)' data-value='$(Fmt0 $it.Value)'$docsAttr></rect><rect class='$barClass' x='$marginL' y='$([math]::Round($barY,1))' width='$([math]::Round($w,1))' height='$barThick' rx='4'></rect><text x='$($marginL - 8)' y='$([math]::Round($barCy + 4,1))' text-anchor='end' class='chart-xlabel mono'>$($it.Label)</text>$labelSvg`n"
+    $i++
+  }
+
+  $gridSvg = ""
+  for ($t = 0; $t -le 4; $t++) {
+    $val = $niceMax * $t / 4
+    $gx = $marginL + ($plotW * $t / 4)
+    $gridSvg += "<line x1='$([math]::Round($gx,1))' y1='$marginT' x2='$([math]::Round($gx,1))' y2='$([math]::Round($marginT + $plotH,1))' class='chart-grid'></line><text x='$([math]::Round($gx,1))' y='$([math]::Round($marginT + $plotH + 16,1))' text-anchor='middle' class='chart-ylabel'>$(Fmt0 $val)</text>`n"
+  }
+
+  return @"
+<div class="chart-card">
+<svg viewBox="0 0 $chartW $chartH" class="chart-svg" role="img" aria-label="$ariaLabel">
+$gridSvg
+$barsSvg
+</svg>
+<div class="chart-tooltip"></div>
+</div>
+"@
+}
 function Badge($estado) {
   if ($estado -eq "Facturado y cobrado") { return "<span class='badge badge-green'>Cobrado</span>" }
   if ($estado -eq "Facturado sin cobrar") { return "<span class='badge badge-amber'>Por cobrar</span>" }
@@ -373,6 +423,98 @@ $filasCarteraCliente = ($carteraCliente | ForEach-Object {
   "<tr><td><b>$($_.Cliente)</b></td><td class=n>$(FmtCell $_.Cobrado)</td><td class=n>$(FmtCell $_.PorCobrar)</td><td class=n>$(FmtCell $_.SinFacturar)</td><td class=n>$(FmtCell $_.Pendiente)</td></tr>"
 }) -join "`n"
 
+# ---------- Grafico: ranking de clientes por venta ----------
+$rankItems = $porCliente | ForEach-Object { [PSCustomObject]@{ Label = $_.Cliente; Value = $_.VentaTotal; Docs = $_.Docs } }
+$rankChartSvg = New-RankingChartSvg $rankItems "Ranking de clientes por venta"
+
+# ---------- Ventas no facturadas, desglosadas por cliente ----------
+$sinFacturaPorCliente = $grpSinFactura | Group-Object Cliente | ForEach-Object {
+  [PSCustomObject]@{
+    Cliente = $_.Name
+    Docs    = $_.Count
+    Monto   = ($_.Group | Measure-Object TotalFac -Sum).Sum
+  }
+} | Sort-Object Monto -Descending
+
+$filasSinFacturaCliente = ($sinFacturaPorCliente | ForEach-Object {
+  $pct = Pct $_.Monto $montoSinFactura
+  "<tr><td><b>$($_.Cliente)</b></td><td class=n>$($_.Docs)</td><td class=n>$(FmtCell $_.Monto)</td><td class=n>$(Fmt1Pct $pct)</td></tr>"
+}) -join "`n"
+
+$sinFacturaChartItems = $sinFacturaPorCliente | ForEach-Object { [PSCustomObject]@{ Label = $_.Cliente; Value = $_.Monto; Docs = $_.Docs } }
+$sinFacturaChartSvg = New-RankingChartSvg $sinFacturaChartItems "Ranking de ventas sin facturar por cliente"
+
+$filasSinFacturaDetalle = ($grpSinFactura | Sort-Object Cliente, @{Expression = { $_.TotalFac }; Descending = $true } | ForEach-Object {
+  $fechaTxt = if ($_.MesRef) { $_.MesRef.ToString("dd/MM/yyyy") } else { "" }
+  "<tr><td><b>$($_.Cliente)</b></td><td class=mono>$($_.PO)</td><td>$($_.Descripcion)</td><td class=mono>$fechaTxt</td><td class=n>$(FmtCell $_.TotalFac)</td></tr>"
+}) -join "`n"
+
+# ---------- Grafico: detalle de cartera por cliente ----------
+$compChartW = 900
+$compRowH = 30
+$compMarginL = 96
+$compMarginR = 12
+$compMarginT = 34
+$compMarginB = 26
+$compRows = [math]::Max($carteraCliente.Count, 1)
+$compPlotH = $compRows * $compRowH
+$compChartH = $compMarginT + $compPlotH + $compMarginB
+$compPlotW = $compChartW - $compMarginL - $compMarginR
+$compNiceMax = Get-NiceMax (($carteraCliente | ForEach-Object { $_.Cobrado + $_.PorCobrar + $_.SinFacturar } | Measure-Object -Maximum).Maximum)
+$compBarThick = 20
+$segGap = 2
+
+$compBarsSvg = ""
+$ci = 0
+foreach ($c in $carteraCliente) {
+  $rowY = $compMarginT + ($ci * $compRowH)
+  $barCy = $rowY + ($compRowH / 2)
+  $barY = $barCy - ($compBarThick / 2)
+  $wCobrado = if ($compNiceMax -gt 0) { $compPlotW * ($c.Cobrado / $compNiceMax) } else { 0 }
+  $wPorCobrar = if ($compNiceMax -gt 0) { $compPlotW * ($c.PorCobrar / $compNiceMax) } else { 0 }
+  $wSinFacturar = if ($compNiceMax -gt 0) { $compPlotW * ($c.SinFacturar / $compNiceMax) } else { 0 }
+  $segX = $compMarginL
+  $segs = ""
+  if ($wCobrado -gt 0) {
+    $segs += "<rect class='seg-cobrado' x='$([math]::Round($segX,1))' y='$([math]::Round($barY,1))' width='$([math]::Round([math]::Max($wCobrado-$segGap,0),1))' height='$compBarThick' rx='3'></rect>"
+    $segX += $wCobrado
+  }
+  if ($wPorCobrar -gt 0) {
+    $segX += $segGap
+    $segs += "<rect class='seg-porcobrar' x='$([math]::Round($segX,1))' y='$([math]::Round($barY,1))' width='$([math]::Round([math]::Max($wPorCobrar-$segGap,0),1))' height='$compBarThick' rx='3'></rect>"
+    $segX += $wPorCobrar
+  }
+  if ($wSinFacturar -gt 0) {
+    $segX += $segGap
+    $segs += "<rect class='seg-sinfacturar' x='$([math]::Round($segX,1))' y='$([math]::Round($barY,1))' width='$([math]::Round([math]::Max($wSinFacturar-$segGap,0),1))' height='$compBarThick' rx='3'></rect>"
+    $segX += $wSinFacturar
+  }
+  $compBarsSvg += "<rect class='bar-hit' tabindex='0' x='0' y='$([math]::Round($rowY,1))' width='$compChartW' height='$compRowH' data-label='$($c.Cliente)' data-cobrado='$(Fmt0 $c.Cobrado)' data-porcobrar='$(Fmt0 $c.PorCobrar)' data-sinfacturar='$(Fmt0 $c.SinFacturar)'></rect>$segs<text x='$($compMarginL - 8)' y='$([math]::Round($barCy + 4,1))' text-anchor='end' class='chart-xlabel mono'>$($c.Cliente)</text>`n"
+  $ci++
+}
+
+$compGridSvg = ""
+for ($t = 0; $t -le 4; $t++) {
+  $val = $compNiceMax * $t / 4
+  $gx = $compMarginL + ($compPlotW * $t / 4)
+  $compGridSvg += "<line x1='$([math]::Round($gx,1))' y1='$compMarginT' x2='$([math]::Round($gx,1))' y2='$([math]::Round($compMarginT + $compPlotH,1))' class='chart-grid'></line><text x='$([math]::Round($gx,1))' y='$([math]::Round($compMarginT + $compPlotH + 16,1))' text-anchor='middle' class='chart-ylabel'>$(Fmt0 $val)</text>`n"
+}
+
+$compChartSvg = @"
+<div class="chart-card">
+<div class="chart-legend">
+<span class="legend-item"><span class="legend-swatch swatch-cobrado"></span>Cobrado</span>
+<span class="legend-item"><span class="legend-swatch swatch-porcobrar"></span>Por cobrar</span>
+<span class="legend-item"><span class="legend-swatch swatch-sinfacturar"></span>Sin facturar</span>
+</div>
+<svg viewBox="0 0 $compChartW $compChartH" class="chart-svg" role="img" aria-label="Detalle de cartera por cliente">
+$compGridSvg
+$compBarsSvg
+</svg>
+<div class="chart-tooltip"></div>
+</div>
+"@
+
 $top3Pct = Pct (($porCliente | Select-Object -First 3 | Measure-Object VentaTotal -Sum).Sum) $totalVentas
 $clienteTop = $porCliente | Select-Object -First 1
 $clienteTopPct = Pct $clienteTop.VentaTotal $totalVentas
@@ -431,6 +573,32 @@ $pctFacturado = Pct $montoFacturado $totalVentas
 
 $fechaCorteTxt = $FechaCorte.ToString("dd/MM/yyyy")
 $generadoTs = Get-Date -Format "dd/MM/yyyy HH:mm"
+
+$sinFacturaTabBtnHtml = ""
+$sinFacturaPanelHtml = ""
+if ($grpSinFactura.Count -gt 0) {
+  $sinFacturaTabBtnHtml = "<button class=`"tab-btn`" data-tab=`"tab-sinfacturar`" onclick=`"mostrarTab('tab-sinfacturar', this)`">Ventas no facturadas</button>"
+  $sinFacturaPanelHtml = @"
+<div id="tab-sinfacturar" class="tab-panel">
+<div class="panel-head"><div class="eyebrow">Pendiente</div><h2>Ventas no facturadas</h2><p class="panel-desc">Operaciones ejecutadas a${e_u}n sin facturar, desglosadas por cliente.</p></div>
+$sinFacturaChartSvg
+<div class="table-scroll">
+<table><thead><tr><th>Cliente</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% part.</th></tr></thead>
+<tbody>
+$filasSinFacturaCliente
+</tbody>
+<tfoot><tr><td>TOTAL</td><td class=n>$($grpSinFactura.Count)</td><td class=n>$(FmtCell $montoSinFactura)</td><td class=n>100,0%</td></tr></tfoot></table>
+</div>
+<div class="panel-head"><div class="eyebrow">Detalle</div><h2>Detalle por documento</h2></div>
+<div class="table-scroll">
+<table><thead><tr><th>Cliente</th><th>PO</th><th>Descripci${e_o}n</th><th>Fecha PO</th><th class=n>Monto USD</th></tr></thead>
+<tbody>
+$filasSinFacturaDetalle
+</tbody></table>
+</div>
+</div>
+"@
+}
 
 $inproccaTabBtnHtml = ""
 $inproccaPanelHtml = ""
@@ -559,9 +727,20 @@ td.bar{width:160px} td.bar div{height:8px;background:var(--brand-teal);border-ra
 .bar-rect.peak{fill:var(--brand-teal-dark)}
 .bar-hit{fill:transparent;cursor:pointer;outline:none}
 .bar-hit:hover + .bar-rect,.bar-hit:focus + .bar-rect{opacity:.72}
-.chart-tooltip{position:absolute;pointer-events:none;background:var(--brand-teal-deep);color:#fff;font-family:var(--font-body);font-size:12px;padding:6px 10px;border-radius:6px;opacity:0;transition:opacity .1s;transform:translate(-50%,-100%);white-space:nowrap;z-index:5}
+.chart-tooltip{position:absolute;pointer-events:none;background:var(--brand-teal-deep);color:#fff;font-family:var(--font-body);font-size:12px;padding:7px 11px;border-radius:6px;opacity:0;transition:opacity .1s;transform:translate(-50%,-100%);white-space:nowrap;z-index:5;text-align:left}
 .chart-tooltip.show{opacity:1}
 .chart-tooltip b{font-family:var(--font-mono)}
+.tooltip-title{font-weight:600;margin-bottom:3px}
+.tooltip-row{display:flex;align-items:center;gap:6px}
+.seg-cobrado{fill:var(--green-600)}
+.seg-porcobrar{fill:var(--amber-600)}
+.seg-sinfacturar{fill:var(--red-600)}
+.chart-legend{display:flex;gap:16px;padding:0 4px 8px;font-size:11.5px;color:var(--slate-600)}
+.legend-item{display:inline-flex;align-items:center;gap:6px}
+.legend-swatch{width:10px;height:10px;border-radius:2px;display:inline-block;flex:0 0 auto}
+.swatch-cobrado{background:var(--green-600)}
+.swatch-porcobrar{background:var(--amber-600)}
+.swatch-sinfacturar{background:var(--red-600)}
 .zero{color:var(--slate-400)}
 .neg{color:var(--red-600)}
 .badge{display:inline-block;border-radius:20px;padding:3px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
@@ -613,6 +792,7 @@ $logoImgTag
 <div class="tabs">
 <button class="tab-btn active" data-tab="tab-ventas" onclick="mostrarTab('tab-ventas', this)">Ventas</button>
 <button class="tab-btn" data-tab="tab-cobranza" onclick="mostrarTab('tab-cobranza', this)">Cuentas por cobrar</button>
+$sinFacturaTabBtnHtml
 $inproccaTabBtnHtml
 $dispoTabBtnHtml
 </div>
@@ -646,6 +826,7 @@ $filasMensual
 <tfoot><tr><td>TOTAL</td><td class=n>$docsTotal</td><td class=n>$(FmtCell $totalVentas)</td><td class=n>100,0%</td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">Cartera</div><h2>Ventas por cliente</h2><p class="panel-desc">Participaci${e_o}n de cada cliente sobre el total facturado.</p></div>
+$rankChartSvg
 <div class="table-scroll">
 <table><thead><tr><th>Cliente</th><th class=n>Docs.</th><th class=n>Venta total</th><th class=n>% part.</th></tr></thead>
 <tbody>
@@ -674,6 +855,7 @@ $filasTop10
 <tfoot><tr><td>TOTAL</td><td class=n>$docsTotal</td><td class=n>$(FmtCell $totalVentas)</td><td class=n>100,0%</td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">Cobranza</div><h2>Cartera pendiente por cliente</h2><p class="panel-desc">Saldo cobrado, por cobrar y sin facturar por cliente.</p></div>
+$compChartSvg
 <div class="table-scroll">
 <table><thead><tr><th>Cliente</th><th class=n>Cobrado</th><th class=n>Por cobrar</th><th class=n>Sin facturar</th><th class=n>Total pendiente</th></tr></thead>
 <tbody>
@@ -690,6 +872,8 @@ $filasAging
 <tfoot><tr><td>TOTAL POR COBRAR</td><td class=n>$(FmtCell $montoPorCobrar)</td><td class=n>100,0%</td></tr></tfoot></table>
 </div>
 </div>
+
+$sinFacturaPanelHtml
 
 $inproccaPanelHtml
 
@@ -716,13 +900,41 @@ document.querySelectorAll('.chart-card').forEach(function (card) {
   card.querySelectorAll('.bar-hit').forEach(function (hit) {
     function mostrar() {
       var label = hit.getAttribute('data-label');
-      var value = hit.getAttribute('data-value');
-      var docs = hit.getAttribute('data-docs');
       tooltip.textContent = '';
-      var strong = document.createElement('b');
-      strong.textContent = value;
-      tooltip.appendChild(strong);
-      tooltip.appendChild(document.createTextNode(' USD  ' + String.fromCharCode(183) + '  ' + label + '  ' + String.fromCharCode(183) + '  ' + docs + ' docs.'));
+      var titleEl = document.createElement('div');
+      titleEl.className = 'tooltip-title';
+      titleEl.textContent = label;
+      tooltip.appendChild(titleEl);
+      if (hit.hasAttribute('data-cobrado')) {
+        var filas = [
+          ['Cobrado', hit.getAttribute('data-cobrado'), 'swatch-cobrado'],
+          ['Por cobrar', hit.getAttribute('data-porcobrar'), 'swatch-porcobrar'],
+          ['Sin facturar', hit.getAttribute('data-sinfacturar'), 'swatch-sinfacturar']
+        ];
+        filas.forEach(function (f) {
+          var fila = document.createElement('div');
+          fila.className = 'tooltip-row';
+          var sw = document.createElement('span');
+          sw.className = 'legend-swatch ' + f[2];
+          fila.appendChild(sw);
+          fila.appendChild(document.createTextNode(f[0] + ': '));
+          var strong = document.createElement('b');
+          strong.textContent = f[1];
+          fila.appendChild(strong);
+          tooltip.appendChild(fila);
+        });
+      } else {
+        var value = hit.getAttribute('data-value');
+        var docs = hit.getAttribute('data-docs');
+        var fila = document.createElement('div');
+        var strong = document.createElement('b');
+        strong.textContent = value;
+        fila.appendChild(strong);
+        var resto = ' USD';
+        if (docs) { resto += '  ' + String.fromCharCode(183) + '  ' + docs + ' docs.'; }
+        fila.appendChild(document.createTextNode(resto));
+        tooltip.appendChild(fila);
+      }
       tooltip.classList.add('show');
       var cardRect = card.getBoundingClientRect();
       var hitRect = hit.getBoundingClientRect();
