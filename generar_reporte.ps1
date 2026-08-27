@@ -603,10 +603,10 @@ $generadoTs = Get-Date -Format "dd/MM/yyyy HH:mm"
 $sinFacturaTabBtnHtml = ""
 $sinFacturaPanelHtml = ""
 if ($grpSinFactura.Count -gt 0) {
-  $sinFacturaTabBtnHtml = "<button class=`"tab-btn`" data-tab=`"tab-sinfacturar`" onclick=`"mostrarTab('tab-sinfacturar', this)`">Ventas no facturadas</button>"
+  $sinFacturaTabBtnHtml = "<button class=`"tab-btn`" data-tab=`"tab-sinfacturar`" onclick=`"mostrarTab('tab-sinfacturar', this)`">Ventas Sin Facturar</button>"
   $sinFacturaPanelHtml = @"
 <div id="tab-sinfacturar" class="tab-panel">
-<div class="panel-head"><div class="eyebrow">Pendiente</div><h2>Ventas no facturadas</h2><p class="panel-desc">Operaciones ejecutadas a${e_u}n sin facturar, desglosadas por cliente.</p></div>
+<div class="panel-head"><div class="eyebrow">Pendiente</div><h2>Ventas Sin Facturar</h2><p class="panel-desc">Operaciones ejecutadas a${e_u}n sin facturar, desglosadas por cliente.</p></div>
 $sinFacturaChartSvg
 <div class="table-scroll">
 <table><thead><tr><th>Cliente</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% part.</th></tr></thead>
