@@ -130,21 +130,56 @@ $excel.DisplayAlerts = $false
 $wb = $excel.Workbooks.Open($ExcelPath, $null, $true)
 $ws = $wb.Worksheets.Item($SheetName)
 
+# ---------- Ubicar columnas por nombre de encabezado (fila 1) ----------
+# La hoja ha cambiado de estructura antes (p.ej. se agrego "TIPO DE CLIENTE" y corrio
+# columnas a la derecha). En vez de indices fijos, buscamos cada columna por su
+# encabezado para que el script no falle silenciosamente si vuelve a cambiar.
+$headerMap = @{}
+for ($c = 1; $c -le 30; $c++) {
+  $h = ($ws.Cells.Item(1, $c).Text).Trim().ToUpper()
+  if ($h -ne "" -and -not $headerMap.ContainsKey($h)) { $headerMap[$h] = $c }
+}
+function Get-ColIndex($names, $required) {
+  foreach ($n in $names) {
+    if ($headerMap.ContainsKey($n)) { return $headerMap[$n] }
+  }
+  if ($required) { throw "No se encontro en la hoja '$SheetName' la columna esperada ($($names -join ' / ')). Revisa si cambiaron los encabezados de la fila 1." }
+  return $null
+}
+
+$colTotalFac     = Get-ColIndex @("TOTAL FAC") $true
+$colBase         = Get-ColIndex @("BASE IMPONIBLE") $true
+$colExento       = Get-ColIndex @("EXENTO") $true
+$colIVA          = Get-ColIndex @("IVA") $true
+$colIGTF         = Get-ColIndex @("IGTF") $true
+$colPO           = Get-ColIndex @("PO") $true
+$colCliente      = Get-ColIndex @("CLIENTE") $true
+$colTipoCliente  = Get-ColIndex @("TIPO DE CLIENTE") $false
+$colDescripcion  = Get-ColIndex @("DESCRIPCION") $true
+$colFechaPO      = Get-ColIndex @("FECHA. PO", "FECHA PO") $true
+$colFacturado    = Get-ColIndex @("FACTURADO") $true
+$colCobranza     = Get-ColIndex @("COBRANZA") $true
+$colNroFactura   = Get-ColIndex @("Nº. FACTURA", "N°. FACTURA", "NO. FACTURA") $false
+if (-not $colNroFactura) { $colNroFactura = 2 }
+$colFechaFactura = Get-ColIndex @("FECHA. FACTURA", "FECHA FACTURA") $false
+if (-not $colFechaFactura) { $colFechaFactura = 3 }
+
 $raw = New-Object System.Collections.Generic.List[object]
 $firstRow = 2
 $r = $firstRow
 while ($true) {
-  $totalText = $ws.Cells.Item($r, 4).Text
+  $totalText = $ws.Cells.Item($r, $colTotalFac).Text
   if ([string]::IsNullOrWhiteSpace($totalText)) { break }
 
-  $facturado = ($ws.Cells.Item($r, 15).Text).Trim().ToUpper()
-  $cobranza  = ($ws.Cells.Item($r, 16).Text).Trim().ToUpper()
-  $cliente   = ($ws.Cells.Item($r, 10).Text).Trim().ToUpper()
-  $nroFactura = ($ws.Cells.Item($r, 2).Text).Trim()
-  $descripcion = ($ws.Cells.Item($r, 11).Text).Trim()
+  $facturado = ($ws.Cells.Item($r, $colFacturado).Text).Trim().ToUpper()
+  $cobranza  = ($ws.Cells.Item($r, $colCobranza).Text).Trim().ToUpper()
+  $cliente   = ($ws.Cells.Item($r, $colCliente).Text).Trim().ToUpper()
+  $tipoCliente = if ($colTipoCliente) { ($ws.Cells.Item($r, $colTipoCliente).Text).Trim().ToUpper() } else { "" }
+  $nroFactura = ($ws.Cells.Item($r, $colNroFactura).Text).Trim()
+  $descripcion = ($ws.Cells.Item($r, $colDescripcion).Text).Trim()
 
-  $fechaFacTxt = ($ws.Cells.Item($r, 3).Text).Trim()
-  $fechaPOTxt  = ($ws.Cells.Item($r, 12).Text).Trim()
+  $fechaFacTxt = ($ws.Cells.Item($r, $colFechaFactura).Text).Trim()
+  $fechaPOTxt  = ($ws.Cells.Item($r, $colFechaPO).Text).Trim()
   $fechaFac = $null
   if ($fechaFacTxt -ne "") { try { $fechaFac = [datetime]::ParseExact($fechaFacTxt, "dd/MM/yyyy", $culture) } catch {} }
   $fechaPO = $null
@@ -162,13 +197,14 @@ while ($true) {
     NroFactura    = $nroFactura
     FechaFactura  = $fechaFac
     MesRef        = $mesRef
-    TotalFac      = [double]$ws.Cells.Item($r, 4).Value2
-    BaseImponible = [double]$ws.Cells.Item($r, 5).Value2
-    Exento        = [double]$ws.Cells.Item($r, 6).Value2
-    IVA           = [double]$ws.Cells.Item($r, 7).Value2
-    IGTF          = [double]$ws.Cells.Item($r, 8).Value2
-    PO            = ($ws.Cells.Item($r, 9).Text).Trim()
+    TotalFac      = [double]$ws.Cells.Item($r, $colTotalFac).Value2
+    BaseImponible = [double]$ws.Cells.Item($r, $colBase).Value2
+    Exento        = [double]$ws.Cells.Item($r, $colExento).Value2
+    IVA           = [double]$ws.Cells.Item($r, $colIVA).Value2
+    IGTF          = [double]$ws.Cells.Item($r, $colIGTF).Value2
+    PO            = ($ws.Cells.Item($r, $colPO).Text).Trim()
     Cliente       = $cliente
+    TipoCliente   = $tipoCliente
     Descripcion   = $descripcion
     Facturado     = $facturado
     Cobranza      = $cobranza
@@ -404,8 +440,11 @@ $barsSvg
 $porCliente = $raw | Group-Object Cliente | ForEach-Object {
   $g = $_.Group
   $venta = ($g | Measure-Object TotalFac -Sum).Sum
+  $tipo = ($g | Where-Object { $_.TipoCliente -ne "" } | Select-Object -First 1 -ExpandProperty TipoCliente)
+  if (-not $tipo) { $tipo = "" }
   [PSCustomObject]@{
     Cliente     = $_.Name
+    TipoCliente = $tipo
     Docs        = $_.Count
     VentaTotal  = $venta
     Cobrado     = ($g | Where-Object { $_.Estado -eq "Facturado y cobrado" } | Measure-Object TotalFac -Sum).Sum
@@ -423,6 +462,7 @@ $carteraCliente = $porCliente | ForEach-Object {
   $pend = $_.PorCobrar + $_.SinFacturar
   [PSCustomObject]@{
     Cliente = $_.Cliente
+    TipoCliente = $_.TipoCliente
     Cobrado = $_.Cobrado
     PorCobrar = $_.PorCobrar
     SinFacturar = $_.SinFacturar
@@ -430,9 +470,40 @@ $carteraCliente = $porCliente | ForEach-Object {
   }
 } | Sort-Object Pendiente -Descending
 
-$filasCarteraCliente = ($carteraCliente | ForEach-Object {
-  "<tr><td><b>$($_.Cliente)</b></td><td class=n>$(FmtCell $_.Cobrado)</td><td class=n>$(FmtCell $_.PorCobrar)</td><td class=n>$(FmtCell $_.SinFacturar)</td><td class=n>$(FmtCell $_.Pendiente)</td></tr>"
-}) -join "`n"
+function New-FilasCarteraYTotal($items) {
+  $filas = ($items | ForEach-Object {
+    "<tr><td><b>$($_.Cliente)</b></td><td class=n>$(FmtCell $_.Cobrado)</td><td class=n>$(FmtCell $_.PorCobrar)</td><td class=n>$(FmtCell $_.SinFacturar)</td><td class=n>$(FmtCell $_.Pendiente)</td></tr>"
+  }) -join "`n"
+  $totCobrado = ($items | Measure-Object Cobrado -Sum).Sum
+  $totPorCobrar = ($items | Measure-Object PorCobrar -Sum).Sum
+  $totSinFacturar = ($items | Measure-Object SinFacturar -Sum).Sum
+  $totPendiente = ($items | Measure-Object Pendiente -Sum).Sum
+  $tfoot = "<tr><td>TOTAL</td><td class=n>$(FmtCell $totCobrado)</td><td class=n>$(FmtCell $totPorCobrar)</td><td class=n>$(FmtCell $totSinFacturar)</td><td class=n>$(FmtCell $totPendiente)</td></tr>"
+  return @{ Filas = $filas; Tfoot = $tfoot }
+}
+
+$carteraONG = $carteraCliente | Where-Object { $_.TipoCliente -eq "ONG" }
+$txtPetroleo = "PETR" + [char]0xD3 + "LEO"
+$carteraPetroleo = $carteraCliente | Where-Object { $_.TipoCliente -eq $txtPetroleo -or $_.TipoCliente -eq "PETROLEO" }
+$carteraOtros = $carteraCliente | Where-Object { $_.TipoCliente -ne "ONG" -and $_.TipoCliente -ne $txtPetroleo -and $_.TipoCliente -ne "PETROLEO" }
+
+$carteraONGResult = New-FilasCarteraYTotal $carteraONG
+$carteraPetroleoResult = New-FilasCarteraYTotal $carteraPetroleo
+$carteraOtrosResult = if ($carteraOtros.Count -gt 0) { New-FilasCarteraYTotal $carteraOtros } else { $null }
+
+$carteraOtrosPanelHtml = ""
+if ($carteraOtrosResult) {
+  $carteraOtrosPanelHtml = @"
+<div class="panel-head"><div class="eyebrow">Cobranza $([char]0xB7) Otros</div><h2>Cartera pendiente $([char]0x2014) Otros</h2><p class="panel-desc">Clientes sin tipo asignado en la columna "TIPO DE CLIENTE" del Excel.</p></div>
+<div class="table-scroll">
+<table><thead><tr><th>Cliente</th><th class=n>Cobrado</th><th class=n>Por cobrar</th><th class=n>Sin facturar</th><th class=n>Total pendiente</th></tr></thead>
+<tbody>
+$($carteraOtrosResult.Filas)
+</tbody>
+<tfoot>$($carteraOtrosResult.Tfoot)</tfoot></table>
+</div>
+"@
+}
 
 # ---------- Grafico: ranking de clientes por venta ----------
 $rankItems = $porCliente | ForEach-Object { [PSCustomObject]@{ Label = $_.Cliente; Value = $_.VentaTotal; Docs = $_.Docs } }
@@ -459,72 +530,6 @@ $filasSinFacturaDetalle = ($grpSinFactura | Sort-Object @{Expression = { $_.MesR
   $fechaTxt = if ($_.MesRef) { $_.MesRef.ToString("dd/MM/yyyy") } else { "" }
   "<tr><td><b>$($_.Cliente)</b></td><td class=mono>$($_.PO)</td><td>$($_.Descripcion)</td><td class=mono>$fechaTxt</td><td class=n>$(FmtCell $_.TotalFac)</td></tr>"
 }) -join "`n"
-
-# ---------- Grafico: detalle de cartera por cliente ----------
-$compChartW = 900
-$compRowH = 30
-$compMarginL = 96
-$compMarginR = 12
-$compMarginT = 34
-$compMarginB = 26
-$compRows = [math]::Max($carteraCliente.Count, 1)
-$compPlotH = $compRows * $compRowH
-$compChartH = $compMarginT + $compPlotH + $compMarginB
-$compPlotW = $compChartW - $compMarginL - $compMarginR
-$compNiceMax = Get-NiceMax (($carteraCliente | ForEach-Object { $_.Cobrado + $_.PorCobrar + $_.SinFacturar } | Measure-Object -Maximum).Maximum)
-$compBarThick = 20
-$segGap = 2
-
-$compBarsSvg = ""
-$ci = 0
-foreach ($c in $carteraCliente) {
-  $rowY = $compMarginT + ($ci * $compRowH)
-  $barCy = $rowY + ($compRowH / 2)
-  $barY = $barCy - ($compBarThick / 2)
-  $wCobrado = if ($compNiceMax -gt 0) { $compPlotW * ($c.Cobrado / $compNiceMax) } else { 0 }
-  $wPorCobrar = if ($compNiceMax -gt 0) { $compPlotW * ($c.PorCobrar / $compNiceMax) } else { 0 }
-  $wSinFacturar = if ($compNiceMax -gt 0) { $compPlotW * ($c.SinFacturar / $compNiceMax) } else { 0 }
-  $segX = $compMarginL
-  $segs = ""
-  if ($wCobrado -gt 0) {
-    $segs += "<rect class='seg-cobrado' x='$([math]::Round($segX,1))' y='$([math]::Round($barY,1))' width='$([math]::Round([math]::Max($wCobrado-$segGap,0),1))' height='$compBarThick' rx='3'></rect>"
-    $segX += $wCobrado
-  }
-  if ($wPorCobrar -gt 0) {
-    $segX += $segGap
-    $segs += "<rect class='seg-porcobrar' x='$([math]::Round($segX,1))' y='$([math]::Round($barY,1))' width='$([math]::Round([math]::Max($wPorCobrar-$segGap,0),1))' height='$compBarThick' rx='3'></rect>"
-    $segX += $wPorCobrar
-  }
-  if ($wSinFacturar -gt 0) {
-    $segX += $segGap
-    $segs += "<rect class='seg-sinfacturar' x='$([math]::Round($segX,1))' y='$([math]::Round($barY,1))' width='$([math]::Round([math]::Max($wSinFacturar-$segGap,0),1))' height='$compBarThick' rx='3'></rect>"
-    $segX += $wSinFacturar
-  }
-  $compBarsSvg += "<rect class='bar-hit' tabindex='0' x='0' y='$([math]::Round($rowY,1))' width='$compChartW' height='$compRowH' data-label='$($c.Cliente)' data-cobrado='$(Fmt0 $c.Cobrado)' data-porcobrar='$(Fmt0 $c.PorCobrar)' data-sinfacturar='$(Fmt0 $c.SinFacturar)'></rect>$segs<text x='$($compMarginL - 8)' y='$([math]::Round($barCy + 4,1))' text-anchor='end' class='chart-xlabel mono'>$($c.Cliente)</text>`n"
-  $ci++
-}
-
-$compGridSvg = ""
-for ($t = 0; $t -le 4; $t++) {
-  $val = $compNiceMax * $t / 4
-  $gx = $compMarginL + ($compPlotW * $t / 4)
-  $compGridSvg += "<line x1='$([math]::Round($gx,1))' y1='$compMarginT' x2='$([math]::Round($gx,1))' y2='$([math]::Round($compMarginT + $compPlotH,1))' class='chart-grid'></line><text x='$([math]::Round($gx,1))' y='$([math]::Round($compMarginT + $compPlotH + 16,1))' text-anchor='middle' class='chart-ylabel'>$(Fmt0 $val)</text>`n"
-}
-
-$compChartSvg = @"
-<div class="chart-card">
-<div class="chart-legend">
-<span class="legend-item"><span class="legend-swatch swatch-cobrado"></span>Cobrado</span>
-<span class="legend-item"><span class="legend-swatch swatch-porcobrar"></span>Por cobrar</span>
-<span class="legend-item"><span class="legend-swatch swatch-sinfacturar"></span>Sin facturar</span>
-</div>
-<svg viewBox="0 0 $compChartW $compChartH" class="chart-svg" role="img" aria-label="Detalle de cartera por cliente">
-$compGridSvg
-$compBarsSvg
-</svg>
-<div class="chart-tooltip"></div>
-</div>
-"@
 
 $top3Pct = Pct (($porCliente | Select-Object -First 3 | Measure-Object VentaTotal -Sum).Sum) $totalVentas
 $clienteTop = $porCliente | Select-Object -First 1
@@ -875,15 +880,23 @@ $filasTop10
 </tbody>
 <tfoot><tr><td>TOTAL</td><td class=n>$docsTotal</td><td class=n>$(FmtCell $totalVentas)</td><td class=n>100,0%</td></tr></tfoot></table>
 </div>
-<div class="panel-head"><div class="eyebrow">Cobranza</div><h2>Cartera pendiente por cliente</h2><p class="panel-desc">Saldo cobrado, por cobrar y sin facturar por cliente.</p></div>
-$compChartSvg
+<div class="panel-head"><div class="eyebrow">Cobranza $([char]0xB7) ONG</div><h2>Cartera pendiente $([char]0x2014) ONG</h2><p class="panel-desc">Saldo cobrado, por cobrar y sin facturar de clientes ONG.</p></div>
 <div class="table-scroll">
 <table><thead><tr><th>Cliente</th><th class=n>Cobrado</th><th class=n>Por cobrar</th><th class=n>Sin facturar</th><th class=n>Total pendiente</th></tr></thead>
 <tbody>
-$filasCarteraCliente
+$($carteraONGResult.Filas)
 </tbody>
-<tfoot><tr><td>TOTAL</td><td class=n>$(FmtCell $montoCobrado)</td><td class=n>$(FmtCell $montoPorCobrar)</td><td class=n>$(FmtCell $montoSinFactura)</td><td class=n>$(FmtCell $montoPendienteCaja)</td></tr></tfoot></table>
+<tfoot>$($carteraONGResult.Tfoot)</tfoot></table>
 </div>
+<div class="panel-head"><div class="eyebrow">Cobranza $([char]0xB7) Petr${e_o}leo</div><h2>Cartera pendiente $([char]0x2014) Petr${e_o}leo</h2><p class="panel-desc">Saldo cobrado, por cobrar y sin facturar de clientes del sector petrolero.</p></div>
+<div class="table-scroll">
+<table><thead><tr><th>Cliente</th><th class=n>Cobrado</th><th class=n>Por cobrar</th><th class=n>Sin facturar</th><th class=n>Total pendiente</th></tr></thead>
+<tbody>
+$($carteraPetroleoResult.Filas)
+</tbody>
+<tfoot>$($carteraPetroleoResult.Tfoot)</tfoot></table>
+</div>
+$carteraOtrosPanelHtml
 <div class="panel-head"><div class="eyebrow">Aging</div><h2>Antig${e_ud}edad de las cuentas por cobrar</h2><p class="panel-desc">Distribuci${e_o}n de la cartera por cobrar, seg${e_u}n d${e_i}as desde la factura.</p></div>
 <div class="table-scroll">
 <table><thead><tr><th>Tramo (d${e_i}as desde la factura)</th><th class=n>Monto USD</th><th class=n>% de la cartera</th></tr></thead>
