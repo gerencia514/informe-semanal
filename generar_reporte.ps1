@@ -279,17 +279,16 @@ if ($etiquetas.ContainsKey("FACTURADO Y COBRADO") -and $tieneNoCobrado) {
 
 # ---------- Hoja "CC INPROCCA": estado de cuenta detallado de ese cliente ----------
 $inproccaRows = New-Object System.Collections.Generic.List[object]
-$inproccaFechas = @("", "", "")
+$inproccaHeaders = @("Abonos", "Cr${e_e}dito", "Abonos", "Cr${e_e}dito", "Abonos", "Cr${e_e}dito")
 $hojaInprocca = $null
 foreach ($hoja in $wb.Worksheets) { if ($hoja.Name -eq "CC INPROCCA") { $hojaInprocca = $hoja } }
 if ($hojaInprocca) {
   $wsi = $hojaInprocca
   $rowsI = $wsi.UsedRange.Rows.Count
-  $inproccaFechas = @(
-    ($wsi.Cells.Item(4, 5).Text).Trim(),
-    ($wsi.Cells.Item(4, 7).Text).Trim(),
-    ($wsi.Cells.Item(4, 9).Text).Trim()
-  )
+  for ($hc = 0; $hc -lt 6; $hc++) {
+    $txt = ($wsi.Cells.Item(4, 5 + $hc).Text).Trim()
+    if ($txt -ne "") { $inproccaHeaders[$hc] = $txt }
+  }
   for ($ri = 5; $ri -le $rowsI; $ri++) {
     $fecha = ($wsi.Cells.Item($ri, 2).Text).Trim()
     $doc   = ($wsi.Cells.Item($ri, 3).Text).Trim()
@@ -640,8 +639,7 @@ if ($inproccaRows.Count -gt 0) {
 <col style="width:11%"><col style="width:11%"><col style="width:11%"><col style="width:11%"><col style="width:11%"><col style="width:11%">
 </colgroup>
 <thead>
-<tr><th></th><th></th><th></th><th colspan=2>$($inproccaFechas[0])</th><th colspan=2>$($inproccaFechas[1])</th><th colspan=2>$($inproccaFechas[2])</th></tr>
-<tr><th class=ctr>Fecha</th><th>Documento</th><th class=n>Monto</th><th class=ctr>Abonos</th><th class=n>Cr${e_e}dito</th><th class=ctr>Abonos</th><th class=n>Cr${e_e}dito</th><th class=ctr>Abonos</th><th class=n>Cr${e_e}dito</th></tr>
+<tr><th class=ctr>Fecha</th><th>Documento</th><th class=n>Monto</th><th class=ctr>$($inproccaHeaders[0])</th><th class=n>$($inproccaHeaders[1])</th><th class=ctr>$($inproccaHeaders[2])</th><th class=n>$($inproccaHeaders[3])</th><th class=ctr>$($inproccaHeaders[4])</th><th class=n>$($inproccaHeaders[5])</th></tr>
 </thead>
 <tbody>
 $filasInprocca
