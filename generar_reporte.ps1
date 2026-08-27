@@ -540,6 +540,7 @@ h2{font-family:var(--font-display);font-size:16px;font-weight:700;margin:0;color
 .table-scroll table{border-radius:0}
 table{width:100%;border-collapse:collapse;background:var(--card);font-size:13px}
 th{background:var(--teal-100);color:var(--brand-teal-deep);text-align:left;padding:9px 12px;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;border-bottom:2px solid var(--brand-teal);white-space:nowrap}
+th.n{text-align:right}
 td{padding:8px 12px;border-top:1px solid var(--line)}
 td.n{text-align:right}
 td.n,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
