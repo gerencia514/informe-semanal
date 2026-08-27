@@ -444,7 +444,7 @@ $filasSinFacturaCliente = ($sinFacturaPorCliente | ForEach-Object {
 $sinFacturaChartItems = $sinFacturaPorCliente | ForEach-Object { [PSCustomObject]@{ Label = $_.Cliente; Value = $_.Monto; Docs = $_.Docs } }
 $sinFacturaChartSvg = New-RankingChartSvg $sinFacturaChartItems "Ranking de ventas sin facturar por cliente"
 
-$filasSinFacturaDetalle = ($grpSinFactura | Sort-Object Cliente, @{Expression = { $_.TotalFac }; Descending = $true } | ForEach-Object {
+$filasSinFacturaDetalle = ($grpSinFactura | Sort-Object @{Expression = { $_.MesRef } } | ForEach-Object {
   $fechaTxt = if ($_.MesRef) { $_.MesRef.ToString("dd/MM/yyyy") } else { "" }
   "<tr><td><b>$($_.Cliente)</b></td><td class=mono>$($_.PO)</td><td>$($_.Descripcion)</td><td class=mono>$fechaTxt</td><td class=n>$(FmtCell $_.TotalFac)</td></tr>"
 }) -join "`n"
