@@ -85,6 +85,16 @@ $barsSvg
 </div>
 "@
 }
+function Parse-MoneyText($s) {
+  if ([string]::IsNullOrWhiteSpace($s)) { return 0.0 }
+  $clean = $s -replace '[^\d,.\-]', ''
+  if ($clean -eq '' -or $clean -eq '-') { return 0.0 }
+  $clean = $clean -replace '\.', ''
+  $clean = $clean -replace ',', '.'
+  $val = 0.0
+  [double]::TryParse($clean, [System.Globalization.NumberStyles]::Any, [System.Globalization.CultureInfo]::InvariantCulture, [ref]$val) | Out-Null
+  return $val
+}
 function Badge($estado) {
   if ($estado -eq "Facturado y cobrado") { return "<span class='badge badge-green'>Cobrado</span>" }
   if ($estado -eq "Facturado sin cobrar") { return "<span class='badge badge-amber'>Por cobrar</span>" }
@@ -539,12 +549,22 @@ $filasAging = ($tramos.GetEnumerator() | ForEach-Object {
 
 # ---------- Estado de cuenta INPROCCA (hoja "CC INPROCCA") ----------
 $fechasOcultarInprocca = @("07/05/2026", "14/07/2026")
-$filasInprocca = ($inproccaRows | Where-Object { $fechasOcultarInprocca -notcontains $_.Fecha } | ForEach-Object {
+$inproccaVisibles = $inproccaRows | Where-Object { $fechasOcultarInprocca -notcontains $_.Fecha }
+$filasInprocca = ($inproccaVisibles | ForEach-Object {
   $esResumen = $_.Doc -match "(?i)deuda|saldo|conciliado"
   $docHtml = if ($esResumen) { "<b>$($_.Doc)</b>" } else { $_.Doc }
   $rowClass = if ($esResumen) { " class='resumen'" } else { "" }
   "<tr$rowClass><td>$($_.Fecha)</td><td>$docHtml</td><td class=n>$($_.Monto)</td><td class=n>$($_.Ab1)</td><td class=n>$($_.Cr1)</td><td class=n>$($_.Ab2)</td><td class=n>$($_.Cr2)</td><td class=n>$($_.Ab3)</td><td class=n>$($_.Cr3)</td></tr>"
 }) -join "`n"
+
+$inproccaRealRows = $inproccaVisibles | Where-Object { $_.Doc -notmatch "(?i)deuda|saldo|conciliado" }
+$inproccaTotMonto = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Monto } | Measure-Object -Sum).Sum
+$inproccaTotAb1   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Ab1 } | Measure-Object -Sum).Sum
+$inproccaTotCr1   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Cr1 } | Measure-Object -Sum).Sum
+$inproccaTotAb2   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Ab2 } | Measure-Object -Sum).Sum
+$inproccaTotCr2   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Cr2 } | Measure-Object -Sum).Sum
+$inproccaTotAb3   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Ab3 } | Measure-Object -Sum).Sum
+$inproccaTotCr3   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Cr3 } | Measure-Object -Sum).Sum
 
 # ---------- Disponibilidad (hoja "DISPONIBILIDAD") ----------
 $totalDispoUSD = ($dispoRows | Measure-Object UsdValor -Sum).Sum
@@ -619,7 +639,8 @@ if ($inproccaRows.Count -gt 0) {
 </thead>
 <tbody>
 $filasInprocca
-</tbody></table>
+</tbody>
+<tfoot><tr><td colspan=2>TOTAL</td><td class=n>$(FmtCell $inproccaTotMonto)</td><td class=n>$(FmtCell $inproccaTotAb1)</td><td class=n>$(FmtCell $inproccaTotCr1)</td><td class=n>$(FmtCell $inproccaTotAb2)</td><td class=n>$(FmtCell $inproccaTotCr2)</td><td class=n>$(FmtCell $inproccaTotAb3)</td><td class=n>$(FmtCell $inproccaTotCr3)</td></tr></tfoot></table>
 </div>
 </div>
 "@
@@ -631,7 +652,6 @@ if ($dispoRows.Count -gt 0) {
   $dispoTabBtnHtml = "<button class=`"tab-btn`" data-tab=`"tab-dispo`" onclick=`"mostrarTab('tab-dispo', this)`">Disponibilidad</button>"
   $dispoPanelHtml = @"
 <div id="tab-dispo" class="tab-panel">
-<div class="panel-head"><div class="eyebrow">Tesorer${e_i}a</div><h2>$dispoTitulo</h2><p class="panel-desc">Tasa COP: <b class=mono>$dispoTasaCOP</b> $([char]0xB7) Tasa USDT: <b class=mono>$dispoTasaUSDT</b></p></div>
 <div class="table-scroll">
 <table><thead><tr><th>Cuenta</th><th class=n>Importe moneda origen</th><th class=n>Importe USD</th></tr></thead>
 <tbody>
@@ -797,6 +817,8 @@ $inproccaTabBtnHtml
 $dispoTabBtnHtml
 </div>
 </div>
+
+<div id="tab-ventas" class="tab-panel active">
 <div class="kpis">
 <div class="kpi featured"><div class="lbl">Ventas totales (con IVA e IGTF)</div><div class="val teal">$(Fmt0 $totalVentas)</div><div class="sub">$docsTotal operaciones $([char]0xB7) ticket promedio $(Fmt0 $ticketProm)</div></div>
 <div class="kpi"><div class="lbl">Base imponible + exento</div><div class="val teal">$(Fmt0 $totalBaseExe)</div><div class="sub">Ingreso neto de impuestos</div></div>
@@ -813,8 +835,6 @@ $dispoTabBtnHtml
 <li>El mes de mayor actividad fue <b>$($mesTop.Label)</b> con $(Fmt0 $mesTop.Monto) ($(Fmt1Pct $mesTopPct) del a${e_n}o).</li>
 <li>La estructura tributaria muestra <b>$(Fmt0 $totalIVA)</b> de IVA y <b>$(Fmt0 $totalIGTF)</b> de IGTF; el rubro exento asciende a $(Fmt0 $totalExento) ($(Fmt1Pct (Pct $totalExento $totalVentas))).</li>
 </ul></div>
-
-<div id="tab-ventas" class="tab-panel active">
 <div class="panel-head"><div class="eyebrow">Tendencia</div><h2>Evoluci${e_o}n mensual de las ventas</h2><p class="panel-desc">Documentos y monto vendido por mes del ejercicio $($FechaCorte.Year).</p></div>
 <div class="callout">Los documentos a${e_u}n no facturados se asignan al mes de su orden de compra (PO), por no disponer de fecha de factura.</div>
 $monthlyChartSvg
