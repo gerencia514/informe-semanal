@@ -85,6 +85,7 @@ $barsSvg
 </div>
 "@
 }
+function FmtUSD($n) { return "`$ " + ([double]$n).ToString("N2", $culture) }
 function Parse-MoneyText($s) {
   if ([string]::IsNullOrWhiteSpace($s)) { return 0.0 }
   $clean = $s -replace '[^\d,.\-]', ''
@@ -640,7 +641,7 @@ if ($inproccaRows.Count -gt 0) {
 <tbody>
 $filasInprocca
 </tbody>
-<tfoot><tr><td colspan=2>TOTAL</td><td class=n>$(FmtCell $inproccaTotMonto)</td><td class=n>$(FmtCell $inproccaTotAb1)</td><td class=n>$(FmtCell $inproccaTotCr1)</td><td class=n>$(FmtCell $inproccaTotAb2)</td><td class=n>$(FmtCell $inproccaTotCr2)</td><td class=n>$(FmtCell $inproccaTotAb3)</td><td class=n>$(FmtCell $inproccaTotCr3)</td></tr></tfoot></table>
+<tfoot><tr><td colspan=2>TOTAL</td><td class=n>$(FmtUSD $inproccaTotMonto)</td><td class=n>$(FmtUSD $inproccaTotAb1)</td><td class=n>$(FmtUSD $inproccaTotCr1)</td><td class=n>$(FmtUSD $inproccaTotAb2)</td><td class=n>$(FmtUSD $inproccaTotCr2)</td><td class=n>$(FmtUSD $inproccaTotAb3)</td><td class=n>$(FmtUSD $inproccaTotCr3)</td></tr></tfoot></table>
 </div>
 </div>
 "@
