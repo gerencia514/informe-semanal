@@ -26,6 +26,15 @@ function FmtCell($n) {
   if ($v -lt 0) { return "<span class='neg'>($([math]::Abs($v).ToString("N0", $culture)))</span>" }
   return $v.ToString("N0", $culture)
 }
+function Get-NiceMax($v) {
+  if ($v -le 0) { return 100.0 }
+  $exp = [math]::Floor([math]::Log10($v))
+  $base = [math]::Pow(10, $exp)
+  $frac = $v / $base
+  $niceFrac = 10
+  if ($frac -le 1) { $niceFrac = 1 } elseif ($frac -le 2) { $niceFrac = 2 } elseif ($frac -le 5) { $niceFrac = 5 }
+  return $niceFrac * $base
+}
 function Badge($estado) {
   if ($estado -eq "Facturado y cobrado") { return "<span class='badge badge-green'>Cobrado</span>" }
   if ($estado -eq "Facturado sin cobrar") { return "<span class='badge badge-amber'>Por cobrar</span>" }
@@ -275,9 +284,60 @@ $maxMensual = ($mensual | Measure-Object Monto -Maximum).Maximum
 
 $filasMensual = ($mensual | ForEach-Object {
   $pct = Pct $_.Monto $totalVentas
-  $ancho = if ($maxMensual -gt 0) { Pct $_.Monto $maxMensual } else { 0 }
-  "<tr><td class=mono>$($_.Label)</td><td class=n>$($_.Docs)</td><td class=n>$(FmtCell $_.Monto)</td><td class=n>$(Fmt1Pct $pct)</td><td class=bar><div style='width:$([math]::Round($ancho,1))%'></div></td></tr>"
+  "<tr><td class=mono>$($_.Label)</td><td class=n>$($_.Docs)</td><td class=n>$(FmtCell $_.Monto)</td><td class=n>$(Fmt1Pct $pct)</td></tr>"
 }) -join "`n"
+
+# ---------- Grafico de barras: ventas por mes ----------
+$chartW = 900
+$chartH = 260
+$marginL = 60
+$marginR = 12
+$marginT = 30
+$marginB = 34
+$plotW = $chartW - $marginL - $marginR
+$plotH = $chartH - $marginT - $marginB
+$niceMax = Get-NiceMax $maxMensual
+$mesesCount = [math]::Max($mensual.Count, 1)
+$slotW = $plotW / $mesesCount
+$barW = [math]::Min(28, $slotW * 0.55)
+$mesPico = $mensual | Sort-Object Monto -Descending | Select-Object -First 1
+
+$barsSvg = ""
+$i = 0
+foreach ($m in $mensual) {
+  $cx = $marginL + ($i + 0.5) * $slotW
+  $x = $cx - ($barW / 2)
+  $h = if ($niceMax -gt 0) { $plotH * ($m.Monto / $niceMax) } else { 0 }
+  if ($h -lt 1 -and $m.Monto -gt 0) { $h = 1 }
+  $y = $marginT + $plotH - $h
+  $hitX = $marginL + ($i * $slotW)
+  $isPico = ($mesPico -ne $null) -and ($m.Label -eq $mesPico.Label)
+  $barClass = if ($isPico) { "bar-rect peak" } else { "bar-rect" }
+  $labelSvg = ""
+  if ($isPico) {
+    $labelSvg = "<text x='$([math]::Round($cx,1))' y='$([math]::Round($y - 8,1))' text-anchor='middle' class='chart-toplabel'>$(Fmt0 $m.Monto)</text>"
+  }
+  $mesCorto = $m.Label.Split(' ')[0]
+  $barsSvg += "<rect class='bar-hit' tabindex='0' x='$([math]::Round($hitX,1))' y='$marginT' width='$([math]::Round($slotW,1))' height='$plotH' data-label='$($m.Label)' data-value='$(Fmt0 $m.Monto)' data-docs='$($m.Docs)'></rect><rect class='$barClass' x='$([math]::Round($x,1))' y='$([math]::Round($y,1))' width='$([math]::Round($barW,1))' height='$([math]::Round($h,1))' rx='4'></rect>$labelSvg<text x='$([math]::Round($cx,1))' y='$($chartH - 12)' text-anchor='middle' class='chart-xlabel'>$mesCorto</text>`n"
+  $i++
+}
+
+$gridSvg = ""
+for ($t = 0; $t -le 4; $t++) {
+  $val = $niceMax * $t / 4
+  $gy = $marginT + $plotH - ($plotH * $t / 4)
+  $gridSvg += "<line x1='$marginL' y1='$([math]::Round($gy,1))' x2='$($chartW - $marginR)' y2='$([math]::Round($gy,1))' class='chart-grid'></line><text x='$($marginL - 8)' y='$([math]::Round($gy + 3,1))' text-anchor='end' class='chart-ylabel'>$(Fmt0 $val)</text>`n"
+}
+
+$monthlyChartSvg = @"
+<div class="chart-card">
+<svg viewBox="0 0 $chartW $chartH" class="chart-svg" role="img" aria-label="Ventas mensuales en USD">
+$gridSvg
+$barsSvg
+</svg>
+<div class="chart-tooltip"></div>
+</div>
+"@
 
 # ---------- Analisis por cliente ----------
 $porCliente = $raw | Group-Object Cliente | ForEach-Object {
@@ -488,6 +548,19 @@ tbody tr:hover{background:var(--teal-100)}
 tbody tr.resumen{background:#EAF5F2;font-weight:700;color:var(--brand-teal-dark);border-top:2px solid var(--brand-teal);border-bottom:2px solid var(--brand-teal)}
 tfoot td{font-weight:700;background:#EAF5F2;color:var(--brand-teal-dark);border-top:2px solid var(--brand-teal);border-bottom:2px solid var(--brand-teal)}
 td.bar{width:160px} td.bar div{height:8px;background:var(--brand-teal);border-radius:4px}
+.chart-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 12px 6px;margin-bottom:18px;position:relative}
+.chart-svg{width:100%;height:auto;display:block;overflow:visible}
+.chart-grid{stroke:var(--line);stroke-width:1}
+.chart-ylabel,.chart-xlabel{font-family:var(--font-mono);font-size:10px;fill:var(--slate-400)}
+.chart-xlabel{fill:var(--slate-600)}
+.chart-toplabel{font-family:var(--font-mono);font-size:12px;font-weight:600;fill:var(--brand-teal-dark)}
+.bar-rect{fill:var(--brand-teal);transition:opacity .1s}
+.bar-rect.peak{fill:var(--brand-teal-dark)}
+.bar-hit{fill:transparent;cursor:pointer;outline:none}
+.bar-hit:hover + .bar-rect,.bar-hit:focus + .bar-rect{opacity:.72}
+.chart-tooltip{position:absolute;pointer-events:none;background:var(--brand-teal-deep);color:#fff;font-family:var(--font-body);font-size:12px;padding:6px 10px;border-radius:6px;opacity:0;transition:opacity .1s;transform:translate(-50%,-100%);white-space:nowrap;z-index:5}
+.chart-tooltip.show{opacity:1}
+.chart-tooltip b{font-family:var(--font-mono)}
 .zero{color:var(--slate-400)}
 .neg{color:var(--red-600)}
 .badge{display:inline-block;border-radius:20px;padding:3px 10px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
@@ -563,12 +636,13 @@ $dispoTabBtnHtml
 <div id="tab-ventas" class="tab-panel active">
 <div class="panel-head"><div class="eyebrow">Tendencia</div><h2>Evoluci${e_o}n mensual de las ventas</h2><p class="panel-desc">Documentos y monto vendido por mes del ejercicio $($FechaCorte.Year).</p></div>
 <div class="callout">Los documentos a${e_u}n no facturados se asignan al mes de su orden de compra (PO), por no disponer de fecha de factura.</div>
+$monthlyChartSvg
 <div class="table-scroll">
-<table><thead><tr><th>Mes</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% del a${e_n}o</th><th>Peso relativo</th></tr></thead>
+<table><thead><tr><th>Mes</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% del a${e_n}o</th></tr></thead>
 <tbody>
 $filasMensual
 </tbody>
-<tfoot><tr><td>TOTAL</td><td class=n>$docsTotal</td><td class=n>$(FmtCell $totalVentas)</td><td class=n>100,0%</td><td></td></tr></tfoot></table>
+<tfoot><tr><td>TOTAL</td><td class=n>$docsTotal</td><td class=n>$(FmtCell $totalVentas)</td><td class=n>100,0%</td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">Cartera</div><h2>Ventas por cliente</h2><p class="panel-desc">Participaci${e_o}n de cada cliente sobre el total facturado.</p></div>
 <div class="table-scroll">
@@ -635,6 +709,32 @@ function actualizarDashboard(btn) {
   var url = window.location.pathname + '?_=' + Date.now() + window.location.hash;
   window.location.replace(url);
 }
+document.querySelectorAll('.chart-card').forEach(function (card) {
+  var tooltip = card.querySelector('.chart-tooltip');
+  if (!tooltip) { return; }
+  card.querySelectorAll('.bar-hit').forEach(function (hit) {
+    function mostrar() {
+      var label = hit.getAttribute('data-label');
+      var value = hit.getAttribute('data-value');
+      var docs = hit.getAttribute('data-docs');
+      tooltip.textContent = '';
+      var strong = document.createElement('b');
+      strong.textContent = value;
+      tooltip.appendChild(strong);
+      tooltip.appendChild(document.createTextNode(' USD  ' + String.fromCharCode(183) + '  ' + label + '  ' + String.fromCharCode(183) + '  ' + docs + ' docs.'));
+      tooltip.classList.add('show');
+      var cardRect = card.getBoundingClientRect();
+      var hitRect = hit.getBoundingClientRect();
+      tooltip.style.left = (hitRect.left - cardRect.left + hitRect.width / 2) + 'px';
+      tooltip.style.top = (hitRect.top - cardRect.top) + 'px';
+    }
+    function ocultar() { tooltip.classList.remove('show'); }
+    hit.addEventListener('mouseenter', mostrar);
+    hit.addEventListener('focus', mostrar);
+    hit.addEventListener('mouseleave', ocultar);
+    hit.addEventListener('blur', ocultar);
+  });
+});
 function mostrarTab(id, btn) {
   document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
   document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
