@@ -652,7 +652,7 @@ if ($inproccaRows.Count -gt 0) {
 <tbody>
 $filasInprocca
 </tbody>
-<tfoot><tr><td colspan=2>TOTAL</td><td class=n>$(FmtUSD $inproccaTotMonto)</td><td class=ctr>$(FmtUSD $inproccaTotAb1)</td><td class=n>$(FmtUSD $inproccaTotCr1)</td><td class=ctr>$(FmtUSD $inproccaTotAb2)</td><td class=n>$(FmtUSD $inproccaTotCr2)</td><td class=ctr>$(FmtUSD $inproccaTotAb3)</td><td class=n>$(FmtUSD $inproccaTotCr3)</td></tr></tfoot></table>
+<tfoot><tr><td colspan=2>TOTAL</td><td class=n>$(FmtUSD $inproccaTotMonto)</td><td class=ctr>`$ -</td><td class=n>`$ -</td><td class=ctr>`$ -</td><td class=n>$(FmtUSD $inproccaTotCr2)</td><td class=ctr>$(FmtUSD $inproccaTotAb3)</td><td class=n>$(FmtUSD $inproccaTotCr3)</td></tr></tfoot></table>
 </div>
 </div>
 "@
