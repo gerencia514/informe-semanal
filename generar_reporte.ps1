@@ -560,7 +560,7 @@ $filasInprocca = ($inproccaVisibles | ForEach-Object {
   $esResumen = $_.Doc -match "(?i)deuda|saldo|conciliado"
   $docHtml = if ($esResumen) { "<b>$($_.Doc)</b>" } else { $_.Doc }
   $rowClass = if ($esResumen) { " class='resumen'" } else { "" }
-  "<tr$rowClass><td>$($_.Fecha)</td><td>$docHtml</td><td class=n>$($_.Monto)</td><td class=n>$($_.Ab1)</td><td class=n>$($_.Cr1)</td><td class=n>$($_.Ab2)</td><td class=n>$($_.Cr2)</td><td class=n>$($_.Ab3)</td><td class=n>$($_.Cr3)</td></tr>"
+  "<tr$rowClass><td class=ctr>$($_.Fecha)</td><td>$docHtml</td><td class=n>$($_.Monto)</td><td class=ctr>$($_.Ab1)</td><td class=n>$($_.Cr1)</td><td class=ctr>$($_.Ab2)</td><td class=n>$($_.Cr2)</td><td class=ctr>$($_.Ab3)</td><td class=n>$($_.Cr3)</td></tr>"
 }) -join "`n"
 
 $inproccaRealRows = $inproccaVisibles | Where-Object { $_.Doc -notmatch "(?i)deuda|saldo|conciliado" }
@@ -641,12 +641,12 @@ if ($inproccaRows.Count -gt 0) {
 </colgroup>
 <thead>
 <tr><th></th><th></th><th></th><th colspan=2>$($inproccaFechas[0])</th><th colspan=2>$($inproccaFechas[1])</th><th colspan=2>$($inproccaFechas[2])</th></tr>
-<tr><th>Fecha</th><th>Documento</th><th class=n>Monto</th><th class=n>Abonos</th><th class=n>Cr${e_e}dito</th><th class=n>Abonos</th><th class=n>Cr${e_e}dito</th><th class=n>Abonos</th><th class=n>Cr${e_e}dito</th></tr>
+<tr><th class=ctr>Fecha</th><th>Documento</th><th class=n>Monto</th><th class=ctr>Abonos</th><th class=n>Cr${e_e}dito</th><th class=ctr>Abonos</th><th class=n>Cr${e_e}dito</th><th class=ctr>Abonos</th><th class=n>Cr${e_e}dito</th></tr>
 </thead>
 <tbody>
 $filasInprocca
 </tbody>
-<tfoot><tr><td colspan=2>TOTAL</td><td class=n>$(FmtUSD $inproccaTotMonto)</td><td class=n>$(FmtUSD $inproccaTotAb1)</td><td class=n>$(FmtUSD $inproccaTotCr1)</td><td class=n>$(FmtUSD $inproccaTotAb2)</td><td class=n>$(FmtUSD $inproccaTotCr2)</td><td class=n>$(FmtUSD $inproccaTotAb3)</td><td class=n>$(FmtUSD $inproccaTotCr3)</td></tr></tfoot></table>
+<tfoot><tr><td colspan=2>TOTAL</td><td class=n>$(FmtUSD $inproccaTotMonto)</td><td class=ctr>$(FmtUSD $inproccaTotAb1)</td><td class=n>$(FmtUSD $inproccaTotCr1)</td><td class=ctr>$(FmtUSD $inproccaTotAb2)</td><td class=n>$(FmtUSD $inproccaTotCr2)</td><td class=ctr>$(FmtUSD $inproccaTotAb3)</td><td class=n>$(FmtUSD $inproccaTotCr3)</td></tr></tfoot></table>
 </div>
 </div>
 "@
@@ -735,6 +735,7 @@ h2{font-family:var(--font-display);font-size:16px;font-weight:700;margin:0;color
 table{width:100%;border-collapse:collapse;background:var(--card);font-size:13px}
 th{background:var(--teal-100);color:var(--brand-teal-deep);text-align:left;padding:9px 12px;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;border-bottom:2px solid var(--brand-teal);white-space:nowrap}
 th.n{text-align:right}
+td.ctr,th.ctr{text-align:center}
 td{padding:8px 12px;border-top:1px solid var(--line)}
 td.n{text-align:right}
 td.n,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
