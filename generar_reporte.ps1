@@ -285,8 +285,12 @@ foreach ($hoja in $wb.Worksheets) { if ($hoja.Name -eq "CC INPROCCA") { $hojaInp
 if ($hojaInprocca) {
   $wsi = $hojaInprocca
   $rowsI = $wsi.UsedRange.Rows.Count
+  $palabraMala = "c" + [char]0xE9 + "dito"
+  $palabraBuena = "cr" + [char]0xE9 + "dito"
   for ($hc = 0; $hc -lt 6; $hc++) {
     $txt = ($wsi.Cells.Item(4, 5 + $hc).Text).Trim()
+    # Correccion tipografica: el Excel a veces trae "cedito" en vez de "credito"
+    $txt = $txt -replace [regex]::Escape($palabraMala), $palabraBuena
     if ($txt -ne "") { $inproccaHeaders[$hc] = $txt }
   }
   for ($ri = 5; $ri -le $rowsI; $ri++) {
