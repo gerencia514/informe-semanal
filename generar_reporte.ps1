@@ -645,6 +645,7 @@ if ($inproccaRows.Count -gt 0) {
 <div id="tab-inprocca" class="tab-panel">
 <div class="panel-head"><div class="eyebrow">Cliente</div><h2>Estado de cuenta &mdash; INPROCCA</h2></div>
 <div class="callout">Detalle del historial de cr${e_e}dito, abonos y saldo de INPROCCA seg${e_u}n la hoja "CC INPROCCA" del Excel. Estos montos son el registro manual de la cuenta y pueden no coincidir exactamente con el resumen agregado de la pesta${e_n}a "Cuentas por cobrar".</div>
+<div class="callout">INPROCCA ha realizado un abono de `$25.000 el d${e_i}a 07/05/2026, el d${e_i}a 14/07/2026 realiza un segundo abono de `$25.000 y el 06/08/2026 realiza un tercer abono de `$10.000, quedando un saldo pendiente a la fecha de `$131.594.</div>
 <div class="table-scroll">
 <table class="wide-table"><colgroup>
 <col style="width:8%"><col style="width:14%"><col style="width:12%">
