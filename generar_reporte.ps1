@@ -614,6 +614,89 @@ $filasAging = ($tramos.GetEnumerator() | ForEach-Object {
   "<tr><td>$($_.Key)</td><td class=n>$(FmtCell $_.Value)</td><td class=n>$(Fmt1Pct $pct)</td></tr>"
 }) -join "`n"
 
+# ---------- Expectativa de cobranza (facturas emitidas y no cobradas, con fecha estimada de pago) ----------
+# Plazo estandar: 30 dias desde la fecha de factura. MAURELL tiene una excepcion de 90 dias.
+$plazoPorClienteCobranza = @{ "MAURELL" = 90 }
+$plazoDefaultCobranza = 30
+function Get-PlazoCobranza($cliente) {
+  if ($plazoPorClienteCobranza.ContainsKey($cliente)) { return $plazoPorClienteCobranza[$cliente] }
+  return $plazoDefaultCobranza
+}
+function Badge-Vencimiento($diasVencido) {
+  if ($diasVencido -gt 0) { return "<span class='badge badge-red'>Vencida ($diasVencido d)</span>" }
+  $faltan = [math]::Abs($diasVencido)
+  if ($faltan -le 7) { return "<span class='badge badge-amber'>Vence en $faltan d</span>" }
+  return "<span class='badge badge-green'>Vence en $faltan d</span>"
+}
+$expCobranzaItems = $grpPorCobrar | ForEach-Object {
+  $plazo = Get-PlazoCobranza $_.Cliente
+  $fechaEsperada = if ($_.FechaFactura) { $_.FechaFactura.AddDays($plazo) } else { $null }
+  $diasTranscurridos = if ($_.FechaFactura) { ($FechaCorte - $_.FechaFactura).Days } else { 0 }
+  [PSCustomObject]@{
+    Cliente           = $_.Cliente
+    TipoCliente       = $_.TipoCliente
+    NroFactura        = $_.NroFactura
+    FechaFactura      = $_.FechaFactura
+    Plazo             = $plazo
+    FechaEsperada     = $fechaEsperada
+    DiasTranscurridos = $diasTranscurridos
+    DiasVencido       = $diasTranscurridos - $plazo
+    Monto             = $_.TotalFac
+  }
+}
+function New-FilasExpCobranza($items) {
+  $filas = ($items | Sort-Object FechaEsperada | ForEach-Object {
+    $fechaFacTxt = if ($_.FechaFactura) { $_.FechaFactura.ToString("dd/MM/yyyy") } else { "" }
+    $fechaEspTxt = if ($_.FechaEsperada) { $_.FechaEsperada.ToString("dd/MM/yyyy") } else { "" }
+    $doc = if ($_.NroFactura -ne "") { "<span class=mono>$($_.NroFactura)</span>" } else { "<i>s/n</i>" }
+    "<tr><td><b>$($_.Cliente)</b></td><td>$doc</td><td class=ctr>$fechaFacTxt</td><td class=ctr>$($_.Plazo) d</td><td class=ctr>$fechaEspTxt</td><td class=n>$(FmtCell $_.Monto)</td><td class=ctr>$(Badge-Vencimiento $_.DiasVencido)</td></tr>"
+  }) -join "`n"
+  $total = ($items | Measure-Object Monto -Sum).Sum
+  return [PSCustomObject]@{ Filas = $filas; Total = $total; Count = $items.Count }
+}
+$expONG      = @($expCobranzaItems | Where-Object { $_.TipoCliente -eq "ONG" })
+$expPetroleo = @($expCobranzaItems | Where-Object { $_.TipoCliente -eq $txtPetroleo -or $_.TipoCliente -eq "PETROLEO" })
+$expOtros    = @($expCobranzaItems | Where-Object { $_.TipoCliente -ne "ONG" -and $_.TipoCliente -ne $txtPetroleo -and $_.TipoCliente -ne "PETROLEO" })
+$expONGResult      = New-FilasExpCobranza $expONG
+$expPetroleoResult = New-FilasExpCobranza $expPetroleo
+$expOtrosResult    = if ($expOtros.Count -gt 0) { New-FilasExpCobranza $expOtros } else { $null }
+$expInproccaVencidas = @($expCobranzaItems | Where-Object { $_.Cliente -eq "INPROCCA" -and $_.DiasVencido -gt 0 })
+$expInproccaVencidasResult = if ($expInproccaVencidas.Count -gt 0) { New-FilasExpCobranza $expInproccaVencidas } else { $null }
+
+# ---------- Resumen por cliente (expectativa de cobranza) ----------
+$expPorCliente = $expCobranzaItems | Group-Object Cliente | ForEach-Object {
+  $g = $_.Group
+  $montoVencido = ($g | Where-Object { $_.DiasVencido -gt 0 } | Measure-Object Monto -Sum).Sum
+  $montoPorVencer = ($g | Where-Object { $_.DiasVencido -le 0 } | Measure-Object Monto -Sum).Sum
+  $proxima = ($g | Sort-Object FechaEsperada | Select-Object -First 1).FechaEsperada
+  [PSCustomObject]@{
+    Cliente        = $_.Name
+    TipoCliente    = ($g | Select-Object -First 1).TipoCliente
+    Docs           = $g.Count
+    Monto          = ($g | Measure-Object Monto -Sum).Sum
+    MontoVencido   = $montoVencido
+    MontoPorVencer = $montoPorVencer
+    ProximaFecha   = $proxima
+  }
+} | Sort-Object Monto -Descending
+$expTotalDocs = ($expPorCliente | Measure-Object Docs -Sum).Sum
+$expTotalMonto = ($expPorCliente | Measure-Object Monto -Sum).Sum
+$expTotalVencido = ($expPorCliente | Measure-Object MontoVencido -Sum).Sum
+$expTotalPorVencer = ($expPorCliente | Measure-Object MontoPorVencer -Sum).Sum
+
+# Detalle de todas las facturas pendientes, agrupadas por cliente con subtotal
+$filasExpDetalleCliente = ($expPorCliente | ForEach-Object {
+  $cli = $_.Cliente
+  $itemsCli = @($expCobranzaItems | Where-Object { $_.Cliente -eq $cli } | Sort-Object FechaEsperada)
+  $filasCli = ($itemsCli | ForEach-Object {
+    $fechaFacTxt = if ($_.FechaFactura) { $_.FechaFactura.ToString("dd/MM/yyyy") } else { "" }
+    $fechaEspTxt = if ($_.FechaEsperada) { $_.FechaEsperada.ToString("dd/MM/yyyy") } else { "" }
+    $doc = if ($_.NroFactura -ne "") { "<span class=mono>$($_.NroFactura)</span>" } else { "<i>s/n</i>" }
+    "<tr><td>$doc</td><td class=ctr>$fechaFacTxt</td><td class=ctr>$($_.Plazo) d</td><td class=ctr>$fechaEspTxt</td><td class=n>$(FmtCell $_.Monto)</td><td class=ctr>$(Badge-Vencimiento $_.DiasVencido)</td></tr>"
+  }) -join "`n"
+  "<tr class='resumen'><td colspan=6><b>$cli</b> &middot; $($itemsCli.Count) factura(s) pendiente(s) &middot; total $(FmtCell $_.Monto)</td></tr>`n$filasCli"
+}) -join "`n"
+
 # ---------- Estado de cuenta INPROCCA (hoja "CC INPROCCA") ----------
 $fechasOcultarInprocca = @("07/05/2026", "14/07/2026")
 $inproccaVisibles = $inproccaRows | Where-Object { $fechasOcultarInprocca -notcontains $_.Fecha }
@@ -717,6 +800,70 @@ $filasInprocca
 </tbody>
 <tfoot><tr><td colspan=2>TOTAL</td><td class=n>$(FmtUSD $inproccaTotMonto)</td><td class=ctr>`$ -</td><td class=n>`$ -</td><td class=ctr>`$ -</td><td class=n>$(FmtUSD $inproccaTotCr2)</td><td class=ctr>$(FmtUSD $inproccaTotAb3)</td><td class=n>$(FmtUSD $inproccaTotCr3)</td></tr></tfoot></table>
 </div>
+</div>
+"@
+}
+
+$expTabBtnHtml = ""
+$expPanelHtml = ""
+if ($expCobranzaItems.Count -gt 0) {
+  $expOtrosPanelHtml = ""
+  if ($expOtrosResult) {
+    $expOtrosPanelHtml = @"
+<div class="panel-head"><div class="eyebrow">Otros</div><h2>Cuentas por cobrar &mdash; Otros</h2></div>
+<div class="table-scroll">
+<table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha factura</th><th class=ctr>Plazo</th><th class=ctr>Fecha esperada de cobro</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead>
+<tbody>
+$($expOtrosResult.Filas)
+</tbody>
+<tfoot><tr><td colspan=5>TOTAL OTROS</td><td class=n>$(FmtCell $expOtrosResult.Total)</td><td></td></tr></tfoot></table>
+</div>
+"@
+  }
+  $expInproccaHtml = "<div class=`"callout`">INPROCCA no tiene facturas con m${e_a}s de 30 d${e_i}as pendientes por cobrar.</div>"
+  if ($expInproccaVencidasResult) {
+    $expInproccaHtml = @"
+<div class="table-scroll">
+<table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha factura</th><th class=ctr>Plazo</th><th class=ctr>Fecha esperada de cobro</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead>
+<tbody>
+$($expInproccaVencidasResult.Filas)
+</tbody>
+<tfoot><tr><td colspan=5>TOTAL INPROCCA VENCIDO</td><td class=n>$(FmtCell $expInproccaVencidasResult.Total)</td><td></td></tr></tfoot></table>
+</div>
+"@
+  }
+  $expTabBtnHtml = "<button class=`"tab-btn`" data-tab=`"tab-expectativa`" onclick=`"mostrarTab('tab-expectativa', this)`">Expectativa de Cobranza</button>"
+  $expPanelHtml = @"
+<div id="tab-expectativa" class="tab-panel">
+<div class="panel-head"><div class="eyebrow">Proyecci${e_o}n</div><h2>Expectativa de Cobranza</h2><p class="panel-desc">Facturas emitidas y a${e_u}n no cobradas, con fecha estimada de pago seg${e_u}n el plazo de cr${e_e}dito de cada cliente, tomando como referencia la fecha de la factura.</p></div>
+<div class="callout">Plazo est${e_a}ndar: 30 d${e_i}as desde la fecha de la factura. Excepci${e_o}n: MAURELL cuenta con 90 d${e_i}as. INPROCCA mantiene cr${e_e}dito de 30 d${e_i}as; sus facturas con m${e_a}s de 30 d${e_i}as se muestran por separado m${e_a}s abajo.</div>
+<div class="panel-head"><div class="eyebrow">Resumen</div><h2>Resumen detallado por cliente</h2><p class="panel-desc">Todas las facturas pendientes por cobrar, agrupadas por cliente (de mayor a menor saldo), con subtotal por cliente.</p></div>
+<div class="table-scroll">
+<table><thead><tr><th>Documento</th><th class=ctr>Fecha factura</th><th class=ctr>Plazo</th><th class=ctr>Fecha esperada de cobro</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead>
+<tbody>
+$filasExpDetalleCliente
+</tbody>
+<tfoot><tr><td colspan=4>TOTAL ($expTotalDocs facturas)</td><td class=n>$(FmtCell $expTotalMonto)</td><td></td></tr></tfoot></table>
+</div>
+<div class="panel-head"><div class="eyebrow">ONG</div><h2>Cuentas por cobrar &mdash; ONG</h2></div>
+<div class="table-scroll">
+<table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha factura</th><th class=ctr>Plazo</th><th class=ctr>Fecha esperada de cobro</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead>
+<tbody>
+$($expONGResult.Filas)
+</tbody>
+<tfoot><tr><td colspan=5>TOTAL ONG</td><td class=n>$(FmtCell $expONGResult.Total)</td><td></td></tr></tfoot></table>
+</div>
+<div class="panel-head"><div class="eyebrow">Petr${e_o}leo</div><h2>Cuentas por cobrar &mdash; Petr${e_o}leo</h2></div>
+<div class="table-scroll">
+<table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha factura</th><th class=ctr>Plazo</th><th class=ctr>Fecha esperada de cobro</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead>
+<tbody>
+$($expPetroleoResult.Filas)
+</tbody>
+<tfoot><tr><td colspan=5>TOTAL PETR&Oacute;LEO</td><td class=n>$(FmtCell $expPetroleoResult.Total)</td><td></td></tr></tfoot></table>
+</div>
+$expOtrosPanelHtml
+<div class="panel-head"><div class="eyebrow">INPROCCA</div><h2>INPROCCA &mdash; facturas con m${e_a}s de 30 d${e_i}as</h2><p class="panel-desc">Subconjunto de la cartera Petr${e_o}leo: facturas de INPROCCA que superan su cr${e_e}dito de 30 d${e_i}as sin cobrar.</p></div>
+$expInproccaHtml
 </div>
 "@
 }
@@ -932,6 +1079,7 @@ $sinFacturaTabBtnHtml
 $inproccaTabBtnHtml
 $dispoTabBtnHtml
 $cxpTabBtnHtml
+$expTabBtnHtml
 </div>
 </div>
 
@@ -1032,6 +1180,8 @@ $inproccaPanelHtml
 $dispoPanelHtml
 
 $cxpPanelHtml
+
+$expPanelHtml
 
 <footer>Informe generado autom${e_a}ticamente a partir de "$([System.IO.Path]::GetFileName($ExcelPath))" $([char]0x2014) hoja $SheetName. $([char]0xB7) $generadoTs</footer>
 </div>

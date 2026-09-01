@@ -133,9 +133,9 @@ td.bar{width:80px}
 </div>
 </div>
 <div class="header-right">
-<div class="corte-label">Corte al 31/08/2026</div>
+<div class="corte-label">Corte al 01/09/2026</div>
 <div class="refresh-row">
-<span class="refresh-ts">Actualizado 31/08/2026 20:24</span>
+<span class="refresh-ts">Actualizado 01/09/2026 11:03</span>
 <button class="refresh-btn" onclick="actualizarDashboard(this)" title="Vuelve a cargar la &uacute;ltima versi&oacute;n publicada de este dashboard">
 <span class="refresh-ic">&#8635;</span> Actualizar
 </button>
@@ -151,6 +151,7 @@ td.bar{width:80px}
 <button class="tab-btn" data-tab="tab-inprocca" onclick="mostrarTab('tab-inprocca', this)">INPROCCA</button>
 <button class="tab-btn" data-tab="tab-dispo" onclick="mostrarTab('tab-dispo', this)">Disponibilidad</button>
 <button class="tab-btn" data-tab="tab-cxp" onclick="mostrarTab('tab-cxp', this)">Cuentas por pagar</button>
+<button class="tab-btn" data-tab="tab-expectativa" onclick="mostrarTab('tab-expectativa', this)">Expectativa de Cobranza</button>
 </div>
 </div>
 
@@ -449,7 +450,64 @@ td.bar{width:80px}
 </div>
 </div>
 
-<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 31/08/2026 20:24</footer>
+<div id="tab-expectativa" class="tab-panel">
+<div class="panel-head"><div class="eyebrow">Proyecci&oacute;n</div><h2>Expectativa de Cobranza</h2><p class="panel-desc">Facturas emitidas y a&uacute;n no cobradas, con fecha estimada de pago seg&uacute;n el plazo de cr&eacute;dito de cada cliente, tomando como referencia la fecha de la factura.</p></div>
+<div class="callout">Plazo est&aacute;ndar: 30 d&iacute;as desde la fecha de la factura. Excepci&oacute;n: MAURELL cuenta con 90 d&iacute;as. INPROCCA mantiene cr&eacute;dito de 30 d&iacute;as; sus facturas con m&aacute;s de 30 d&iacute;as se muestran por separado m&aacute;s abajo.</div>
+<div class="panel-head"><div class="eyebrow">Resumen</div><h2>Resumen detallado por cliente</h2><p class="panel-desc">Todas las facturas pendientes por cobrar, agrupadas por cliente (de mayor a menor saldo), con subtotal por cliente.</p></div>
+<div class="table-scroll">
+<table><thead><tr><th>Documento</th><th class=ctr>Fecha factura</th><th class=ctr>Plazo</th><th class=ctr>Fecha esperada de cobro</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead>
+<tbody>
+<tr class='resumen'><td colspan=6><b>UNICEF</b> &middot; 7 factura(s) pendiente(s) &middot; total 212.214</td></tr>
+<tr><td><span class=mono>00000767</span></td><td class=ctr>31/07/2026</td><td class=ctr>30 d</td><td class=ctr>30/08/2026</td><td class=n>550</td><td class=ctr><span class='badge badge-red'>Vencida (2 d)</span></td></tr>
+<tr><td><span class=mono>00000771</span></td><td class=ctr>17/08/2026</td><td class=ctr>30 d</td><td class=ctr>16/09/2026</td><td class=n>36.360</td><td class=ctr><span class='badge badge-green'>Vence en 15 d</span></td></tr>
+<tr><td><span class=mono>00000770</span></td><td class=ctr>17/08/2026</td><td class=ctr>30 d</td><td class=ctr>16/09/2026</td><td class=n>37.015</td><td class=ctr><span class='badge badge-green'>Vence en 15 d</span></td></tr>
+<tr><td><span class=mono>00000773</span></td><td class=ctr>18/08/2026</td><td class=ctr>30 d</td><td class=ctr>17/09/2026</td><td class=n>51.185</td><td class=ctr><span class='badge badge-green'>Vence en 16 d</span></td></tr>
+<tr><td><span class=mono>00000772</span></td><td class=ctr>18/08/2026</td><td class=ctr>30 d</td><td class=ctr>17/09/2026</td><td class=n>84.814</td><td class=ctr><span class='badge badge-green'>Vence en 16 d</span></td></tr>
+<tr><td><span class=mono>00000788</span></td><td class=ctr>31/08/2026</td><td class=ctr>30 d</td><td class=ctr>30/09/2026</td><td class=n>852</td><td class=ctr><span class='badge badge-green'>Vence en 29 d</span></td></tr>
+<tr><td><span class=mono>00000787</span></td><td class=ctr>31/08/2026</td><td class=ctr>30 d</td><td class=ctr>30/09/2026</td><td class=n>1.438</td><td class=ctr><span class='badge badge-green'>Vence en 29 d</span></td></tr>
+<tr class='resumen'><td colspan=6><b>INPROCCA</b> &middot; 2 factura(s) pendiente(s) &middot; total 120.325</td></tr>
+<tr><td><span class=mono>INVOICE-011-2026</span></td><td class=ctr>19/08/2026</td><td class=ctr>30 d</td><td class=ctr>18/09/2026</td><td class=n>109.555</td><td class=ctr><span class='badge badge-green'>Vence en 17 d</span></td></tr>
+<tr><td><span class=mono>INVOICE-010-2026</span></td><td class=ctr>19/08/2026</td><td class=ctr>30 d</td><td class=ctr>18/09/2026</td><td class=n>10.770</td><td class=ctr><span class='badge badge-green'>Vence en 17 d</span></td></tr>
+<tr class='resumen'><td colspan=6><b>WVV</b> &middot; 2 factura(s) pendiente(s) &middot; total 39.984</td></tr>
+<tr><td><span class=mono>00000769</span></td><td class=ctr>17/08/2026</td><td class=ctr>30 d</td><td class=ctr>16/09/2026</td><td class=n>35.625</td><td class=ctr><span class='badge badge-green'>Vence en 15 d</span></td></tr>
+<tr><td><span class=mono>00000779</span></td><td class=ctr>27/08/2026</td><td class=ctr>30 d</td><td class=ctr>26/09/2026</td><td class=n>4.359</td><td class=ctr><span class='badge badge-green'>Vence en 25 d</span></td></tr>
+<tr class='resumen'><td colspan=6><b>MAURELL</b> &middot; 1 factura(s) pendiente(s) &middot; total 6.903</td></tr>
+<tr><td><span class=mono>00000732</span></td><td class=ctr>09/06/2026</td><td class=ctr>90 d</td><td class=ctr>07/09/2026</td><td class=n>6.903</td><td class=ctr><span class='badge badge-amber'>Vence en 6 d</span></td></tr>
+</tbody>
+<tfoot><tr><td colspan=4>TOTAL (12 facturas)</td><td class=n>379.426</td><td></td></tr></tfoot></table>
+</div>
+<div class="panel-head"><div class="eyebrow">ONG</div><h2>Cuentas por cobrar &mdash; ONG</h2></div>
+<div class="table-scroll">
+<table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha factura</th><th class=ctr>Plazo</th><th class=ctr>Fecha esperada de cobro</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead>
+<tbody>
+<tr><td><b>UNICEF</b></td><td><span class=mono>00000767</span></td><td class=ctr>31/07/2026</td><td class=ctr>30 d</td><td class=ctr>30/08/2026</td><td class=n>550</td><td class=ctr><span class='badge badge-red'>Vencida (2 d)</span></td></tr>
+<tr><td><b>UNICEF</b></td><td><span class=mono>00000771</span></td><td class=ctr>17/08/2026</td><td class=ctr>30 d</td><td class=ctr>16/09/2026</td><td class=n>36.360</td><td class=ctr><span class='badge badge-green'>Vence en 15 d</span></td></tr>
+<tr><td><b>UNICEF</b></td><td><span class=mono>00000770</span></td><td class=ctr>17/08/2026</td><td class=ctr>30 d</td><td class=ctr>16/09/2026</td><td class=n>37.015</td><td class=ctr><span class='badge badge-green'>Vence en 15 d</span></td></tr>
+<tr><td><b>WVV</b></td><td><span class=mono>00000769</span></td><td class=ctr>17/08/2026</td><td class=ctr>30 d</td><td class=ctr>16/09/2026</td><td class=n>35.625</td><td class=ctr><span class='badge badge-green'>Vence en 15 d</span></td></tr>
+<tr><td><b>UNICEF</b></td><td><span class=mono>00000773</span></td><td class=ctr>18/08/2026</td><td class=ctr>30 d</td><td class=ctr>17/09/2026</td><td class=n>51.185</td><td class=ctr><span class='badge badge-green'>Vence en 16 d</span></td></tr>
+<tr><td><b>UNICEF</b></td><td><span class=mono>00000772</span></td><td class=ctr>18/08/2026</td><td class=ctr>30 d</td><td class=ctr>17/09/2026</td><td class=n>84.814</td><td class=ctr><span class='badge badge-green'>Vence en 16 d</span></td></tr>
+<tr><td><b>WVV</b></td><td><span class=mono>00000779</span></td><td class=ctr>27/08/2026</td><td class=ctr>30 d</td><td class=ctr>26/09/2026</td><td class=n>4.359</td><td class=ctr><span class='badge badge-green'>Vence en 25 d</span></td></tr>
+<tr><td><b>UNICEF</b></td><td><span class=mono>00000788</span></td><td class=ctr>31/08/2026</td><td class=ctr>30 d</td><td class=ctr>30/09/2026</td><td class=n>852</td><td class=ctr><span class='badge badge-green'>Vence en 29 d</span></td></tr>
+<tr><td><b>UNICEF</b></td><td><span class=mono>00000787</span></td><td class=ctr>31/08/2026</td><td class=ctr>30 d</td><td class=ctr>30/09/2026</td><td class=n>1.438</td><td class=ctr><span class='badge badge-green'>Vence en 29 d</span></td></tr>
+</tbody>
+<tfoot><tr><td colspan=5>TOTAL ONG</td><td class=n>252.199</td><td></td></tr></tfoot></table>
+</div>
+<div class="panel-head"><div class="eyebrow">Petr&oacute;leo</div><h2>Cuentas por cobrar &mdash; Petr&oacute;leo</h2></div>
+<div class="table-scroll">
+<table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha factura</th><th class=ctr>Plazo</th><th class=ctr>Fecha esperada de cobro</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead>
+<tbody>
+<tr><td><b>MAURELL</b></td><td><span class=mono>00000732</span></td><td class=ctr>09/06/2026</td><td class=ctr>90 d</td><td class=ctr>07/09/2026</td><td class=n>6.903</td><td class=ctr><span class='badge badge-amber'>Vence en 6 d</span></td></tr>
+<tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE-011-2026</span></td><td class=ctr>19/08/2026</td><td class=ctr>30 d</td><td class=ctr>18/09/2026</td><td class=n>109.555</td><td class=ctr><span class='badge badge-green'>Vence en 17 d</span></td></tr>
+<tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE-010-2026</span></td><td class=ctr>19/08/2026</td><td class=ctr>30 d</td><td class=ctr>18/09/2026</td><td class=n>10.770</td><td class=ctr><span class='badge badge-green'>Vence en 17 d</span></td></tr>
+</tbody>
+<tfoot><tr><td colspan=5>TOTAL PETR&Oacute;LEO</td><td class=n>127.228</td><td></td></tr></tfoot></table>
+</div>
+
+<div class="panel-head"><div class="eyebrow">INPROCCA</div><h2>INPROCCA &mdash; facturas con m&aacute;s de 30 d&iacute;as</h2><p class="panel-desc">Subconjunto de la cartera Petr&oacute;leo: facturas de INPROCCA que superan su cr&eacute;dito de 30 d&iacute;as sin cobrar.</p></div>
+<div class="callout">INPROCCA no tiene facturas con m&aacute;s de 30 d&iacute;as pendientes por cobrar.</div>
+</div>
+
+<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 01/09/2026 11:03</footer>
 </div>
 <script>
 function actualizarDashboard(btn) {
