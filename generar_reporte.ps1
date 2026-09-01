@@ -358,18 +358,25 @@ if ($hojaCxP) {
     $cxpProveedores.Add([PSCustomObject]@{ Proveedor = $etiqueta; Monto = [double]($monto) }) | Out-Null
     $rp++
   }
-  # Bloque de provisiones: salta el encabezado de seccion y lee items hasta el total (fila sin etiqueta, solo monto)
+  # Bloque de provisiones: salta el encabezado de seccion y lee items hasta el total
+  # (el total puede venir como fila sin etiqueta con solo el monto, o como fila etiquetada "TOTAL ..."/"TOTAL GENERAL")
   $cxpTotalProvisionesExcel = $null
+  $cxpTotalGeneralExcel = $null
   while ($rp -le $rowsP) {
     $etiqueta = ($wsp.Cells.Item($rp, 2).Text).Trim()
     $montoRaw = $wsp.Cells.Item($rp, 3).Value2
-    if ($etiqueta -eq "" -and ($montoRaw -eq $null -or $montoRaw -eq "")) { $rp++; continue }
-    if ($etiqueta -eq "" -and $montoRaw -ne $null -and $montoRaw -ne "") {
+    $tieneMonto = ($montoRaw -ne $null -and $montoRaw -ne "")
+    if (-not $tieneMonto) { $rp++; continue }
+    if ($etiqueta -match "(?i)total\s*general") {
+      $cxpTotalGeneralExcel = [double]$montoRaw
+      $rp++
+      continue
+    }
+    if ($etiqueta -eq "" -or $etiqueta -match "(?i)total") {
       $cxpTotalProvisionesExcel = [double]$montoRaw
       $rp++
       continue
     }
-    if ($montoRaw -eq $null -or $montoRaw -eq "") { $rp++; continue }
     $cxpProvisiones.Add([PSCustomObject]@{ Concepto = $etiqueta; Monto = [double]$montoRaw }) | Out-Null
     $rp++
   }
