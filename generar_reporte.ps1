@@ -333,6 +333,53 @@ if ($hojaDispo) {
   }
 }
 
+# ---------- Hoja "cuentas por pagar": proveedores y provisiones ----------
+$cxpProveedores = New-Object System.Collections.Generic.List[object]
+$cxpProvisiones = New-Object System.Collections.Generic.List[object]
+$cxpSubtotalProveedores = 0.0
+$cxpTotalProvisiones = 0.0
+$cxpProvisionesCuadra = $true
+$hojaCxP = $null
+foreach ($hoja in $wb.Worksheets) { if ($hoja.Name.Trim().ToLower() -eq "cuentas por pagar") { $hojaCxP = $hoja } }
+if ($hojaCxP) {
+  $wsp = $hojaCxP
+  $rowsP = $wsp.UsedRange.Rows.Count
+  $rp = 2
+  # Bloque de proveedores: hasta la fila "SUB-TOTAL"
+  while ($rp -le $rowsP) {
+    $etiqueta = ($wsp.Cells.Item($rp, 2).Text).Trim()
+    if ($etiqueta -eq "") { $rp++; continue }
+    if ($etiqueta -match "(?i)sub-?total") {
+      $cxpSubtotalProveedores = [double]($wsp.Cells.Item($rp, 3).Value2)
+      $rp++
+      break
+    }
+    $monto = $wsp.Cells.Item($rp, 3).Value2
+    $cxpProveedores.Add([PSCustomObject]@{ Proveedor = $etiqueta; Monto = [double]($monto) }) | Out-Null
+    $rp++
+  }
+  # Bloque de provisiones: salta el encabezado de seccion y lee items hasta el total (fila sin etiqueta, solo monto)
+  $cxpTotalProvisionesExcel = $null
+  while ($rp -le $rowsP) {
+    $etiqueta = ($wsp.Cells.Item($rp, 2).Text).Trim()
+    $montoRaw = $wsp.Cells.Item($rp, 3).Value2
+    if ($etiqueta -eq "" -and ($montoRaw -eq $null -or $montoRaw -eq "")) { $rp++; continue }
+    if ($etiqueta -eq "" -and $montoRaw -ne $null -and $montoRaw -ne "") {
+      $cxpTotalProvisionesExcel = [double]$montoRaw
+      $rp++
+      continue
+    }
+    if ($montoRaw -eq $null -or $montoRaw -eq "") { $rp++; continue }
+    $cxpProvisiones.Add([PSCustomObject]@{ Concepto = $etiqueta; Monto = [double]$montoRaw }) | Out-Null
+    $rp++
+  }
+  $cxpTotalProvisiones = ($cxpProvisiones | Measure-Object Monto -Sum).Sum
+  if ($cxpTotalProvisionesExcel -ne $null -and [math]::Abs($cxpTotalProvisionesExcel - $cxpTotalProvisiones) -gt 0.5) {
+    $cxpProvisionesCuadra = $false
+  }
+}
+$cxpTotalGeneral = $cxpSubtotalProveedores + $cxpTotalProvisiones
+
 $wb.Close($false)
 $excel.Quit()
 [System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel) | Out-Null
@@ -340,6 +387,10 @@ $excel.Quit()
 Write-Host "Filas leidas: $($raw.Count)"
 Write-Host "Filas leidas de CC INPROCCA: $($inproccaRows.Count)"
 Write-Host "Filas leidas de DISPONIBILIDAD: $($dispoRows.Count)"
+Write-Host "Filas leidas de CUENTAS POR PAGAR: $($cxpProveedores.Count) proveedores, $($cxpProvisiones.Count) provisiones"
+if (-not $cxpProvisionesCuadra) {
+  Write-Host "Aviso: el total de provisiones de 'cuentas por pagar' en el Excel no cuadra con la suma de sus items; se uso la suma de los items."
+}
 if ($clasificacionOficial) {
   Write-Host "Clasificacion de cobranza: usando el resumen oficial de la hoja (coincide con el cuadre de Excel)."
 } else {
@@ -663,6 +714,46 @@ $filasInprocca
 "@
 }
 
+$cxpTabBtnHtml = ""
+$cxpPanelHtml = ""
+if ($cxpProveedores.Count -gt 0 -or $cxpProvisiones.Count -gt 0) {
+  $filasCxpProveedores = ($cxpProveedores | ForEach-Object {
+    "<tr><td>$($_.Proveedor)</td><td class=n>$(FmtCell $_.Monto)</td></tr>"
+  }) -join "`n"
+  $filasCxpProvisiones = ($cxpProvisiones | ForEach-Object {
+    "<tr><td>$($_.Concepto)</td><td class=n>$(FmtCell $_.Monto)</td></tr>"
+  }) -join "`n"
+  $cxpAvisoHtml = ""
+  if (-not $cxpProvisionesCuadra) {
+    $cxpAvisoHtml = "<div class=`"callout`">El total de provisiones que trae el Excel no coincide con la suma de sus renglones; aqu${e_i} se muestra la suma de los renglones.</div>"
+  }
+  $cxpTabBtnHtml = "<button class=`"tab-btn`" data-tab=`"tab-cxp`" onclick=`"mostrarTab('tab-cxp', this)`">Cuentas por pagar</button>"
+  $cxpPanelHtml = @"
+<div id="tab-cxp" class="tab-panel">
+<div class="panel-head"><div class="eyebrow">Obligaciones</div><h2>Cuentas por pagar</h2><p class="panel-desc">Saldos pendientes con proveedores y provisiones para ejecuci${e_o}n de proyectos, seg${e_u}n la hoja "cuentas por pagar" del Excel.</p></div>
+$cxpAvisoHtml
+<div class="table-scroll">
+<table><thead><tr><th>Proveedor</th><th class=n>Monto USD</th></tr></thead>
+<tbody>
+$filasCxpProveedores
+</tbody>
+<tfoot><tr><td>SUB-TOTAL</td><td class=n>$(FmtCell $cxpSubtotalProveedores)</td></tr></tfoot></table>
+</div>
+<div class="panel-head"><div class="eyebrow">Provisiones</div><h2>Provisiones para ejecuci${e_o}n de proyectos</h2></div>
+<div class="table-scroll">
+<table><thead><tr><th>Concepto</th><th class=n>Monto USD</th></tr></thead>
+<tbody>
+$filasCxpProvisiones
+</tbody>
+<tfoot><tr><td>SUB-TOTAL</td><td class=n>$(FmtCell $cxpTotalProvisiones)</td></tr></tfoot></table>
+</div>
+<div class="table-scroll">
+<table><tfoot><tr><td>TOTAL CUENTAS POR PAGAR</td><td class=n>$(FmtCell $cxpTotalGeneral)</td></tr></tfoot></table>
+</div>
+</div>
+"@
+}
+
 $dispoTabBtnHtml = ""
 $dispoPanelHtml = ""
 if ($dispoRows.Count -gt 0) {
@@ -833,6 +924,7 @@ $logoImgTag
 $sinFacturaTabBtnHtml
 $inproccaTabBtnHtml
 $dispoTabBtnHtml
+$cxpTabBtnHtml
 </div>
 </div>
 
@@ -931,6 +1023,8 @@ $sinFacturaPanelHtml
 $inproccaPanelHtml
 
 $dispoPanelHtml
+
+$cxpPanelHtml
 
 <footer>Informe generado autom${e_a}ticamente a partir de "$([System.IO.Path]::GetFileName($ExcelPath))" $([char]0x2014) hoja $SheetName. $([char]0xB7) $generadoTs</footer>
 </div>
