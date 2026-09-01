@@ -697,6 +697,27 @@ $filasExpDetalleCliente = ($expPorCliente | ForEach-Object {
   "<tr class='resumen'><td colspan=6><b>$cli</b> &middot; $($itemsCli.Count) factura(s) pendiente(s) &middot; total $(FmtCell $_.Monto)</td></tr>`n$filasCli"
 }) -join "`n"
 
+# ---------- Resumen por rango de vencimiento (dias que faltan para la fecha esperada de cobro) ----------
+$rangosVencimiento = [ordered]@{
+  "Vencidas"          = { param($d) $d.DiasVencido -gt 0 }
+  "Vence en 0-7 dias"   = { param($d) $d.DiasVencido -le 0 -and (-$d.DiasVencido) -le 7 }
+  "Vence en 8-20 dias"  = { param($d) $d.DiasVencido -le 0 -and (-$d.DiasVencido) -gt 7 -and (-$d.DiasVencido) -le 20 }
+  "Vence en 21-30 dias" = { param($d) $d.DiasVencido -le 0 -and (-$d.DiasVencido) -gt 20 -and (-$d.DiasVencido) -le 30 }
+  "Vence en 31-90 dias" = { param($d) $d.DiasVencido -le 0 -and (-$d.DiasVencido) -gt 30 -and (-$d.DiasVencido) -le 90 }
+  "Vence en +90 dias"   = { param($d) $d.DiasVencido -le 0 -and (-$d.DiasVencido) -gt 90 }
+}
+$expRangos = $rangosVencimiento.GetEnumerator() | ForEach-Object {
+  $rangoNombre = $_.Key
+  $predicado = $_.Value
+  $items = @($expCobranzaItems | Where-Object { & $predicado $_ })
+  [PSCustomObject]@{ Rango = $rangoNombre; Docs = $items.Count; Monto = ($items | Measure-Object Monto -Sum).Sum }
+}
+$filasExpRangos = ($expRangos | ForEach-Object {
+  $pct = Pct $_.Monto $expTotalMonto
+  $claseFila = if ($_.Rango -eq "Vencidas") { " class='resumen'" } else { "" }
+  "<tr$claseFila><td>$($_.Rango)</td><td class=n>$($_.Docs)</td><td class=n>$(FmtCell $_.Monto)</td><td class=n>$(Fmt1Pct $pct)</td></tr>"
+}) -join "`n"
+
 # ---------- Estado de cuenta INPROCCA (hoja "CC INPROCCA") ----------
 $fechasOcultarInprocca = @("07/05/2026", "14/07/2026")
 $inproccaVisibles = $inproccaRows | Where-Object { $fechasOcultarInprocca -notcontains $_.Fecha }
@@ -837,13 +858,13 @@ $($expInproccaVencidasResult.Filas)
 <div id="tab-expectativa" class="tab-panel">
 <div class="panel-head"><div class="eyebrow">Proyecci${e_o}n</div><h2>Expectativa de Cobranza</h2><p class="panel-desc">Facturas emitidas y a${e_u}n no cobradas, con fecha estimada de pago seg${e_u}n el plazo de cr${e_e}dito de cada cliente, tomando como referencia la fecha de la factura.</p></div>
 <div class="callout">Plazo est${e_a}ndar: 30 d${e_i}as desde la fecha de la factura. Excepci${e_o}n: MAURELL cuenta con 90 d${e_i}as. INPROCCA mantiene cr${e_e}dito de 30 d${e_i}as; sus facturas con m${e_a}s de 30 d${e_i}as se muestran por separado m${e_a}s abajo.</div>
-<div class="panel-head"><div class="eyebrow">Resumen</div><h2>Resumen detallado por cliente</h2><p class="panel-desc">Todas las facturas pendientes por cobrar, agrupadas por cliente (de mayor a menor saldo), con subtotal por cliente.</p></div>
+<div class="panel-head"><div class="eyebrow">Proyecci${e_o}n</div><h2>Resumen por rango de vencimiento</h2><p class="panel-desc">Facturas pendientes agrupadas seg${e_u}n cu${e_a}nto falta (o cu${e_a}nto lleva vencido) para la fecha esperada de cobro.</p></div>
 <div class="table-scroll">
-<table><thead><tr><th>Documento</th><th class=ctr>Fecha factura</th><th class=ctr>Plazo</th><th class=ctr>Fecha esperada de cobro</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead>
+<table><thead><tr><th>Rango</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% del pendiente</th></tr></thead>
 <tbody>
-$filasExpDetalleCliente
+$filasExpRangos
 </tbody>
-<tfoot><tr><td colspan=4>TOTAL ($expTotalDocs facturas)</td><td class=n>$(FmtCell $expTotalMonto)</td><td></td></tr></tfoot></table>
+<tfoot><tr><td>TOTAL</td><td class=n>$expTotalDocs</td><td class=n>$(FmtCell $expTotalMonto)</td><td class=n>100,0%</td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">ONG</div><h2>Cuentas por cobrar &mdash; ONG</h2></div>
 <div class="table-scroll">
@@ -862,6 +883,14 @@ $($expPetroleoResult.Filas)
 <tfoot><tr><td colspan=5>TOTAL PETR&Oacute;LEO</td><td class=n>$(FmtCell $expPetroleoResult.Total)</td><td></td></tr></tfoot></table>
 </div>
 $expOtrosPanelHtml
+<div class="panel-head"><div class="eyebrow">Resumen</div><h2>Resumen detallado por cliente</h2><p class="panel-desc">Todas las facturas pendientes por cobrar, agrupadas por cliente (de mayor a menor saldo), con subtotal por cliente.</p></div>
+<div class="table-scroll">
+<table><thead><tr><th>Documento</th><th class=ctr>Fecha factura</th><th class=ctr>Plazo</th><th class=ctr>Fecha esperada de cobro</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead>
+<tbody>
+$filasExpDetalleCliente
+</tbody>
+<tfoot><tr><td colspan=4>TOTAL ($expTotalDocs facturas)</td><td class=n>$(FmtCell $expTotalMonto)</td><td></td></tr></tfoot></table>
+</div>
 <div class="panel-head"><div class="eyebrow">INPROCCA</div><h2>INPROCCA &mdash; facturas con m${e_a}s de 30 d${e_i}as</h2><p class="panel-desc">Subconjunto de la cartera Petr${e_o}leo: facturas de INPROCCA que superan su cr${e_e}dito de 30 d${e_i}as sin cobrar.</p></div>
 $expInproccaHtml
 </div>
