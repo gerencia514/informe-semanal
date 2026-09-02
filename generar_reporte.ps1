@@ -86,6 +86,11 @@ $barsSvg
 "@
 }
 function FmtUSD($n) { return "`$ " + ([double]$n).ToString("N2", $culture) }
+function FmtUSDDash($n) {
+  $v = [math]::Round([double]$n, 2)
+  if ($v -eq 0) { return "`$ -" }
+  return FmtUSD $v
+}
 function Parse-MoneyText($s) {
   if ([string]::IsNullOrWhiteSpace($s)) { return 0.0 }
   $clean = $s -replace '[^\d,.\-]', ''
@@ -174,6 +179,9 @@ while ($true) {
   $facturado = ($ws.Cells.Item($r, $colFacturado).Text).Trim().ToUpper()
   $cobranza  = ($ws.Cells.Item($r, $colCobranza).Text).Trim().ToUpper()
   $cliente   = ($ws.Cells.Item($r, $colCliente).Text).Trim().ToUpper()
+  # Filas de resumen (p.ej. "TOTALES:") a veces traen un monto en la columna TOTAL FAC
+  # pero no tienen cliente; se tratan como fin de los datos, no como una operacion mas.
+  if ($cliente -eq "") { break }
   $tipoCliente = if ($colTipoCliente) { ($ws.Cells.Item($r, $colTipoCliente).Text).Trim().ToUpper() } else { "" }
   $nroFactura = ($ws.Cells.Item($r, $colNroFactura).Text).Trim()
   $descripcion = ($ws.Cells.Item($r, $colDescripcion).Text).Trim()
@@ -308,9 +316,13 @@ if ($hojaInprocca) {
     $cr3   = ($wsi.Cells.Item($ri, 10).Text).Trim()
     $ab4   = ($wsi.Cells.Item($ri, 11).Text).Trim()
     if ($fecha -eq "" -and $doc -eq "" -and $monto -eq "") { continue }
+    # El Excel aun no trae una columna de saldo para el abono del 01/09; se calcula aqui
+    # como el ultimo saldo conocido (Credito al 06/08) menos ese abono.
+    $saldoPendienteVal = (Parse-MoneyText $cr3) - (Parse-MoneyText $ab4)
     $inproccaRows.Add([PSCustomObject]@{
       Fecha = $fecha; Doc = $doc; Monto = $monto
       Ab1 = $ab1; Cr1 = $cr1; Ab2 = $ab2; Cr2 = $cr2; Ab3 = $ab3; Cr3 = $cr3; Ab4 = $ab4
+      SaldoPendiente = $saldoPendienteVal
     }) | Out-Null
   }
 }
@@ -737,7 +749,7 @@ $filasInprocca = ($inproccaVisibles | ForEach-Object {
   $esResumen = $_.Doc -match "(?i)deuda|saldo|conciliado"
   $docHtml = if ($esResumen) { "<b>$($_.Doc)</b>" } else { $_.Doc }
   $rowClass = if ($esResumen) { " class='resumen'" } else { "" }
-  "<tr$rowClass><td class=ctr>$($_.Fecha)</td><td>$docHtml</td><td class=n>$($_.Monto)</td><td class=ctr>$($_.Ab1)</td><td class=n>$($_.Cr1)</td><td class=ctr>$($_.Ab2)</td><td class=n>$($_.Cr2)</td><td class=ctr>$($_.Ab3)</td><td class=n>$($_.Cr3)</td><td class=n>$($_.Ab4)</td></tr>"
+  "<tr$rowClass><td class=ctr>$($_.Fecha)</td><td>$docHtml</td><td class=n>$($_.Monto)</td><td class=ctr>$($_.Ab1)</td><td class=n>$($_.Cr1)</td><td class=ctr>$($_.Ab2)</td><td class=n>$($_.Cr2)</td><td class=ctr>$($_.Ab3)</td><td class=n>$($_.Cr3)</td><td class=n>$($_.Ab4)</td><td class=n>$(FmtUSDDash $_.SaldoPendiente)</td></tr>"
 }) -join "`n"
 
 $inproccaRealRows = $inproccaVisibles | Where-Object { $_.Doc -notmatch "(?i)deuda|saldo|conciliado" }
@@ -749,7 +761,7 @@ $inproccaTotCr2   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Cr2
 $inproccaTotAb3   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Ab3 } | Measure-Object -Sum).Sum
 $inproccaTotCr3   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Cr3 } | Measure-Object -Sum).Sum
 $inproccaTotAb4   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Ab4 } | Measure-Object -Sum).Sum
-$inproccaSaldoActualizado = $inproccaTotCr3 - $inproccaTotAb4
+$inproccaSaldoActualizado = ($inproccaRealRows | Measure-Object SaldoPendiente -Sum).Sum
 
 # ---------- Disponibilidad (hoja "DISPONIBILIDAD") ----------
 $totalDispoUSD = ($dispoRows | Measure-Object UsdValor -Sum).Sum
@@ -813,19 +825,19 @@ if ($inproccaRows.Count -gt 0) {
 <div id="tab-inprocca" class="tab-panel">
 <div class="panel-head"><div class="eyebrow">Cliente</div><h2>Estado de cuenta &mdash; INPROCCA</h2></div>
 <div class="callout">Detalle del historial de cr${e_e}dito, abonos y saldo de INPROCCA seg${e_u}n la hoja "CC INPROCCA" del Excel. Estos montos son el registro manual de la cuenta y pueden no coincidir exactamente con el resumen agregado de la pesta${e_n}a "Cuentas por cobrar".</div>
-<div class="callout">INPROCCA ha realizado un abono de `$25.000 el d${e_i}a 07/05/2026, el d${e_i}a 14/07/2026 realiza un segundo abono de `$25.000, el 06/08/2026 realiza un tercer abono de `$10.000 y el 01/09/2026 realiza un cuarto abono de $(FmtUSD $inproccaTotAb4), quedando un saldo pendiente estimado de $(FmtUSD $inproccaSaldoActualizado).</div>
+<div class="callout">INPROCCA ha realizado un abono de `$25.000 el d${e_i}a 07/05/2026, el d${e_i}a 14/07/2026 realiza un segundo abono de `$25.000, el 06/08/2026 realiza un tercer abono de `$10.000 y el 01/09/2026 realiza un cuarto abono de $(FmtUSD $inproccaTotAb4), quedando el saldo pendiente reflejado en la ${e_u}ltima columna de la tabla.</div>
 <div class="table-scroll">
 <table class="wide-table"><colgroup>
-<col style="width:8%"><col style="width:13%"><col style="width:11%">
-<col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:9%"><col style="width:9%">
+<col style="width:7%"><col style="width:12%"><col style="width:10%">
+<col style="width:9%"><col style="width:9%"><col style="width:9%"><col style="width:9%"><col style="width:9%"><col style="width:9%"><col style="width:8%"><col style="width:9%">
 </colgroup>
 <thead>
-<tr><th class=ctr>Fecha</th><th>Documento</th><th class=n>Monto</th><th class=ctr>$($inproccaHeaders[0])</th><th class=n>$($inproccaHeaders[1])</th><th class=ctr>$($inproccaHeaders[2])</th><th class=n>$($inproccaHeaders[3])</th><th class=ctr>$($inproccaHeaders[4])</th><th class=n>$($inproccaHeaders[5])</th><th class=n>$inproccaHeaderExtra</th></tr>
+<tr><th class=ctr>Fecha</th><th>Documento</th><th class=n>Monto</th><th class=ctr>$($inproccaHeaders[0])</th><th class=n>$($inproccaHeaders[1])</th><th class=ctr>$($inproccaHeaders[2])</th><th class=n>$($inproccaHeaders[3])</th><th class=ctr>$($inproccaHeaders[4])</th><th class=n>$($inproccaHeaders[5])</th><th class=n>$inproccaHeaderExtra</th><th class=n>Saldo pendiente</th></tr>
 </thead>
 <tbody>
 $filasInprocca
 </tbody>
-<tfoot><tr><td colspan=2>TOTAL</td><td class=n>$(FmtUSD $inproccaTotMonto)</td><td class=ctr>`$ -</td><td class=n>`$ -</td><td class=ctr>`$ -</td><td class=n>$(FmtUSD $inproccaTotCr2)</td><td class=ctr>$(FmtUSD $inproccaTotAb3)</td><td class=n>$(FmtUSD $inproccaTotCr3)</td><td class=n>$(FmtUSD $inproccaTotAb4)</td></tr></tfoot></table>
+<tfoot><tr><td colspan=2>TOTAL</td><td class=n>$(FmtUSD $inproccaTotMonto)</td><td class=ctr>`$ -</td><td class=n>`$ -</td><td class=ctr>`$ -</td><td class=n>$(FmtUSD $inproccaTotCr2)</td><td class=ctr>$(FmtUSD $inproccaTotAb3)</td><td class=n>$(FmtUSD $inproccaTotCr3)</td><td class=n>$(FmtUSD $inproccaTotAb4)</td><td class=n>$(FmtUSDDash $inproccaSaldoActualizado)</td></tr></tfoot></table>
 </div>
 </div>
 "@
