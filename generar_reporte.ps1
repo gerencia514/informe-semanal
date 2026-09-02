@@ -763,6 +763,12 @@ $inproccaTotCr3   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Cr3
 $inproccaTotAb4   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Ab4 } | Measure-Object -Sum).Sum
 $inproccaSaldoActualizado = ($inproccaRealRows | Measure-Object SaldoPendiente -Sum).Sum
 
+$inproccaPendientes = @($inproccaRealRows | Where-Object { $_.SaldoPendiente -gt 0.01 } | Sort-Object Fecha)
+$filasInproccaPendientes = ($inproccaPendientes | ForEach-Object {
+  "<tr><td class=ctr>$($_.Fecha)</td><td>$($_.Doc)</td><td class=n>$($_.Monto)</td><td class=n>$(FmtUSDDash $_.SaldoPendiente)</td></tr>"
+}) -join "`n"
+$inproccaTotPendientes = ($inproccaPendientes | Measure-Object SaldoPendiente -Sum).Sum
+
 # ---------- Disponibilidad (hoja "DISPONIBILIDAD") ----------
 $totalDispoUSD = ($dispoRows | Measure-Object UsdValor -Sum).Sum
 $filasDispo = ($dispoRows | ForEach-Object {
@@ -826,6 +832,15 @@ if ($inproccaRows.Count -gt 0) {
 <div class="panel-head"><div class="eyebrow">Cliente</div><h2>Estado de cuenta &mdash; INPROCCA</h2></div>
 <div class="callout">Detalle del historial de cr${e_e}dito, abonos y saldo de INPROCCA seg${e_u}n la hoja "CC INPROCCA" del Excel. Estos montos son el registro manual de la cuenta y pueden no coincidir exactamente con el resumen agregado de la pesta${e_n}a "Cuentas por cobrar".</div>
 <div class="callout">INPROCCA ha realizado un abono de `$25.000 el d${e_i}a 07/05/2026, el d${e_i}a 14/07/2026 realiza un segundo abono de `$25.000, el 06/08/2026 realiza un tercer abono de `$10.000 y el 01/09/2026 realiza un cuarto abono de $(FmtUSD $inproccaTotAb4), quedando el saldo pendiente reflejado en la ${e_u}ltima columna de la tabla.</div>
+<div class="panel-head"><div class="eyebrow">Pendiente</div><h2>Facturas con saldo por cobrar</h2><p class="panel-desc">Solo las facturas de INPROCCA que todav${e_i}a tienen saldo pendiente, despu${e_e}s de aplicar todos los abonos registrados.</p></div>
+<div class="table-scroll">
+<table><thead><tr><th class=ctr>Fecha</th><th>Documento</th><th class=n>Monto</th><th class=n>Saldo pendiente</th></tr></thead>
+<tbody>
+$filasInproccaPendientes
+</tbody>
+<tfoot><tr><td colspan=3>TOTAL PENDIENTE</td><td class=n>$(FmtUSDDash $inproccaTotPendientes)</td></tr></tfoot></table>
+</div>
+<div class="panel-head"><div class="eyebrow">Detalle</div><h2>Estado de cuenta completo</h2></div>
 <div class="table-scroll">
 <table class="wide-table"><colgroup>
 <col style="width:7%"><col style="width:12%"><col style="width:10%">
