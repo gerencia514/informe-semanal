@@ -344,6 +344,9 @@ if ($hojaDispo) {
     $cuenta = ($wsd.Cells.Item($rd, 1).Text).Trim()
     $origen = ($wsd.Cells.Item($rd, 2).Text).Trim()
     $usd    = ($wsd.Cells.Item($rd, 3).Text).Trim()
+    # La hoja trae una fila "Total" seguida de notas de conciliacion sueltas (sin
+    # nombre de cuenta); ahi terminan las cuentas individuales, no se siguen sumando.
+    if ($cuenta -match "(?i)^total$") { break }
     if ($cuenta -eq "" -and $origen -eq "" -and $usd -eq "") { continue }
     $dispoRows.Add([PSCustomObject]@{ Cuenta = $cuenta; Origen = $origen; UsdTexto = $usd; UsdValor = [double]$wsd.Cells.Item($rd, 3).Value2 }) | Out-Null
   }
