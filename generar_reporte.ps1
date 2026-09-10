@@ -1201,15 +1201,14 @@ $filasTop10
 </div>
 
 <div id="tab-cobranza" class="tab-panel">
-<div class="panel-head"><div class="eyebrow">Estado</div><h2>Situaci${e_o}n de facturaci${e_o}n y cobranza</h2><p class="panel-desc">Documentos agrupados por estado de cobro.</p></div>
+<div class="panel-head"><div class="eyebrow">Estado</div><h2>Situaci${e_o}n de facturaci${e_o}n y cobranza</h2><p class="panel-desc">Documentos pendientes de cobro, agrupados por estado.</p></div>
 <div class="table-scroll">
 <table><thead><tr><th>Estado</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% del total</th></tr></thead>
 <tbody>
-<tr><td>$(Badge "Facturado y cobrado")</td><td class=n>$($grpCobrado.Count)</td><td class=n>$(FmtCell $montoCobrado)</td><td class=n>$(Fmt1Pct $pctCobrado)</td></tr>
 <tr><td>$(Badge "Facturado sin cobrar")</td><td class=n>$($grpPorCobrar.Count)</td><td class=n>$(FmtCell $montoPorCobrar)</td><td class=n>$(Fmt1Pct $pctPorCobrar)</td></tr>
 <tr><td>$(Badge "Sin facturar")</td><td class=n>$($grpSinFactura.Count)</td><td class=n>$(FmtCell $montoSinFactura)</td><td class=n>$(Fmt1Pct $pctSinFactura)</td></tr>
 </tbody>
-<tfoot><tr><td>TOTAL</td><td class=n>$docsTotal</td><td class=n>$(FmtCell $totalVentas)</td><td class=n>100,0%</td></tr></tfoot></table>
+<tfoot><tr><td>TOTAL PENDIENTE</td><td class=n>$($grpPorCobrar.Count + $grpSinFactura.Count)</td><td class=n>$(FmtCell $montoPendienteCaja)</td><td class=n>$(Fmt1Pct $pctPendienteCaja)</td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">Cobranza $([char]0xB7) ONG</div><h2>Cartera pendiente $([char]0x2014) ONG</h2><p class="panel-desc">Saldo cobrado, por cobrar y sin facturar de clientes ONG.</p></div>
 <div class="table-scroll">
