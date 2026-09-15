@@ -355,6 +355,7 @@ if ($hojaDispo) {
 # ---------- Hoja "cuentas por pagar": proveedores y provisiones ----------
 $cxpProveedores = New-Object System.Collections.Generic.List[object]
 $cxpProvisiones = New-Object System.Collections.Generic.List[object]
+$cxpDeposito = New-Object System.Collections.Generic.List[object]
 $cxpSubtotalProveedores = 0.0
 $cxpTotalProvisiones = 0.0
 $cxpProvisionesCuadra = $true
@@ -390,6 +391,7 @@ if ($hojaCxP) {
       $cxpTotalGeneralExcel = [double]$montoRaw
       # "TOTAL GENERAL" cierra la hoja de cuentas por pagar; lo que venga despues
       # (p.ej. una previsi${e_o}n de dep${e_o}sito aparte) no son mas provisiones de proyectos.
+      $rp++
       break
     }
     if ($etiqueta -eq "" -or $etiqueta -match "(?i)total") {
@@ -404,8 +406,34 @@ if ($hojaCxP) {
   if ($cxpTotalProvisionesExcel -ne $null -and [math]::Abs($cxpTotalProvisionesExcel - $cxpTotalProvisiones) -gt 0.5) {
     $cxpProvisionesCuadra = $false
   }
+
+  # Bloque adicional despues de "TOTAL GENERAL": otras previsiones de la misma hoja
+  # (p.ej. "PREVISION FUNCIONAMIENTO DEPOSITO"), con su propio titulo y total.
+  $cxpTituloDeposito = ""
+  $cxpTotalDepositoExcel = $null
+  while ($rp -le $rowsP) {
+    $etiqueta = ($wsp.Cells.Item($rp, 2).Text).Trim()
+    $montoRaw = $wsp.Cells.Item($rp, 3).Value2
+    $tieneMonto = ($montoRaw -ne $null -and $montoRaw -ne "")
+    if ($etiqueta -eq "" -and -not $tieneMonto) { $rp++; continue }
+    if ($etiqueta -ne "" -and -not $tieneMonto) {
+      if ($cxpTituloDeposito -eq "") { $cxpTituloDeposito = $etiqueta }
+      $rp++
+      continue
+    }
+    if ($etiqueta -match "(?i)total") {
+      $cxpTotalDepositoExcel = [double]$montoRaw
+      $rp++
+      break
+    }
+    if ($tieneMonto) {
+      $cxpDeposito.Add([PSCustomObject]@{ Concepto = $etiqueta; Monto = [double]$montoRaw }) | Out-Null
+    }
+    $rp++
+  }
 }
-$cxpTotalGeneral = $cxpSubtotalProveedores + $cxpTotalProvisiones
+$cxpTotalDeposito = ($cxpDeposito | Measure-Object Monto -Sum).Sum
+$cxpTotalGeneral = $cxpSubtotalProveedores + $cxpTotalProvisiones + $cxpTotalDeposito
 
 $wb.Close($false)
 $excel.Quit()
@@ -414,7 +442,7 @@ $excel.Quit()
 Write-Host "Filas leidas: $($raw.Count)"
 Write-Host "Filas leidas de CC INPROCCA: $($inproccaRows.Count)"
 Write-Host "Filas leidas de DISPONIBILIDAD: $($dispoRows.Count)"
-Write-Host "Filas leidas de CUENTAS POR PAGAR: $($cxpProveedores.Count) proveedores, $($cxpProvisiones.Count) provisiones"
+Write-Host "Filas leidas de CUENTAS POR PAGAR: $($cxpProveedores.Count) proveedores, $($cxpProvisiones.Count) provisiones, $($cxpDeposito.Count) items de deposito"
 if (-not $cxpProvisionesCuadra) {
   Write-Host "Aviso: el total de provisiones de 'cuentas por pagar' en el Excel no cuadra con la suma de sus items; se uso la suma de los items."
 }
@@ -996,6 +1024,23 @@ if ($cxpProveedores.Count -gt 0 -or $cxpProvisiones.Count -gt 0) {
   $filasCxpProvisiones = ($cxpProvisiones | ForEach-Object {
     "<tr><td>$($_.Concepto)</td><td class=n>$(FmtCell $_.Monto)</td></tr>"
   }) -join "`n"
+  $cxpDepositoPanelHtml = ""
+  if ($cxpDeposito.Count -gt 0) {
+    $filasCxpDeposito = ($cxpDeposito | ForEach-Object {
+      "<tr><td>$($_.Concepto)</td><td class=n>$(FmtCell $_.Monto)</td></tr>"
+    }) -join "`n"
+    $tituloDeposito = if ($cxpTituloDeposito -ne "") { $cxpTituloDeposito } else { "Previsi${e_o}n funcionamiento dep${e_o}sito" }
+    $cxpDepositoPanelHtml = @"
+<div class="panel-head"><div class="eyebrow">Dep${e_o}sito</div><h2>$tituloDeposito</h2></div>
+<div class="table-scroll">
+<table><thead><tr><th>Concepto</th><th class=n>Monto USD</th></tr></thead>
+<tbody>
+$filasCxpDeposito
+</tbody>
+<tfoot><tr><td>SUB-TOTAL</td><td class=n>$(FmtCell $cxpTotalDeposito)</td></tr></tfoot></table>
+</div>
+"@
+  }
   $cxpAvisoHtml = ""
   if (-not $cxpProvisionesCuadra) {
     $cxpAvisoHtml = "<div class=`"callout`">El total de provisiones que trae el Excel no coincide con la suma de sus renglones; aqu${e_i} se muestra la suma de los renglones.</div>"
@@ -1020,6 +1065,7 @@ $filasCxpProvisiones
 </tbody>
 <tfoot><tr><td>SUB-TOTAL</td><td class=n>$(FmtCell $cxpTotalProvisiones)</td></tr></tfoot></table>
 </div>
+$cxpDepositoPanelHtml
 <div class="table-scroll">
 <table><tfoot><tr><td>TOTAL CUENTAS POR PAGAR</td><td class=n>$(FmtCell $cxpTotalGeneral)</td></tr></tfoot></table>
 </div>
