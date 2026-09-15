@@ -550,9 +550,52 @@ $carteraCliente = $porCliente | ForEach-Object {
   }
 } | Sort-Object Pendiente -Descending
 
-function New-FilasCarteraYTotal($items) {
+function New-DetalleFacturasHtml($id, $itemsList, $colspan = 5, $incluirCliente = $false) {
+  if ($itemsList.Count -eq 0) { return "" }
+  $filasDet = ($itemsList | ForEach-Object {
+    $fechaTxt = if ($_.FechaFactura) { $_.FechaFactura.ToString("dd/MM/yyyy") } elseif ($_.MesRef) { $_.MesRef.ToString("dd/MM/yyyy") } else { "" }
+    $doc = if ($_.NroFactura -ne "") { "<span class=mono>$($_.NroFactura)</span>" } else { "<i>por facturar</i>" }
+    $clienteTd = if ($incluirCliente) { "<td><b>$($_.Cliente)</b></td>" } else { "" }
+    "<tr>$clienteTd<td>$doc</td><td class=ctr>$fechaTxt</td><td>$($_.Descripcion)</td><td class=n>$(FmtCell $_.TotalFac)</td><td class=ctr>$(Badge $_.Estado)</td></tr>"
+  }) -join "`n"
+  $clienteTh = if ($incluirCliente) { "<th>Cliente</th>" } else { "" }
+  return "<tr id='$id' class='cliente-detalle'><td colspan=$colspan><div class=`"table-scroll`"><table><thead><tr>$clienteTh<th>Documento</th><th class=ctr>Fecha</th><th>Descripci${e_o}n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>`n$filasDet`n</tbody></table></div></td></tr>"
+}
+function New-FilasCarteraYTotal($items, $prefix) {
   $filas = ($items | ForEach-Object {
-    "<tr><td><b>$($_.Cliente)</b></td><td class=n>$(FmtCell $_.Cobrado)</td><td class=n>$(FmtCell $_.PorCobrar)</td><td class=n>$(FmtCell $_.SinFacturar)</td><td class=n>$(FmtCell $_.Pendiente)</td></tr>"
+    $cli = $_.Cliente
+    $cobrado = $_.Cobrado
+    $porCobrarVal = $_.PorCobrar
+    $sinFacturarVal = $_.SinFacturar
+    $pendienteVal = $_.Pendiente
+    $rowId = "cxc-$prefix-" + ($cli -replace '[^A-Za-z0-9]', '')
+
+    # Facturas de este cliente por categoria, para desplegar el detalle al hacer
+    # clic sobre el nombre (pendiente total) o sobre cada monto individual.
+    $cobradoItems     = @($raw | Where-Object { $_.Cliente -eq $cli -and $_.Estado -eq "Facturado y cobrado" } | Sort-Object MesRef)
+    $porCobrarItems   = @($raw | Where-Object { $_.Cliente -eq $cli -and $_.Estado -eq "Facturado sin cobrar" } | Sort-Object MesRef)
+    $sinFacturarItems = @($raw | Where-Object { $_.Cliente -eq $cli -and $_.Estado -eq "Sin facturar" } | Sort-Object MesRef)
+    $pendienteItems   = @(@($porCobrarItems) + @($sinFacturarItems) | Sort-Object MesRef)
+
+    $idCobrado = "$rowId-cob"
+    $idPorCobrar = "$rowId-pc"
+    $idSinFacturar = "$rowId-sf"
+    $idPendiente = $rowId
+
+    $detCobrado = New-DetalleFacturasHtml $idCobrado $cobradoItems
+    $detPorCobrar = New-DetalleFacturasHtml $idPorCobrar $porCobrarItems
+    $detSinFacturar = New-DetalleFacturasHtml $idSinFacturar $sinFacturarItems
+    $detPendiente = New-DetalleFacturasHtml $idPendiente $pendienteItems
+
+    $tdCobrado = if ($cobradoItems.Count -gt 0) { "<td class=n><span class='monto-click' onclick=`"event.stopPropagation();toggleMonto('$idCobrado')`">$(FmtCell $cobrado)</span></td>" } else { "<td class=n>$(FmtCell $cobrado)</td>" }
+    $tdPorCobrar = if ($porCobrarItems.Count -gt 0) { "<td class=n><span class='monto-click' onclick=`"event.stopPropagation();toggleMonto('$idPorCobrar')`">$(FmtCell $porCobrarVal)</span></td>" } else { "<td class=n>$(FmtCell $porCobrarVal)</td>" }
+    $tdSinFacturar = if ($sinFacturarItems.Count -gt 0) { "<td class=n><span class='monto-click' onclick=`"event.stopPropagation();toggleMonto('$idSinFacturar')`">$(FmtCell $sinFacturarVal)</span></td>" } else { "<td class=n>$(FmtCell $sinFacturarVal)</td>" }
+    $tdPendiente = if ($pendienteItems.Count -gt 0) { "<td class=n><span class='monto-click' onclick=`"event.stopPropagation();toggleMonto('$idPendiente')`">$(FmtCell $pendienteVal)</span></td>" } else { "<td class=n>$(FmtCell $pendienteVal)</td>" }
+
+    $expandible = $pendienteItems.Count -gt 0
+    $nombreHtml = if ($expandible) { "<span class='expand-ic'>&#9656;</span> $cli" } else { $cli }
+    $rowAttrs = if ($expandible) { " class='cliente-row' onclick=`"toggleCliente('$idPendiente', this)`"" } else { "" }
+    "<tr$rowAttrs><td><b>$nombreHtml</b></td>$tdCobrado$tdPorCobrar$tdSinFacturar$tdPendiente</tr>`n$detCobrado`n$detPorCobrar`n$detSinFacturar`n$detPendiente"
   }) -join "`n"
   $totCobrado = ($items | Measure-Object Cobrado -Sum).Sum
   $totPorCobrar = ($items | Measure-Object PorCobrar -Sum).Sum
@@ -567,9 +610,9 @@ $txtPetroleo = "PETR" + [char]0xD3 + "LEO"
 $carteraPetroleo = $carteraCliente | Where-Object { $_.TipoCliente -eq $txtPetroleo -or $_.TipoCliente -eq "PETROLEO" }
 $carteraOtros = $carteraCliente | Where-Object { $_.TipoCliente -ne "ONG" -and $_.TipoCliente -ne $txtPetroleo -and $_.TipoCliente -ne "PETROLEO" }
 
-$carteraONGResult = New-FilasCarteraYTotal $carteraONG
-$carteraPetroleoResult = New-FilasCarteraYTotal $carteraPetroleo
-$carteraOtrosResult = if ($carteraOtros.Count -gt 0) { New-FilasCarteraYTotal $carteraOtros } else { $null }
+$carteraONGResult = New-FilasCarteraYTotal $carteraONG "ong"
+$carteraPetroleoResult = New-FilasCarteraYTotal $carteraPetroleo "pet"
+$carteraOtrosResult = if ($carteraOtros.Count -gt 0) { New-FilasCarteraYTotal $carteraOtros "otr" } else { $null }
 
 $carteraOtrosPanelHtml = ""
 if ($carteraOtrosResult) {
@@ -616,21 +659,32 @@ $clienteTop = $porCliente | Select-Object -First 1
 $clienteTopPct = Pct $clienteTop.VentaTotal $totalVentas
 
 # ---------- Antiguedad de cuentas por cobrar ----------
-$tramos = [ordered]@{ "0-30 dias" = 0.0; "31-60 dias" = 0.0; "61-90 dias" = 0.0; "+90 dias" = 0.0 }
+$tramoBuckets = [ordered]@{
+  "0-30 dias"   = New-Object System.Collections.Generic.List[object]
+  "31-60 dias"  = New-Object System.Collections.Generic.List[object]
+  "61-90 dias"  = New-Object System.Collections.Generic.List[object]
+  "+90 dias"    = New-Object System.Collections.Generic.List[object]
+}
 foreach ($row in $grpPorCobrar) {
   if ($row.FechaFactura) {
     $dias = ($FechaCorte - $row.FechaFactura).Days
   } else {
     $dias = 0
   }
-  if ($dias -le 30) { $tramos["0-30 dias"] += $row.TotalFac }
-  elseif ($dias -le 60) { $tramos["31-60 dias"] += $row.TotalFac }
-  elseif ($dias -le 90) { $tramos["61-90 dias"] += $row.TotalFac }
-  else { $tramos["+90 dias"] += $row.TotalFac }
+  if ($dias -le 30) { $tramoBuckets["0-30 dias"].Add($row) | Out-Null }
+  elseif ($dias -le 60) { $tramoBuckets["31-60 dias"].Add($row) | Out-Null }
+  elseif ($dias -le 90) { $tramoBuckets["61-90 dias"].Add($row) | Out-Null }
+  else { $tramoBuckets["+90 dias"].Add($row) | Out-Null }
 }
-$filasAging = ($tramos.GetEnumerator() | ForEach-Object {
-  $pct = Pct $_.Value $montoPorCobrar
-  "<tr><td>$($_.Key)</td><td class=n>$(FmtCell $_.Value)</td><td class=n>$(Fmt1Pct $pct)</td></tr>"
+$filasAging = ($tramoBuckets.GetEnumerator() | ForEach-Object {
+  $tramoNombre = $_.Key
+  $itemsTramo = @($_.Value | Sort-Object FechaFactura)
+  $montoTramo = ($itemsTramo | Measure-Object TotalFac -Sum).Sum
+  $pct = Pct $montoTramo $montoPorCobrar
+  $idTramo = "aging-" + ($tramoNombre -replace '[^A-Za-z0-9]', '')
+  $detTramo = New-DetalleFacturasHtml $idTramo $itemsTramo 3 $true
+  $montoCell = if ($itemsTramo.Count -gt 0) { "<td class=n><span class='monto-click' onclick=`"toggleMonto('$idTramo')`">$(FmtCell $montoTramo)</span></td>" } else { "<td class=n>$(FmtCell $montoTramo)</td>" }
+  "<tr><td>$tramoNombre</td>$montoCell<td class=n>$(Fmt1Pct $pct)</td></tr>`n$detTramo"
 }) -join "`n"
 
 # ---------- Expectativa de cobranza (facturas emitidas y no cobradas, con fecha estimada de pago) ----------
@@ -718,11 +772,10 @@ $filasExpDetalleCliente = ($expPorCliente | ForEach-Object {
 
 # ---------- Resumen por rango de vencimiento (dias que faltan para la fecha esperada de cobro) ----------
 $rangosVencimiento = [ordered]@{
-  "Vencidas"          = { param($d) $d.DiasVencido -gt 0 }
-  "Vence en 0-7 dias"   = { param($d) $d.DiasVencido -le 0 -and (-$d.DiasVencido) -le 7 }
-  "Vence en 8-20 dias"  = { param($d) $d.DiasVencido -le 0 -and (-$d.DiasVencido) -gt 7 -and (-$d.DiasVencido) -le 20 }
-  "Vence en 21-30 dias" = { param($d) $d.DiasVencido -le 0 -and (-$d.DiasVencido) -gt 20 -and (-$d.DiasVencido) -le 30 }
-  "Vence en 31-90 dias" = { param($d) $d.DiasVencido -le 0 -and (-$d.DiasVencido) -gt 30 -and (-$d.DiasVencido) -le 90 }
+  "Vencidas"            = { param($d) $d.DiasVencido -gt 0 }
+  "Vence en 0-30 dias"  = { param($d) $d.DiasVencido -le 0 -and (-$d.DiasVencido) -le 30 }
+  "Vence en 31-60 dias" = { param($d) $d.DiasVencido -le 0 -and (-$d.DiasVencido) -gt 30 -and (-$d.DiasVencido) -le 60 }
+  "Vence en 61-90 dias" = { param($d) $d.DiasVencido -le 0 -and (-$d.DiasVencido) -gt 60 -and (-$d.DiasVencido) -le 90 }
   "Vence en +90 dias"   = { param($d) $d.DiasVencido -le 0 -and (-$d.DiasVencido) -gt 90 }
 }
 $expRangos = $rangosVencimiento.GetEnumerator() | ForEach-Object {
@@ -1063,6 +1116,15 @@ td.n,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
 tbody tr:nth-child(even){background:#FAFDFC}
 tbody tr:hover{background:var(--teal-100)}
 tbody tr.resumen{background:#EAF5F2;font-weight:700;color:var(--brand-teal-dark);border-top:2px solid var(--brand-teal);border-bottom:2px solid var(--brand-teal)}
+tr.cliente-row{cursor:pointer}
+tr.cliente-row:hover{background:var(--teal-100)}
+tr.cliente-detalle{display:none}
+tr.cliente-detalle.show{display:table-row}
+tr.cliente-detalle td{background:var(--paper);padding:10px 14px}
+.expand-ic{display:inline-block;font-size:10px;transition:transform .15s;margin-right:2px}
+.expand-ic.open{transform:rotate(90deg)}
+.monto-click{cursor:pointer;border-bottom:1px dotted var(--brand-teal)}
+.monto-click:hover{color:var(--brand-teal-dark)}
 tfoot td{font-weight:700;background:#EAF5F2;color:var(--brand-teal-dark);border-top:2px solid var(--brand-teal);border-bottom:2px solid var(--brand-teal)}
 td.bar{width:160px} td.bar div{height:8px;background:var(--brand-teal);border-radius:4px}
 .chart-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 12px 6px;margin-bottom:18px;position:relative}
@@ -1314,6 +1376,17 @@ function mostrarTab(id, btn) {
   document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
   document.getElementById(id).classList.add('active');
   btn.classList.add('active');
+}
+function toggleCliente(id, rowEl) {
+  var det = document.getElementById(id);
+  if (!det) { return; }
+  var showing = det.classList.toggle('show');
+  var ic = rowEl.querySelector('.expand-ic');
+  if (ic) { ic.classList.toggle('open', showing); }
+}
+function toggleMonto(id) {
+  var det = document.getElementById(id);
+  if (det) { det.classList.toggle('show'); }
 }
 </script>
 </body></html>

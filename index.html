@@ -70,6 +70,15 @@ td.n,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
 tbody tr:nth-child(even){background:#FAFDFC}
 tbody tr:hover{background:var(--teal-100)}
 tbody tr.resumen{background:#EAF5F2;font-weight:700;color:var(--brand-teal-dark);border-top:2px solid var(--brand-teal);border-bottom:2px solid var(--brand-teal)}
+tr.cliente-row{cursor:pointer}
+tr.cliente-row:hover{background:var(--teal-100)}
+tr.cliente-detalle{display:none}
+tr.cliente-detalle.show{display:table-row}
+tr.cliente-detalle td{background:var(--paper);padding:10px 14px}
+.expand-ic{display:inline-block;font-size:10px;transition:transform .15s;margin-right:2px}
+.expand-ic.open{transform:rotate(90deg)}
+.monto-click{cursor:pointer;border-bottom:1px dotted var(--brand-teal)}
+.monto-click:hover{color:var(--brand-teal-dark)}
 tfoot td{font-weight:700;background:#EAF5F2;color:var(--brand-teal-dark);border-top:2px solid var(--brand-teal);border-bottom:2px solid var(--brand-teal)}
 td.bar{width:160px} td.bar div{height:8px;background:var(--brand-teal);border-radius:4px}
 .chart-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 12px 6px;margin-bottom:18px;position:relative}
@@ -135,7 +144,7 @@ td.bar{width:80px}
 <div class="header-right">
 <div class="corte-label">Corte al 10/09/2026</div>
 <div class="refresh-row">
-<span class="refresh-ts">Actualizado 10/09/2026 14:03</span>
+<span class="refresh-ts">Actualizado 10/09/2026 14:36</span>
 <button class="refresh-btn" onclick="actualizarDashboard(this)" title="Vuelve a cargar la &uacute;ltima versi&oacute;n publicada de este dashboard">
 <span class="refresh-ic">&#8635;</span> Actualizar
 </button>
@@ -290,15 +299,161 @@ td.bar{width:80px}
 <div class="table-scroll">
 <table><thead><tr><th>Cliente</th><th class=n>Cobrado</th><th class=n>Por cobrar</th><th class=n>Sin facturar</th><th class=n>Total pendiente</th></tr></thead>
 <tbody>
-<tr><td><b>UNICEF</b></td><td class=n>602.505</td><td class=n>2.840</td><td class=n>95.929</td><td class=n>98.769</td></tr>
-<tr><td><b>CNR</b></td><td class=n>6.992</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>12.007</td><td class=n>12.007</td></tr>
-<tr><td><b>WVV</b></td><td class=n>318.842</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>5.098</td><td class=n>5.098</td></tr>
-<tr><td><b>SCI</b></td><td class=n>49.735</td><td class=n>907</td><td class=n>612</td><td class=n>1.519</td></tr>
-<tr><td><b>IRC</b></td><td class=n>1.316</td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td></tr>
-<tr><td><b>HIAS</b></td><td class=n>97</td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td></tr>
-<tr><td><b>ACCF</b></td><td class=n>1.354</td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td></tr>
-<tr><td><b>AECID</b></td><td class=n>349.013</td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td></tr>
-<tr><td><b>PALUZ</b></td><td class=n>1.603</td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td></tr>
+<tr class='cliente-row' onclick="toggleCliente('cxc-ong-UNICEF', this)"><td><b><span class='expand-ic'>&#9656;</span> UNICEF</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF-cob')">602.505</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF-pc')">2.840</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF-sf')">95.929</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF')">98.769</span></td></tr>
+<tr id='cxc-ong-UNICEF-cob' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>00000678</span></td><td class=ctr>21/01/2026</td><td>FLETE</td><td class=n>1.100</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000677</span></td><td class=ctr>21/01/2026</td><td>KIT DE HIGIENE REPOSICION</td><td class=n>41.390</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000687</span></td><td class=ctr>10/03/2026</td><td>KIT DE EDUCACION PRIM/BASC</td><td class=n>68.626</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000688</span></td><td class=ctr>10/03/2026</td><td>FLETE</td><td class=n>4.680</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000685</span></td><td class=ctr>10/03/2026</td><td>KIT DOCENTE PREMIUM</td><td class=n>39.369</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000686</span></td><td class=ctr>10/03/2026</td><td>FELTE</td><td class=n>702</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000700</span></td><td class=ctr>25/03/2026</td><td>KIT DE FERRETERIA</td><td class=n>9.528</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000699</span></td><td class=ctr>25/03/2026</td><td>KIT DE PRIMARIA Y KIT PARA DOCENTES</td><td class=n>4.856</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000705</span></td><td class=ctr>30/04/2026</td><td>FLETE</td><td class=n>8.228</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000714</span></td><td class=ctr>13/05/2026</td><td>KIT PARA AULA REGULAR, PRIMARIA Y MEDIA</td><td class=n>136.406</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000717</span></td><td class=ctr>19/05/2026</td><td>fletes kit escolares oct. 2025</td><td class=n>4.435</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000719</span></td><td class=ctr>28/05/2026</td><td>fletes kit escolares oct. 2025</td><td class=n>2.124</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000724</span></td><td class=ctr>01/06/2026</td><td>Rehabilitación Hospital Negrette</td><td class=n>6.542</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000738</span></td><td class=ctr>17/06/2026</td><td>KIT ESCOLARES</td><td class=n>25.349</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000737</span></td><td class=ctr>17/06/2026</td><td>kit variois</td><td class=n>10.441</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000739</span></td><td class=ctr>19/06/2026</td><td>KIT CPNNA</td><td class=n>19.901</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000741</span></td><td class=ctr>22/06/2026</td><td>FLETES KIT CPNNA</td><td class=n>5.400</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000754-755</span></td><td class=ctr>20/07/2026</td><td>Materiales ECD</td><td class=n>3.825</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000771</span></td><td class=ctr>17/08/2026</td><td>KIT ESCOLARES</td><td class=n>36.360</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000770</span></td><td class=ctr>17/08/2026</td><td>KIT EDUC INICIAL, PRIMARIA, MEDIA Y DOCENTE</td><td class=n>37.015</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000773</span></td><td class=ctr>18/08/2026</td><td>KIT DE AULA REGULAR</td><td class=n>51.185</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000772</span></td><td class=ctr>18/08/2026</td><td>KIT VARIOS</td><td class=n>84.814</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000777</span></td><td class=ctr>24/08/2026</td><td>FLETES</td><td class=n>114</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000776</span></td><td class=ctr>24/08/2026</td><td>FLETES</td><td class=n>114</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+</tbody></table></div></td></tr>
+<tr id='cxc-ong-UNICEF-pc' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>00000767</span></td><td class=ctr>31/07/2026</td><td>Fletes materiales ECD PO81158263</td><td class=n>550</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><span class=mono>00000788</span></td><td class=ctr>31/08/2026</td><td>FLETES PO 81157327 KIT ESCOLARES</td><td class=n>852</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><span class=mono>00000787</span></td><td class=ctr>31/08/2026</td><td>FLETES PO 81155673 KIT ESCOLARES</td><td class=n>1.438</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+</tbody></table></div></td></tr>
+<tr id='cxc-ong-UNICEF-sf' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><i>por facturar</i></td><td class=ctr>25/03/2026</td><td>KIT VARIOS</td><td class=n>65.396</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+<tr><td><i>por facturar</i></td><td class=ctr>07/07/2026</td><td>KIT DE AULA REGULAR</td><td class=n>22.880</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+<tr><td><i>por facturar</i></td><td class=ctr>28/08/2026</td><td>FLETES PO 81155123</td><td class=n>4.513</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+<tr><td><i>por facturar</i></td><td class=ctr>28/08/2026</td><td>FLETES PO 81158050</td><td class=n>3.140</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+</tbody></table></div></td></tr>
+<tr id='cxc-ong-UNICEF' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><i>por facturar</i></td><td class=ctr>25/03/2026</td><td>KIT VARIOS</td><td class=n>65.396</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+<tr><td><i>por facturar</i></td><td class=ctr>07/07/2026</td><td>KIT DE AULA REGULAR</td><td class=n>22.880</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+<tr><td><span class=mono>00000767</span></td><td class=ctr>31/07/2026</td><td>Fletes materiales ECD PO81158263</td><td class=n>550</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><i>por facturar</i></td><td class=ctr>28/08/2026</td><td>FLETES PO 81155123</td><td class=n>4.513</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+<tr><td><i>por facturar</i></td><td class=ctr>28/08/2026</td><td>FLETES PO 81158050</td><td class=n>3.140</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+<tr><td><span class=mono>00000787</span></td><td class=ctr>31/08/2026</td><td>FLETES PO 81155673 KIT ESCOLARES</td><td class=n>1.438</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><span class=mono>00000788</span></td><td class=ctr>31/08/2026</td><td>FLETES PO 81157327 KIT ESCOLARES</td><td class=n>852</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+</tbody></table></div></td></tr>
+<tr class='cliente-row' onclick="toggleCliente('cxc-ong-CNR', this)"><td><b><span class='expand-ic'>&#9656;</span> CNR</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-CNR-cob')">6.992</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-CNR-sf')">12.007</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-CNR')">12.007</span></td></tr>
+<tr id='cxc-ong-CNR-cob' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>00000680</span></td><td class=ctr>20/02/2026</td><td>ALQUILER</td><td class=n>999</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000725</span></td><td class=ctr>01/06/2026</td><td>impresiones A1</td><td class=n>999</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000728</span></td><td class=ctr>05/06/2026</td><td>ALQUILER</td><td class=n>1.030</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000765</span></td><td class=ctr>23/07/2026</td><td>MCB1362_REFRIGERIOS_ICLA_PFV_EDC</td><td class=n>2.934</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000764</span></td><td class=ctr>23/07/2026</td><td>ALQUILER</td><td class=n>1.030</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+</tbody></table></div></td></tr>
+
+<tr id='cxc-ong-CNR-sf' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><i>por facturar</i></td><td class=ctr>12/06/2026</td><td>MCB1362_REFRIGERIOS_ICLA_PFV_EDC</td><td class=n>12.007</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+</tbody></table></div></td></tr>
+<tr id='cxc-ong-CNR' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><i>por facturar</i></td><td class=ctr>12/06/2026</td><td>MCB1362_REFRIGERIOS_ICLA_PFV_EDC</td><td class=n>12.007</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+</tbody></table></div></td></tr>
+<tr class='cliente-row' onclick="toggleCliente('cxc-ong-WVV', this)"><td><b><span class='expand-ic'>&#9656;</span> WVV</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-WVV-cob')">318.842</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-WVV-sf')">5.098</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-WVV')">5.098</span></td></tr>
+<tr id='cxc-ong-WVV-cob' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>00000689</span></td><td class=ctr>13/03/2026</td><td>BOTELLONES 20 L</td><td class=n>3.973</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000743</span></td><td class=ctr>14/07/2026</td><td>884 KIT DE ALBERGUE</td><td class=n>274.885</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000769</span></td><td class=ctr>17/08/2026</td><td>116 KIT DE ALBERGUE, parte 2.</td><td class=n>35.625</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000779</span></td><td class=ctr>27/08/2026</td><td>4 KIT DE PRIMEROS AUXILIOS</td><td class=n>4.359</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+</tbody></table></div></td></tr>
+
+<tr id='cxc-ong-WVV-sf' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><i>por facturar</i></td><td class=ctr>03/07/2026</td><td>116 KIT DE ALBERGUE, parte 2.</td><td class=n>1.700</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+<tr><td><i>por facturar</i></td><td class=ctr>14/07/2026</td><td>884 KIT DE ALBERGUE, parte 1</td><td class=n>3.399</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+</tbody></table></div></td></tr>
+<tr id='cxc-ong-WVV' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><i>por facturar</i></td><td class=ctr>03/07/2026</td><td>116 KIT DE ALBERGUE, parte 2.</td><td class=n>1.700</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+<tr><td><i>por facturar</i></td><td class=ctr>14/07/2026</td><td>884 KIT DE ALBERGUE, parte 1</td><td class=n>3.399</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+</tbody></table></div></td></tr>
+<tr class='cliente-row' onclick="toggleCliente('cxc-ong-SCI', this)"><td><b><span class='expand-ic'>&#9656;</span> SCI</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-SCI-cob')">49.735</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-SCI-pc')">907</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-SCI-sf')">612</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-SCI')">1.519</span></td></tr>
+<tr id='cxc-ong-SCI-cob' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>00000682</span></td><td class=ctr>20/02/2026</td><td>FLETE</td><td class=n>618</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000681</span></td><td class=ctr>20/02/2026</td><td>SUMINISTRO (JUGOS Y CAFÉ)</td><td class=n>3.478</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000690</span></td><td class=ctr>16/03/2026</td><td>KIT DE ESPACIO AMIGABLE</td><td class=n>7.072</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000691</span></td><td class=ctr>18/03/2026</td><td>CERTIFICADOS</td><td class=n>985</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000697</span></td><td class=ctr>20/03/2026</td><td>REFRIGERIO</td><td class=n>5.710</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000698</span></td><td class=ctr>20/03/2026</td><td>REFRIGERIO</td><td class=n>549</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000696</span></td><td class=ctr>20/03/2026</td><td>SERV. MANT. NEVERA</td><td class=n>287</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000693</span></td><td class=ctr>20/03/2026</td><td>NITROGENO</td><td class=n>191</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000694</span></td><td class=ctr>20/03/2026</td><td>REFRIGERIO</td><td class=n>1.244</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000713</span></td><td class=ctr>13/05/2026</td><td>SERV DE MANT. PREVENTIVO Y LIMP. EXTRACTOR</td><td class=n>75</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000723</span></td><td class=ctr>29/05/2026</td><td>Refrigerios</td><td class=n>2.106</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000722</span></td><td class=ctr>29/05/2026</td><td>KIT AUTO CUIDADO</td><td class=n>8.390</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000727</span></td><td class=ctr>05/06/2026</td><td>Refrigerios</td><td class=n>471</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000753</span></td><td class=ctr>20/07/2026</td><td>KIT SHELTER</td><td class=n>16.727</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000763</span></td><td class=ctr>23/07/2026</td><td>INSUMOS DE IMPLEMENTACIÓN-CUMANÁ</td><td class=n>459</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000762</span></td><td class=ctr>23/07/2026</td><td>INSUMOS DE IMPLEMENTACIÓN-ANZOÁTEGUI</td><td class=n>459</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000761</span></td><td class=ctr>23/07/2026</td><td>FABRICADOR DE HIELO</td><td class=n>615</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000766</span></td><td class=ctr>30/07/2026</td><td>Refrigerios</td><td class=n>299</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+</tbody></table></div></td></tr>
+<tr id='cxc-ong-SCI-pc' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>00000790</span></td><td class=ctr>02/09/2026</td><td>REFRIGERIOS</td><td class=n>624</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><span class=mono>00000789</span></td><td class=ctr>02/09/2026</td><td>REFRIGERIOS</td><td class=n>283</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+</tbody></table></div></td></tr>
+<tr id='cxc-ong-SCI-sf' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><i>por facturar</i></td><td class=ctr>17/08/2026</td><td>REFRIGERIOS</td><td class=n>612</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+</tbody></table></div></td></tr>
+<tr id='cxc-ong-SCI' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><i>por facturar</i></td><td class=ctr>17/08/2026</td><td>REFRIGERIOS</td><td class=n>612</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+<tr><td><span class=mono>00000790</span></td><td class=ctr>02/09/2026</td><td>REFRIGERIOS</td><td class=n>624</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><span class=mono>00000789</span></td><td class=ctr>02/09/2026</td><td>REFRIGERIOS</td><td class=n>283</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+</tbody></table></div></td></tr>
+<tr><td><b>IRC</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-IRC-cob')">1.316</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td></tr>
+<tr id='cxc-ong-IRC-cob' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>00000684</span></td><td class=ctr>02/03/2026</td><td>TULAS BLANCAS</td><td class=n>211</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000683</span></td><td class=ctr>02/03/2026</td><td>TULAS BLANCAS</td><td class=n>281</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000709</span></td><td class=ctr>11/05/2026</td><td>ESTIBAS</td><td class=n>227</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000726</span></td><td class=ctr>04/06/2026</td><td>INSUMOS VARIOS</td><td class=n>598</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+</tbody></table></div></td></tr>
+
+
+
+<tr><td><b>HIAS</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-HIAS-cob')">97</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td></tr>
+<tr id='cxc-ong-HIAS-cob' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>00000792</span></td><td class=ctr>10/09/2026</td><td>MATERIALES MÉDICOS</td><td class=n>97</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+</tbody></table></div></td></tr>
+
+
+
+<tr><td><b>ACCF</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-ACCF-cob')">1.354</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td></tr>
+<tr id='cxc-ong-ACCF-cob' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>00000718</span></td><td class=ctr>20/05/2026</td><td>Bolso, pendrive y termo de café</td><td class=n>195</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000735</span></td><td class=ctr>10/06/2026</td><td>INSUMOS VARIOS</td><td class=n>274</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000744</span></td><td class=ctr>16/07/2026</td><td>INSUMOS DE PAPELERÍA</td><td class=n>456</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000760</span></td><td class=ctr>22/07/2026</td><td>PROTECTORES DE VOLTAJE</td><td class=n>93</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000785-786</span></td><td class=ctr>28/08/2026</td><td>INSUMOS VARIOS</td><td class=n>336</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+</tbody></table></div></td></tr>
+
+
+
+<tr><td><b>AECID</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-AECID-cob')">349.013</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td></tr>
+<tr id='cxc-ong-AECID-cob' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>INVOICE-008-2026</span></td><td class=ctr>25/07/2026</td><td>INSUMOS DE FERRETERÍA</td><td class=n>349.013</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+</tbody></table></div></td></tr>
+
+
+
+<tr><td><b>PALUZ</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-PALUZ-cob')">1.603</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td></tr>
+<tr id='cxc-ong-PALUZ-cob' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>00000716</span></td><td class=ctr>14/05/2026</td><td>SILLAS, ESTANTE Y ESCRITORIO</td><td class=n>536</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000759</span></td><td class=ctr>20/07/2026</td><td>Insumos de limpieza</td><td class=n>672</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000758</span></td><td class=ctr>20/07/2026</td><td>gavetero metálico</td><td class=n>394</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+</tbody></table></div></td></tr>
+
+
+
 </tbody>
 <tfoot><tr><td>TOTAL</td><td class=n>1.331.458</td><td class=n>3.747</td><td class=n>113.647</td><td class=n>117.394</td></tr></tfoot></table>
 </div>
@@ -306,8 +461,38 @@ td.bar{width:80px}
 <div class="table-scroll">
 <table><thead><tr><th>Cliente</th><th class=n>Cobrado</th><th class=n>Por cobrar</th><th class=n>Sin facturar</th><th class=n>Total pendiente</th></tr></thead>
 <tbody>
-<tr><td><b>MAURELL</b></td><td class=n>17.490</td><td class=n>6.903</td><td class=n>249.427</td><td class=n>256.330</td></tr>
-<tr><td><b>INPROCCA</b></td><td class=n>13.434</td><td class=n>139.671</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>139.671</td></tr>
+<tr class='cliente-row' onclick="toggleCliente('cxc-pet-MAURELL', this)"><td><b><span class='expand-ic'>&#9656;</span> MAURELL</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-pet-MAURELL-cob')">17.490</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-pet-MAURELL-pc')">6.903</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-pet-MAURELL-sf')">249.427</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-pet-MAURELL')">256.330</span></td></tr>
+<tr id='cxc-pet-MAURELL-cob' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>00000704</span></td><td class=ctr>20/04/2026</td><td>KIT DE SEGURIDAD INDUSTRIAL</td><td class=n>16.202</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000703</span></td><td class=ctr>20/04/2026</td><td>KIT DE SEGURIDAD INDUSTRIAL</td><td class=n>1.289</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+</tbody></table></div></td></tr>
+<tr id='cxc-pet-MAURELL-pc' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>00000732</span></td><td class=ctr>09/06/2026</td><td>KIT DE SEGURIDAD INDUSTRIAL</td><td class=n>6.903</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+</tbody></table></div></td></tr>
+<tr id='cxc-pet-MAURELL-sf' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><i>por facturar</i></td><td class=ctr>28/07/2026</td><td>ADQ. MAT. FERROSOS PTEROREGIONAL DEL LAGO</td><td class=n>249.427</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+</tbody></table></div></td></tr>
+<tr id='cxc-pet-MAURELL' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>00000732</span></td><td class=ctr>09/06/2026</td><td>KIT DE SEGURIDAD INDUSTRIAL</td><td class=n>6.903</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><i>por facturar</i></td><td class=ctr>28/07/2026</td><td>ADQ. MAT. FERROSOS PTEROREGIONAL DEL LAGO</td><td class=n>249.427</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+</tbody></table></div></td></tr>
+<tr class='cliente-row' onclick="toggleCliente('cxc-pet-INPROCCA', this)"><td><b><span class='expand-ic'>&#9656;</span> INPROCCA</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-pet-INPROCCA-cob')">13.434</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-pet-INPROCCA-pc')">139.671</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-pet-INPROCCA')">139.671</span></td></tr>
+<tr id='cxc-pet-INPROCCA-cob' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>INVOICE-007-2026</span></td><td class=ctr>09/06/2026</td><td>BRAGAS DESECHABLES (200)</td><td class=n>1.200</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>INVOICE-006-2026</span></td><td class=ctr>09/06/2026</td><td>BRAGAS DE ALGODÓN (300)</td><td class=n>4.935</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>INVOICE -009-2026</span></td><td class=ctr>07/08/2026</td><td>BRAGAS DE ALGODÓN (300)</td><td class=n>7.299</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+</tbody></table></div></td></tr>
+<tr id='cxc-pet-INPROCCA-pc' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>INVOICE-011-2026</span></td><td class=ctr>19/08/2026</td><td>INSUMOS PETROLEROS</td><td class=n>109.555</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><span class=mono>INVOICE-010-2026</span></td><td class=ctr>19/08/2026</td><td>GUANTES</td><td class=n>10.770</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><span class=mono>INVOICE-012-2026</span></td><td class=ctr>03/09/2026</td><td>BRAGAS Y BORDADOS DE LOGO</td><td class=n>19.346</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+</tbody></table></div></td></tr>
+
+<tr id='cxc-pet-INPROCCA' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><span class=mono>INVOICE-010-2026</span></td><td class=ctr>19/08/2026</td><td>GUANTES</td><td class=n>10.770</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><span class=mono>INVOICE-011-2026</span></td><td class=ctr>19/08/2026</td><td>INSUMOS PETROLEROS</td><td class=n>109.555</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><span class=mono>INVOICE-012-2026</span></td><td class=ctr>03/09/2026</td><td>BRAGAS Y BORDADOS DE LOGO</td><td class=n>19.346</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+</tbody></table></div></td></tr>
 </tbody>
 <tfoot><tr><td>TOTAL</td><td class=n>30.924</td><td class=n>146.574</td><td class=n>249.427</td><td class=n>396.001</td></tr></tfoot></table>
 </div>
@@ -316,10 +501,26 @@ td.bar{width:80px}
 <div class="table-scroll">
 <table><thead><tr><th>Tramo (d&iacute;as desde la factura)</th><th class=n>Monto USD</th><th class=n>% de la cartera</th></tr></thead>
 <tbody>
-<tr><td>0-30 dias</td><td class=n>142.868</td><td class=n>95,0%</td></tr>
-<tr><td>31-60 dias</td><td class=n>550</td><td class=n>0,4%</td></tr>
+<tr><td>0-30 dias</td><td class=n><span class='monto-click' onclick="toggleMonto('aging-030dias')">142.868</span></td><td class=n>95,0%</td></tr>
+<tr id='aging-030dias' class='cliente-detalle'><td colspan=3><div class="table-scroll"><table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE-011-2026</span></td><td class=ctr>19/08/2026</td><td>INSUMOS PETROLEROS</td><td class=n>109.555</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE-010-2026</span></td><td class=ctr>19/08/2026</td><td>GUANTES</td><td class=n>10.770</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><b>UNICEF</b></td><td><span class=mono>00000788</span></td><td class=ctr>31/08/2026</td><td>FLETES PO 81157327 KIT ESCOLARES</td><td class=n>852</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><b>UNICEF</b></td><td><span class=mono>00000787</span></td><td class=ctr>31/08/2026</td><td>FLETES PO 81155673 KIT ESCOLARES</td><td class=n>1.438</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><b>SCI</b></td><td><span class=mono>00000790</span></td><td class=ctr>02/09/2026</td><td>REFRIGERIOS</td><td class=n>624</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><b>SCI</b></td><td><span class=mono>00000789</span></td><td class=ctr>02/09/2026</td><td>REFRIGERIOS</td><td class=n>283</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE-012-2026</span></td><td class=ctr>03/09/2026</td><td>BRAGAS Y BORDADOS DE LOGO</td><td class=n>19.346</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+</tbody></table></div></td></tr>
+<tr><td>31-60 dias</td><td class=n><span class='monto-click' onclick="toggleMonto('aging-3160dias')">550</span></td><td class=n>0,4%</td></tr>
+<tr id='aging-3160dias' class='cliente-detalle'><td colspan=3><div class="table-scroll"><table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><b>UNICEF</b></td><td><span class=mono>00000767</span></td><td class=ctr>31/07/2026</td><td>Fletes materiales ECD PO81158263</td><td class=n>550</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+</tbody></table></div></td></tr>
 <tr><td>61-90 dias</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
-<tr><td>+90 dias</td><td class=n>6.903</td><td class=n>4,6%</td></tr>
+
+<tr><td>+90 dias</td><td class=n><span class='monto-click' onclick="toggleMonto('aging-90dias')">6.903</span></td><td class=n>4,6%</td></tr>
+<tr id='aging-90dias' class='cliente-detalle'><td colspan=3><div class="table-scroll"><table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
+<tr><td><b>MAURELL</b></td><td><span class=mono>00000732</span></td><td class=ctr>09/06/2026</td><td>KIT DE SEGURIDAD INDUSTRIAL</td><td class=n>6.903</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+</tbody></table></div></td></tr>
 </tbody>
 <tfoot><tr><td>TOTAL POR COBRAR</td><td class=n>150.321</td><td class=n>100,0%</td></tr></tfoot></table>
 </div>
@@ -472,10 +673,9 @@ td.bar{width:80px}
 <table><thead><tr><th>Rango</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% del pendiente</th></tr></thead>
 <tbody>
 <tr class='resumen'><td>Vencidas</td><td class=n>2</td><td class=n>7.453</td><td class=n>5,0%</td></tr>
-<tr><td>Vence en 0-7 dias</td><td class=n>0</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
-<tr><td>Vence en 8-20 dias</td><td class=n>4</td><td class=n>122.615</td><td class=n>81,6%</td></tr>
-<tr><td>Vence en 21-30 dias</td><td class=n>3</td><td class=n>20.253</td><td class=n>13,5%</td></tr>
-<tr><td>Vence en 31-90 dias</td><td class=n>0</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
+<tr><td>Vence en 0-30 dias</td><td class=n>7</td><td class=n>142.868</td><td class=n>95,0%</td></tr>
+<tr><td>Vence en 31-60 dias</td><td class=n>0</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
+<tr><td>Vence en 61-90 dias</td><td class=n>0</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
 <tr><td>Vence en +90 dias</td><td class=n>0</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
 </tbody>
 <tfoot><tr><td>TOTAL</td><td class=n>9</td><td class=n>150.321</td><td class=n>100,0%</td></tr></tfoot></table>
@@ -528,7 +728,7 @@ td.bar{width:80px}
 <div class="callout">INPROCCA no tiene facturas con m&aacute;s de 30 d&iacute;as pendientes por cobrar.</div>
 </div>
 
-<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 10/09/2026 14:03</footer>
+<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 10/09/2026 14:36</footer>
 </div>
 <script>
 function actualizarDashboard(btn) {
@@ -595,6 +795,17 @@ function mostrarTab(id, btn) {
   document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
   document.getElementById(id).classList.add('active');
   btn.classList.add('active');
+}
+function toggleCliente(id, rowEl) {
+  var det = document.getElementById(id);
+  if (!det) { return; }
+  var showing = det.classList.toggle('show');
+  var ic = rowEl.querySelector('.expand-ic');
+  if (ic) { ic.classList.toggle('open', showing); }
+}
+function toggleMonto(id) {
+  var det = document.getElementById(id);
+  if (det) { det.classList.toggle('show'); }
 }
 </script>
 </body></html>
