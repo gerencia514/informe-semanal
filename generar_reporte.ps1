@@ -388,8 +388,9 @@ if ($hojaCxP) {
     if (-not $tieneMonto) { $rp++; continue }
     if ($etiqueta -match "(?i)total\s*general") {
       $cxpTotalGeneralExcel = [double]$montoRaw
-      $rp++
-      continue
+      # "TOTAL GENERAL" cierra la hoja de cuentas por pagar; lo que venga despues
+      # (p.ej. una previsi${e_o}n de dep${e_o}sito aparte) no son mas provisiones de proyectos.
+      break
     }
     if ($etiqueta -eq "" -or $etiqueta -match "(?i)total") {
       $cxpTotalProvisionesExcel = [double]$montoRaw
