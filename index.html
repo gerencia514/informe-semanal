@@ -144,7 +144,7 @@ td.bar{width:80px}
 <div class="header-right">
 <div class="corte-label">Corte al 25/09/2026</div>
 <div class="refresh-row">
-<span class="refresh-ts">Actualizado 25/09/2026 18:12</span>
+<span class="refresh-ts">Actualizado 25/09/2026 18:20</span>
 <button class="refresh-btn" onclick="actualizarDashboard(this)" title="Vuelve a cargar la &uacute;ltima versi&oacute;n publicada de este dashboard">
 <span class="refresh-ic">&#8635;</span> Actualizar
 </button>
@@ -637,44 +637,45 @@ td.bar{width:80px}
 <div id="tab-inprocca" class="tab-panel">
 <div class="panel-head"><div class="eyebrow">Cliente</div><h2>Estado de cuenta &mdash; INPROCCA</h2></div>
 <div class="callout">Detalle del historial de cr&eacute;dito, abonos y saldo de INPROCCA seg&uacute;n la hoja "CC INPROCCA" del Excel. Estos montos son el registro manual de la cuenta y pueden no coincidir exactamente con el resumen agregado de la pesta&ntilde;a "Cuentas por cobrar".</div>
-<div class="callout">INPROCCA ha realizado un abono de $25.000 el d&iacute;a 07/05/2026, el d&iacute;a 14/07/2026 realiza un segundo abono de $25.000, el 06/08/2026 realiza un tercer abono de $10.000 y el 01/09/2026 realiza un cuarto abono de $ 6.800,00, quedando el saldo pendiente reflejado en la &uacute;ltima columna de la tabla.</div>
+<div class="callout">INPROCCA ha abonado un total de $ 83.000,00 hasta la fecha (ver el detalle de cada abono en la tabla), quedando el saldo pendiente reflejado en la &uacute;ltima columna.</div>
 <div class="panel-head"><div class="eyebrow">Pendiente</div><h2>Facturas con saldo por cobrar</h2><p class="panel-desc">Solo las facturas de INPROCCA que todav&iacute;a tienen saldo pendiente, despu&eacute;s de aplicar todos los abonos registrados.</p></div>
 <div class="table-scroll">
 <table><thead><tr><th class=ctr>Fecha</th><th>Documento</th><th class=n>Monto</th><th class=n>Saldo pendiente</th></tr></thead>
 <tbody>
 <tr><td class=ctr>03/09/2026</td><td>0012-2026</td><td class=n>$     19.346,17</td><td class=n>$ 19.346,17</td></tr>
-<tr><td class=ctr>11/08/2026</td><td>0010-2026</td><td class=n>$     10.770,00</td><td class=n>$ 10.770,00</td></tr>
-<tr><td class=ctr>15/08/2026</td><td>0011-2026</td><td class=n>$   109.555,00</td><td class=n>$ 109.555,00</td></tr>
+<tr><td class=ctr>14/09/2026</td><td>0014-2026</td><td class=n>$        4.945,27</td><td class=n>$ 4.945,27</td></tr>
+<tr><td class=ctr>15/08/2026</td><td>0011-2026</td><td class=n>$   109.555,00</td><td class=n>$ 105.894,00</td></tr>
+<tr><td class=ctr>18/09/2026</td><td>226-2026</td><td class=n>$     19.948,00</td><td class=n>$ 19.948,00</td></tr>
+<tr><td class=ctr>23/09/2026</td><td>0015-2026</td><td class=n>$        1.051,00</td><td class=n>$ 1.051,00</td></tr>
 </tbody>
-<tfoot><tr><td colspan=3>TOTAL PENDIENTE</td><td class=n>$ 139.671,17</td></tr></tfoot></table>
+<tfoot><tr><td colspan=3>TOTAL PENDIENTE</td><td class=n>$ 151.184,44</td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">Detalle</div><h2>Estado de cuenta completo</h2></div>
 <div class="table-scroll">
-<table class="wide-table"><colgroup>
-<col style="width:7%"><col style="width:12%"><col style="width:10%">
-<col style="width:9%"><col style="width:9%"><col style="width:9%"><col style="width:9%"><col style="width:9%"><col style="width:9%"><col style="width:8%"><col style="width:9%">
-</colgroup>
+<table class="wide-table">
 <thead>
-<tr><th class=ctr>Fecha</th><th>Documento</th><th class=n>Monto</th><th class=ctr>$    1.285,00</th><th class=n>$  12.975,00</th><th class=ctr>$    1.206,00</th><th class=n>$        11.769,00</th><th class=ctr>$  10.000,00</th><th class=n>$          1.769,00</th><th class=n>1200</th><th class=n>Saldo pendiente</th></tr>
+<tr><th class=ctr>Fecha</th><th>Documento</th><th class=n>Monto</th><th class=n>Abono al  07/05/2026</th><th class=n>Saldo de crédito al 07/05/2026</th><th class=n>Abonos al 14/07/2026</th><th class=n>Crédito al 14/07/2026</th><th class=n>Abonos al 06/08/2026</th><th class=n>Crédito al 06/08/2026</th><th class=n>abono al 01/09/2026</th><th class=n>crédito al 01/09/2026</th><th class=n>abono 24/09/2023</th><th class=n>crédito al 25/09/2026</th><th class=n>Saldo pendiente</th></tr>
 </thead>
 <tbody>
-<tr><td class=ctr>22/08/2025</td><td>1069-2025</td><td class=n>$        6.800,00</td><td class=ctr>$    6.800,00</td><td class=n>$                 -</td><td class=ctr></td><td class=n>$                       -</td><td class=ctr></td><td class=n>$                       -</td><td class=n></td><td class=n>$ -</td></tr>
-<tr><td class=ctr>29/08/2025</td><td>1070-2025</td><td class=n>$     10.360,00</td><td class=ctr></td><td class=n>$  10.360,00</td><td class=ctr>$  10.360,00</td><td class=n>$                       -</td><td class=ctr></td><td class=n>$                       -</td><td class=n></td><td class=n>$ -</td></tr>
-<tr><td class=ctr>12/07/2025</td><td>1066-2025</td><td class=n>$     16.915,00</td><td class=ctr>$  16.915,00</td><td class=n>$                 -</td><td class=ctr></td><td class=n>$                       -</td><td class=ctr></td><td class=n>$                       -</td><td class=n></td><td class=n>$ -</td></tr>
-<tr><td class=ctr>23/07/2025</td><td>1067-2025</td><td class=n>$        6.800,00</td><td class=ctr></td><td class=n>$    6.800,00</td><td class=ctr></td><td class=n>$          6.800,00</td><td class=ctr></td><td class=n>$          6.800,00</td><td class=n>6800</td><td class=n>$ -</td></tr>
-<tr class='resumen'><td class=ctr></td><td><b>deuda 2025:</b></td><td class=n>$     55.135,00</td><td class=ctr>$  25.000,00</td><td class=n>$  30.135,00</td><td class=ctr>$  11.566,00</td><td class=n>$        18.569,00</td><td class=ctr>$  10.000,00</td><td class=n>$          8.569,00</td><td class=n>$    8.000,00</td><td class=n>$ 569,00</td></tr>
-<tr><td class=ctr>09/06/2026</td><td>0006-2026</td><td class=n>$        4.934,38</td><td class=ctr></td><td class=n></td><td class=ctr>$    4.934,38</td><td class=n>$                       -</td><td class=ctr></td><td class=n>$                       -</td><td class=n></td><td class=n>$ -</td></tr>
-<tr><td class=ctr>09/06/2026</td><td>0007-2026</td><td class=n>$        1.200,00</td><td class=ctr></td><td class=n></td><td class=ctr>$    1.200,00</td><td class=n>$                       -</td><td class=ctr></td><td class=n>$                       -</td><td class=n></td><td class=n>$ -</td></tr>
-<tr><td class=ctr>09/06/2026</td><td>0009-2026</td><td class=n>$        7.299,62</td><td class=ctr></td><td class=n></td><td class=ctr>$    7.299,62</td><td class=n>$                       -</td><td class=ctr></td><td class=n>$                       -</td><td class=n></td><td class=n>$ -</td></tr>
-<tr><td class=ctr>11/08/2026</td><td>0010-2026</td><td class=n>$     10.770,00</td><td class=ctr></td><td class=n></td><td class=ctr></td><td class=n>$        10.770,00</td><td class=ctr></td><td class=n>$        10.770,00</td><td class=n></td><td class=n>$ 10.770,00</td></tr>
-<tr class='resumen'><td class=ctr></td><td><b>conciliado</b></td><td class=n>$     24.204,00</td><td class=ctr>$ -</td><td class=n>$ -</td><td class=ctr>$  25.000,00</td><td class=n>$        29.339,00</td><td class=ctr>$  10.000,00</td><td class=n>$        19.339,00</td><td class=n></td><td class=n>$ 19.339,00</td></tr>
-<tr><td class=ctr>15/08/2026</td><td>0011-2026</td><td class=n>$   109.555,00</td><td class=ctr></td><td class=n></td><td class=ctr></td><td class=n>$      109.555,00</td><td class=ctr></td><td class=n>$     109.555,00</td><td class=n></td><td class=n>$ 109.555,00</td></tr>
-<tr><td class=ctr>03/09/2026</td><td>0012-2026</td><td class=n>$     19.346,17</td><td class=ctr></td><td class=n></td><td class=ctr></td><td class=n>$        19.346,17</td><td class=ctr></td><td class=n>$        19.346,17</td><td class=n></td><td class=n>$ 19.346,17</td></tr>
-<tr><td class=ctr>14/09/2026</td><td>0014-2026</td><td class=n>$        4.945,27</td><td class=ctr></td><td class=n></td><td class=ctr></td><td class=n></td><td class=ctr></td><td class=n></td><td class=n></td><td class=n>$ -</td></tr>
-<tr><td class=ctr>18/09/2026</td><td>226-2026</td><td class=n>$     19.948,00</td><td class=ctr></td><td class=n></td><td class=ctr></td><td class=n></td><td class=ctr></td><td class=n></td><td class=n></td><td class=n>$ -</td></tr>
-<tr><td class=ctr>23/09/2026</td><td>0015-2026</td><td class=n>$        1.051,00</td><td class=ctr></td><td class=n></td><td class=ctr></td><td class=n></td><td class=ctr></td><td class=n></td><td class=n></td><td class=n>$ -</td></tr>
+<tr><td class=ctr>04/08/2025</td><td>1068-2025</td><td class=n>$     14.260,00</td><td class=n>$    1.285,00</td><td class=n>$  12.975,00</td><td class=n>$    1.206,00</td><td class=n>$        11.769,00</td><td class=n>$  10.000,00</td><td class=n>$          1.769,00</td><td class=n>1200</td><td class=n>$           569,00</td><td class=n>$       569,00</td><td class=n>$                   -</td><td class=n>$ -</td></tr>
+<tr><td class=ctr>22/08/2025</td><td>1069-2025</td><td class=n>$        6.800,00</td><td class=n>$    6.800,00</td><td class=n>$                 -</td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n>$                    -</td><td class=n></td><td class=n></td><td class=n>$ -</td></tr>
+<tr><td class=ctr>29/08/2025</td><td>1070-2025</td><td class=n>$     10.360,00</td><td class=n></td><td class=n>$  10.360,00</td><td class=n>$  10.360,00</td><td class=n>$                       -</td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n>$                    -</td><td class=n></td><td class=n></td><td class=n>$ -</td></tr>
+<tr><td class=ctr>12/07/2025</td><td>1066-2025</td><td class=n>$     16.915,00</td><td class=n>$  16.915,00</td><td class=n>$                 -</td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n>$                    -</td><td class=n></td><td class=n></td><td class=n>$ -</td></tr>
+<tr><td class=ctr>23/07/2025</td><td>1067-2025</td><td class=n>$        6.800,00</td><td class=n></td><td class=n>$    6.800,00</td><td class=n></td><td class=n>$          6.800,00</td><td class=n></td><td class=n>$          6.800,00</td><td class=n>6800</td><td class=n>$                    -</td><td class=n></td><td class=n></td><td class=n>$ -</td></tr>
+<tr class='resumen'><td class=ctr></td><td><b>deuda 2025:</b></td><td class=n>$     55.135,00</td><td class=n>$  25.000,00</td><td class=n>$  30.135,00</td><td class=n>$  11.566,00</td><td class=n>$        18.569,00</td><td class=n>$  10.000,00</td><td class=n>$          8.569,00</td><td class=n>$    8.000,00</td><td class=n>$           569,00</td><td class=n>$       569,00</td><td class=n>$                   -</td><td class=n>$ -</td></tr>
+<tr><td class=ctr>09/06/2026</td><td>0006-2026</td><td class=n>$        4.934,38</td><td class=n></td><td class=n></td><td class=n>$    4.934,38</td><td class=n>$                       -</td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n>$                    -</td><td class=n></td><td class=n></td><td class=n>$ -</td></tr>
+<tr><td class=ctr>09/06/2026</td><td>0007-2026</td><td class=n>$        1.200,00</td><td class=n></td><td class=n></td><td class=n>$    1.200,00</td><td class=n>$                       -</td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n>$                    -</td><td class=n></td><td class=n></td><td class=n>$ -</td></tr>
+<tr><td class=ctr>09/06/2026</td><td>0009-2026</td><td class=n>$        7.299,62</td><td class=n></td><td class=n></td><td class=n>$    7.299,62</td><td class=n>$                       -</td><td class=n></td><td class=n>$                       -</td><td class=n></td><td class=n>$                    -</td><td class=n></td><td class=n></td><td class=n>$ -</td></tr>
+<tr><td class=ctr>11/08/2026</td><td>0010-2026</td><td class=n>$     10.770,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$        10.770,00</td><td class=n></td><td class=n>$        10.770,00</td><td class=n></td><td class=n>$     10.770,00</td><td class=n>$ 10.770,00</td><td class=n>$                   -</td><td class=n>$ -</td></tr>
+<tr class='resumen'><td class=ctr></td><td><b>conciliado</b></td><td class=n>$     24.204,00</td><td class=n>$ -</td><td class=n>$ -</td><td class=n>$  25.000,00</td><td class=n>$        29.339,00</td><td class=n>$  10.000,00</td><td class=n>$        19.339,00</td><td class=n></td><td class=n>$     11.339,00</td><td class=n>$ 11.339,00</td><td class=n>$                   -</td><td class=n>$ -</td></tr>
+<tr><td class=ctr>15/08/2026</td><td>0011-2026</td><td class=n>$   109.555,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$      109.555,00</td><td class=n></td><td class=n>$     109.555,00</td><td class=n></td><td class=n>$   109.555,00</td><td class=n>$    3.661,00</td><td class=n>$ 105.894,00</td><td class=n>$ 105.894,00</td></tr>
+<tr><td class=ctr>03/09/2026</td><td>0012-2026</td><td class=n>$     19.346,17</td><td class=n></td><td class=n></td><td class=n></td><td class=n>$        19.346,17</td><td class=n></td><td class=n>$        19.346,17</td><td class=n></td><td class=n>$     19.346,17</td><td class=n></td><td class=n>$   19.346,17</td><td class=n>$ 19.346,17</td></tr>
+<tr><td class=ctr>14/09/2026</td><td>0014-2026</td><td class=n>$        4.945,27</td><td class=n></td><td class=n></td><td class=n></td><td class=n></td><td class=n></td><td class=n></td><td class=n></td><td class=n>$       4.945,27</td><td class=n></td><td class=n>$      4.945,27</td><td class=n>$ 4.945,27</td></tr>
+<tr><td class=ctr>18/09/2026</td><td>226-2026</td><td class=n>$     19.948,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n></td><td class=n></td><td class=n></td><td class=n></td><td class=n>$     19.948,00</td><td class=n></td><td class=n>$   19.948,00</td><td class=n>$ 19.948,00</td></tr>
+<tr><td class=ctr>23/09/2026</td><td>0015-2026</td><td class=n>$        1.051,00</td><td class=n></td><td class=n></td><td class=n></td><td class=n></td><td class=n></td><td class=n></td><td class=n></td><td class=n>$       1.051,00</td><td class=n></td><td class=n>$      1.051,00</td><td class=n>$ 1.051,00</td></tr>
+<tr class='resumen'><td class=ctr></td><td><b>saldo:</b></td><td class=n>$   208.240,17</td><td class=n>$                 -</td><td class=n>$                 -</td><td class=n>$                 -</td><td class=n>$      128.901,17</td><td class=n></td><td class=n>$     148.240,17</td><td class=n></td><td class=n>$   166.184,44</td><td class=n>$ 15.000,00</td><td class=n>$ 151.184,44</td><td class=n>$ 151.184,44</td></tr>
 </tbody>
-<tfoot><tr><td colspan=2>TOTAL</td><td class=n>$ 219.924,44</td><td class=ctr>$ -</td><td class=n>$ -</td><td class=ctr>$ -</td><td class=n>$ 146.471,17</td><td class=ctr>$ 0,00</td><td class=n>$ 146.471,17</td><td class=n>$ 6.800,00</td><td class=n>$ 139.671,17</td></tr></tfoot></table>
+<tfoot><tr><td colspan=2>TOTAL</td><td class=n>$ 234.184,44</td><td class=n>$ 25.000,00</td><td class=n>$ 30.135,00</td><td class=n>$ 25.000,00</td><td class=n>$ 158.240,17</td><td class=n>$ 10.000,00</td><td class=n>$ 148.240,17</td><td class=n>$ 8.000,00</td><td class=n>$ 166.184,44</td><td class=n>$ 15.000,00</td><td class=n>$ 151.184,44</td><td class=n>$ 151.184,44</td></tr></tfoot></table>
 </div>
 </div>
 
@@ -809,7 +810,7 @@ td.bar{width:80px}
 </div>
 </div>
 
-<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 25/09/2026 18:12</footer>
+<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 25/09/2026 18:20</footer>
 </div>
 <script>
 function actualizarDashboard(btn) {

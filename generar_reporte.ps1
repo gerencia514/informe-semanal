@@ -286,42 +286,60 @@ if ($etiquetas.ContainsKey("FACTURADO Y COBRADO") -and $tieneNoCobrado) {
 }
 
 # ---------- Hoja "CC INPROCCA": estado de cuenta detallado de ese cliente ----------
+# Nota: esta hoja crece con el tiempo (cada tanto se agrega una nueva columna de
+# abono/credito, o una fila nueva empuja la fila de encabezados hacia abajo). Por
+# eso la fila de encabezados y las columnas de abono/credito se ubican de forma
+# dinamica en vez de asumir numeros de fila/columna fijos.
 $inproccaRows = New-Object System.Collections.Generic.List[object]
-$inproccaHeaders = @("Abonos", "Cr${e_e}dito", "Abonos", "Cr${e_e}dito", "Abonos", "Cr${e_e}dito")
-$inproccaHeaderExtra = ""
+$inproccaColHeaders = New-Object System.Collections.Generic.List[object]
 $hojaInprocca = $null
 foreach ($hoja in $wb.Worksheets) { if ($hoja.Name -eq "CC INPROCCA") { $hojaInprocca = $hoja } }
 if ($hojaInprocca) {
   $wsi = $hojaInprocca
-  $rowsI = $wsi.UsedRange.Rows.Count
+  $topRow = $wsi.UsedRange.Row
+  $bottomRow = $topRow + $wsi.UsedRange.Rows.Count - 1
   $palabraMala = "c" + [char]0xE9 + "dito"
   $palabraBuena = "cr" + [char]0xE9 + "dito"
-  for ($hc = 0; $hc -lt 6; $hc++) {
-    $txt = ($wsi.Cells.Item(4, 5 + $hc).Text).Trim()
-    # Correccion tipografica: el Excel a veces trae "cedito" en vez de "credito"
-    $txt = $txt -replace [regex]::Escape($palabraMala), $palabraBuena
-    if ($txt -ne "") { $inproccaHeaders[$hc] = $txt }
+  # La fila de encabezados es la que trae "CREDITO ..." en la columna C
+  $headerRow = $null
+  for ($hr = $topRow; $hr -le $bottomRow; $hr++) {
+    if (($wsi.Cells.Item($hr, 3).Text).Trim() -match "(?i)^cr.dito") { $headerRow = $hr; break }
   }
-  # Columna 11 (K) en adelante: nuevos abonos que el Excel agrega sin columna de saldo pareja todavia
-  $inproccaHeaderExtra = ($wsi.Cells.Item(4, 11).Text).Trim()
-  for ($ri = 5; $ri -le $rowsI; $ri++) {
+  if (-not $headerRow) { $headerRow = $topRow }
+  # Columnas de abono/credito: desde la E en adelante, hasta el primer encabezado vacio
+  $col = 5
+  while ($true) {
+    $txt = ($wsi.Cells.Item($headerRow, $col).Text).Trim()
+    if ($txt -eq "") { break }
+    $txt = $txt -replace [regex]::Escape($palabraMala), $palabraBuena
+    $inproccaColHeaders.Add([PSCustomObject]@{ Col = $col; Texto = $txt; EsAbono = ($txt -match "(?i)abono") }) | Out-Null
+    $col++
+  }
+  for ($ri = $headerRow + 1; $ri -le $bottomRow; $ri++) {
     $fecha = ($wsi.Cells.Item($ri, 2).Text).Trim()
     $doc   = ($wsi.Cells.Item($ri, 3).Text).Trim()
     $monto = ($wsi.Cells.Item($ri, 4).Text).Trim()
-    $ab1   = ($wsi.Cells.Item($ri, 5).Text).Trim()
-    $cr1   = ($wsi.Cells.Item($ri, 6).Text).Trim()
-    $ab2   = ($wsi.Cells.Item($ri, 7).Text).Trim()
-    $cr2   = ($wsi.Cells.Item($ri, 8).Text).Trim()
-    $ab3   = ($wsi.Cells.Item($ri, 9).Text).Trim()
-    $cr3   = ($wsi.Cells.Item($ri, 10).Text).Trim()
-    $ab4   = ($wsi.Cells.Item($ri, 11).Text).Trim()
     if ($fecha -eq "" -and $doc -eq "" -and $monto -eq "") { continue }
-    # El Excel aun no trae una columna de saldo para el abono del 01/09; se calcula aqui
-    # como el ultimo saldo conocido (Credito al 06/08) menos ese abono.
-    $saldoPendienteVal = (Parse-MoneyText $cr3) - (Parse-MoneyText $ab4)
+    $valores = New-Object System.Collections.Generic.List[string]
+    foreach ($ch in $inproccaColHeaders) { $valores.Add(($wsi.Cells.Item($ri, $ch.Col).Text).Trim()) | Out-Null }
+    # Saldo pendiente: se toma la ultima columna de tipo "credito/saldo" como base
+    # y se restan los abonos que aparezcan despues (pagos aun sin columna de saldo propia).
+    $ultimoCreditoIdx = -1
+    for ($i = 0; $i -lt $inproccaColHeaders.Count; $i++) { if (-not $inproccaColHeaders[$i].EsAbono) { $ultimoCreditoIdx = $i } }
+    $hayDatos = [bool]($valores | Where-Object { $_ -ne "" })
+    if (-not $hayDatos) {
+      # Fila nueva sin ningun abono/credito registrado todavia: se asume monto completo pendiente
+      $saldoPendienteVal = Parse-MoneyText $monto
+    } else {
+      $saldoBase = if ($ultimoCreditoIdx -ge 0) { Parse-MoneyText $valores[$ultimoCreditoIdx] } else { Parse-MoneyText $monto }
+      $abonosPosteriores = 0.0
+      for ($i = $ultimoCreditoIdx + 1; $i -lt $inproccaColHeaders.Count; $i++) {
+        if ($inproccaColHeaders[$i].EsAbono) { $abonosPosteriores += (Parse-MoneyText $valores[$i]) }
+      }
+      $saldoPendienteVal = $saldoBase - $abonosPosteriores
+    }
     $inproccaRows.Add([PSCustomObject]@{
-      Fecha = $fecha; Doc = $doc; Monto = $monto
-      Ab1 = $ab1; Cr1 = $cr1; Ab2 = $ab2; Cr2 = $cr2; Ab3 = $ab3; Cr3 = $cr3; Ab4 = $ab4
+      Fecha = $fecha; Doc = $doc; Monto = $monto; Valores = $valores
       SaldoPendiente = $saldoPendienteVal
     }) | Out-Null
   }
@@ -826,27 +844,29 @@ $inproccaVisibles = $inproccaRows | Where-Object { $fechasOcultarInprocca -notco
 # al 07/05/2026 se muestran en $0 en el dashboard (el Excel fuente no se modifica).
 foreach ($row in $inproccaVisibles) {
   if ($row.Doc -match "(?i)conciliado") {
-    $row.Ab1 = "`$ -"
-    $row.Cr1 = "`$ -"
+    for ($i = 0; $i -lt $inproccaColHeaders.Count; $i++) {
+      if ($inproccaColHeaders[$i].Texto -match "07/05/2026") { $row.Valores[$i] = "`$ -" }
+    }
   }
 }
 $filasInprocca = ($inproccaVisibles | ForEach-Object {
   $esResumen = $_.Doc -match "(?i)deuda|saldo|conciliado"
   $docHtml = if ($esResumen) { "<b>$($_.Doc)</b>" } else { $_.Doc }
   $rowClass = if ($esResumen) { " class='resumen'" } else { "" }
-  "<tr$rowClass><td class=ctr>$($_.Fecha)</td><td>$docHtml</td><td class=n>$($_.Monto)</td><td class=ctr>$($_.Ab1)</td><td class=n>$($_.Cr1)</td><td class=ctr>$($_.Ab2)</td><td class=n>$($_.Cr2)</td><td class=ctr>$($_.Ab3)</td><td class=n>$($_.Cr3)</td><td class=n>$($_.Ab4)</td><td class=n>$(FmtUSDDash $_.SaldoPendiente)</td></tr>"
+  $celdas = ($_.Valores | ForEach-Object { "<td class=n>$_</td>" }) -join ""
+  "<tr$rowClass><td class=ctr>$($_.Fecha)</td><td>$docHtml</td><td class=n>$($_.Monto)</td>$celdas<td class=n>$(FmtUSDDash $_.SaldoPendiente)</td></tr>"
 }) -join "`n"
 
 $inproccaRealRows = $inproccaVisibles | Where-Object { $_.Doc -notmatch "(?i)deuda|saldo|conciliado" }
 $inproccaTotMonto = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Monto } | Measure-Object -Sum).Sum
-$inproccaTotAb1   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Ab1 } | Measure-Object -Sum).Sum
-$inproccaTotCr1   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Cr1 } | Measure-Object -Sum).Sum
-$inproccaTotAb2   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Ab2 } | Measure-Object -Sum).Sum
-$inproccaTotCr2   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Cr2 } | Measure-Object -Sum).Sum
-$inproccaTotAb3   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Ab3 } | Measure-Object -Sum).Sum
-$inproccaTotCr3   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Cr3 } | Measure-Object -Sum).Sum
-$inproccaTotAb4   = ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Ab4 } | Measure-Object -Sum).Sum
+$inproccaTotColumnas = @(for ($i = 0; $i -lt $inproccaColHeaders.Count; $i++) {
+  ($inproccaRealRows | ForEach-Object { Parse-MoneyText $_.Valores[$i] } | Measure-Object -Sum).Sum
+})
+$inproccaTotAbonos = 0.0
+for ($i = 0; $i -lt $inproccaColHeaders.Count; $i++) { if ($inproccaColHeaders[$i].EsAbono) { $inproccaTotAbonos += $inproccaTotColumnas[$i] } }
 $inproccaSaldoActualizado = ($inproccaRealRows | Measure-Object SaldoPendiente -Sum).Sum
+$inproccaCeldasTotal = ($inproccaTotColumnas | ForEach-Object { "<td class=n>$(FmtUSDDash $_)</td>" }) -join ""
+$inproccaCeldasHeader = ($inproccaColHeaders | ForEach-Object { "<th class=n>$($_.Texto)</th>" }) -join ""
 
 $inproccaPendientes = @($inproccaRealRows | Where-Object { $_.SaldoPendiente -gt 0.01 } | Sort-Object Fecha)
 $filasInproccaPendientes = ($inproccaPendientes | ForEach-Object {
@@ -916,7 +936,7 @@ if ($inproccaRows.Count -gt 0) {
 <div id="tab-inprocca" class="tab-panel">
 <div class="panel-head"><div class="eyebrow">Cliente</div><h2>Estado de cuenta &mdash; INPROCCA</h2></div>
 <div class="callout">Detalle del historial de cr${e_e}dito, abonos y saldo de INPROCCA seg${e_u}n la hoja "CC INPROCCA" del Excel. Estos montos son el registro manual de la cuenta y pueden no coincidir exactamente con el resumen agregado de la pesta${e_n}a "Cuentas por cobrar".</div>
-<div class="callout">INPROCCA ha realizado un abono de `$25.000 el d${e_i}a 07/05/2026, el d${e_i}a 14/07/2026 realiza un segundo abono de `$25.000, el 06/08/2026 realiza un tercer abono de `$10.000 y el 01/09/2026 realiza un cuarto abono de $(FmtUSD $inproccaTotAb4), quedando el saldo pendiente reflejado en la ${e_u}ltima columna de la tabla.</div>
+<div class="callout">INPROCCA ha abonado un total de $(FmtUSD $inproccaTotAbonos) hasta la fecha (ver el detalle de cada abono en la tabla), quedando el saldo pendiente reflejado en la ${e_u}ltima columna.</div>
 <div class="panel-head"><div class="eyebrow">Pendiente</div><h2>Facturas con saldo por cobrar</h2><p class="panel-desc">Solo las facturas de INPROCCA que todav${e_i}a tienen saldo pendiente, despu${e_e}s de aplicar todos los abonos registrados.</p></div>
 <div class="table-scroll">
 <table><thead><tr><th class=ctr>Fecha</th><th>Documento</th><th class=n>Monto</th><th class=n>Saldo pendiente</th></tr></thead>
@@ -927,17 +947,14 @@ $filasInproccaPendientes
 </div>
 <div class="panel-head"><div class="eyebrow">Detalle</div><h2>Estado de cuenta completo</h2></div>
 <div class="table-scroll">
-<table class="wide-table"><colgroup>
-<col style="width:7%"><col style="width:12%"><col style="width:10%">
-<col style="width:9%"><col style="width:9%"><col style="width:9%"><col style="width:9%"><col style="width:9%"><col style="width:9%"><col style="width:8%"><col style="width:9%">
-</colgroup>
+<table class="wide-table">
 <thead>
-<tr><th class=ctr>Fecha</th><th>Documento</th><th class=n>Monto</th><th class=ctr>$($inproccaHeaders[0])</th><th class=n>$($inproccaHeaders[1])</th><th class=ctr>$($inproccaHeaders[2])</th><th class=n>$($inproccaHeaders[3])</th><th class=ctr>$($inproccaHeaders[4])</th><th class=n>$($inproccaHeaders[5])</th><th class=n>$inproccaHeaderExtra</th><th class=n>Saldo pendiente</th></tr>
+<tr><th class=ctr>Fecha</th><th>Documento</th><th class=n>Monto</th>$inproccaCeldasHeader<th class=n>Saldo pendiente</th></tr>
 </thead>
 <tbody>
 $filasInprocca
 </tbody>
-<tfoot><tr><td colspan=2>TOTAL</td><td class=n>$(FmtUSD $inproccaTotMonto)</td><td class=ctr>`$ -</td><td class=n>`$ -</td><td class=ctr>`$ -</td><td class=n>$(FmtUSD $inproccaTotCr2)</td><td class=ctr>$(FmtUSD $inproccaTotAb3)</td><td class=n>$(FmtUSD $inproccaTotCr3)</td><td class=n>$(FmtUSD $inproccaTotAb4)</td><td class=n>$(FmtUSDDash $inproccaSaldoActualizado)</td></tr></tfoot></table>
+<tfoot><tr><td colspan=2>TOTAL</td><td class=n>$(FmtUSD $inproccaTotMonto)</td>$inproccaCeldasTotal<td class=n>$(FmtUSDDash $inproccaSaldoActualizado)</td></tr></tfoot></table>
 </div>
 </div>
 "@
