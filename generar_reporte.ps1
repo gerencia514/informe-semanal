@@ -1213,8 +1213,9 @@ td.bar{width:160px} td.bar div{height:8px;background:var(--brand-teal);border-ra
 .badge-green{background:var(--green-100);color:var(--green-600)}
 .badge-amber{background:var(--amber-100);color:var(--amber-600)}
 .badge-red{background:var(--red-100);color:var(--red-600)}
-.wide-table{font-size:11px}
-.wide-table th,.wide-table td{white-space:normal;padding:6px 8px}
+.wide-table{font-size:10px}
+.wide-table th{white-space:normal;padding:5px 6px}
+.wide-table td{white-space:nowrap;padding:5px 6px}
 .note{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 22px;font-size:13.5px;line-height:1.65}
 .note li{margin-bottom:9px}
 .callout{background:var(--amber-100);border-left:3px solid var(--amber-600);border-radius:0 8px 8px 0;padding:10px 16px;font-size:12.5px;color:var(--slate-600);margin:10px 0 0}
