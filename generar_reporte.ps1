@@ -845,8 +845,8 @@ $filasInprocca = ($inproccaVisibles | ForEach-Object {
   $esResumen = $_.Doc -match "(?i)deuda|saldo|conciliado"
   $docHtml = if ($esResumen) { "<b>$($_.Doc)</b>" } else { $_.Doc }
   $rowClass = if ($esResumen) { " class='resumen'" } else { "" }
-  $celdas = ($_.Valores | ForEach-Object { "<td class=n>$_</td>" }) -join ""
-  "<tr$rowClass><td class=ctr>$($_.Fecha)</td><td>$docHtml</td><td class=n>$($_.Monto)</td>$celdas<td class=n>$(FmtUSDDash $_.SaldoPendiente)</td></tr>"
+  $celdas = ($_.Valores | ForEach-Object { "<td class=n>$(FmtUSDDash (Parse-MoneyText $_))</td>" }) -join ""
+  "<tr$rowClass><td class=ctr>$($_.Fecha)</td><td>$docHtml</td><td class=n>$(FmtUSD (Parse-MoneyText $_.Monto))</td>$celdas<td class=n>$(FmtUSDDash $_.SaldoPendiente)</td></tr>"
 }) -join "`n"
 
 $inproccaRealRows = $inproccaVisibles | Where-Object { $_.Doc -notmatch "(?i)deuda|saldo|conciliado" }
@@ -1213,7 +1213,8 @@ td.bar{width:160px} td.bar div{height:8px;background:var(--brand-teal);border-ra
 .badge-green{background:var(--green-100);color:var(--green-600)}
 .badge-amber{background:var(--amber-100);color:var(--amber-600)}
 .badge-red{background:var(--red-100);color:var(--red-600)}
-.wide-table th,.wide-table td{white-space:normal}
+.wide-table{font-size:11px}
+.wide-table th,.wide-table td{white-space:normal;padding:6px 8px}
 .note{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 22px;font-size:13.5px;line-height:1.65}
 .note li{margin-bottom:9px}
 .callout{background:var(--amber-100);border-left:3px solid var(--amber-600);border-radius:0 8px 8px 0;padding:10px 16px;font-size:12.5px;color:var(--slate-600);margin:10px 0 0}
