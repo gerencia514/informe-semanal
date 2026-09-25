@@ -838,17 +838,9 @@ $filasExpRangos = ($expRangos | ForEach-Object {
 }) -join "`n"
 
 # ---------- Estado de cuenta INPROCCA (hoja "CC INPROCCA") ----------
-$fechasOcultarInprocca = @("07/05/2026", "14/07/2026")
-$inproccaVisibles = $inproccaRows | Where-Object { $fechasOcultarInprocca -notcontains $_.Fecha }
-# Ajuste manual solicitado: en la fila "conciliado", el Abono y el Saldo de credito
-# al 07/05/2026 se muestran en $0 en el dashboard (el Excel fuente no se modifica).
-foreach ($row in $inproccaVisibles) {
-  if ($row.Doc -match "(?i)conciliado") {
-    for ($i = 0; $i -lt $inproccaColHeaders.Count; $i++) {
-      if ($inproccaColHeaders[$i].Texto -match "07/05/2026") { $row.Valores[$i] = "`$ -" }
-    }
-  }
-}
+# El dashboard debe reflejar exactamente lo que trae el Excel: todas las filas y
+# fechas, sin ocultar ni forzar en cero ningun valor.
+$inproccaVisibles = $inproccaRows
 $filasInprocca = ($inproccaVisibles | ForEach-Object {
   $esResumen = $_.Doc -match "(?i)deuda|saldo|conciliado"
   $docHtml = if ($esResumen) { "<b>$($_.Doc)</b>" } else { $_.Doc }
