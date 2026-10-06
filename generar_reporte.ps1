@@ -453,6 +453,101 @@ if ($hojaCxP) {
 $cxpTotalDeposito = ($cxpDeposito | Measure-Object Monto -Sum).Sum
 $cxpTotalGeneral = $cxpSubtotalProveedores + $cxpTotalProvisiones + $cxpTotalDeposito
 
+# ---------- Hoja "tablero comercial": cotizaciones / oportunidades comerciales ----------
+# Se ubica por nombre ("tablero...") o, si todavia se llama "Hoja1", por sus encabezados
+# (NRO. PRESUPUESTO + STATUS). Las columnas se localizan por el texto del encabezado.
+function Get-CmText($ws, $r, $map, $k) {
+  if (-not $map.ContainsKey($k)) { return "" }
+  return ($ws.Cells.Item($r, $map[$k]).Text).Trim()
+}
+function Get-CmNum($ws, $r, $map, $k) {
+  if (-not $map.ContainsKey($k)) { return 0.0 }
+  $v = $ws.Cells.Item($r, $map[$k]).Value2
+  if ($v -is [double]) { return [double]$v }
+  return (Parse-MoneyText ($ws.Cells.Item($r, $map[$k]).Text))
+}
+function Get-CmDate($ws, $r, $map, $k) {
+  if (-not $map.ContainsKey($k)) { return $null }
+  $cell = $ws.Cells.Item($r, $map[$k])
+  $t = ($cell.Text).Trim()
+  if ($t -ne "") {
+    try { return [datetime]::ParseExact($t, "dd/MM/yyyy", $culture) } catch {}
+  }
+  if ($cell.Value2 -is [double]) { try { return [datetime]::FromOADate([double]$cell.Value2) } catch {} }
+  return $null
+}
+$cmRows = New-Object System.Collections.Generic.List[object]
+$cmSheetName = ""
+$hojaCM = $null
+foreach ($hoja in $wb.Worksheets) { if ($hoja.Name.Trim().ToLower() -like "*tablero*") { $hojaCM = $hoja } }
+if (-not $hojaCM) {
+  foreach ($hoja in $wb.Worksheets) {
+    $h1 = ""
+    try {
+      $ur = $hoja.UsedRange
+      for ($cc = $ur.Column; $cc -lt ($ur.Column + [math]::Min($ur.Columns.Count, 25)); $cc++) { $h1 += " " + ($hoja.Cells.Item($ur.Row, $cc).Text).ToUpper() }
+    } catch {}
+    if ($h1 -match "PRESUPUESTO" -and $h1 -match "STATUS") { $hojaCM = $hoja }
+  }
+}
+if ($hojaCM) {
+  $cmSheetName = $hojaCM.Name
+  $urc = $hojaCM.UsedRange
+  $cmTop = $urc.Row
+  $cmBottom = $cmTop + $urc.Rows.Count - 1
+  $cmLeft = $urc.Column
+  $cmRight = $cmLeft + $urc.Columns.Count - 1
+  $cmMap = @{}
+  for ($cc = $cmLeft; $cc -le $cmRight; $cc++) {
+    $ht = ($hojaCM.Cells.Item($cmTop, $cc).Text).Trim().ToUpper()
+    if ($ht -eq "") { continue }
+    $key = $null
+    if ($ht -eq "FECHA") { $key = "Fecha" }
+    elseif ($ht -eq "MEDIO") { $key = "Medio" }
+    elseif ($ht -match "^LICITA") { $key = "Licitacion" }
+    elseif ($ht -eq "CLIENTE") { $key = "Cliente" }
+    elseif ($ht -match "^CT ") { $key = "Costo" }
+    elseif ($ht -match "^BASE") { $key = "Base" }
+    elseif ($ht -match "^EXONERADO|^EXENTO") { $key = "Exonerado" }
+    elseif ($ht -eq "IVA") { $key = "IVA" }
+    elseif ($ht -eq "IGTF") { $key = "IGTF" }
+    elseif ($ht -match "^UTILIDAD") { $key = "Utilidad" }
+    elseif ($ht -match "^FECHA OFERTA") { $key = "FechaOferta" }
+    elseif ($ht -match "PRESUPUESTO") { $key = "Presupuesto" }
+    elseif ($ht -match "^STATUS|^ESTATUS") { $key = "Status" }
+    elseif ($ht -match "^ELABORADO") { $key = "Elaborado" }
+    if ($key -and -not $cmMap.ContainsKey($key)) { $cmMap[$key] = $cc }
+  }
+  for ($rc = $cmTop + 1; $rc -le $cmBottom; $rc++) {
+    $cliente = (Get-CmText $hojaCM $rc $cmMap "Cliente").ToUpper()
+    if ($cliente -eq "") { continue }
+    if ($cliente -eq "IOM") { $cliente = "OIM" }
+    $fecha = Get-CmDate $hojaCM $rc $cmMap "Fecha"
+    $fechaOferta = Get-CmDate $hojaCM $rc $cmMap "FechaOferta"
+    if (-not $fecha) { $fecha = $fechaOferta }
+    if (-not $fecha) { continue }
+    $medio = (Get-CmText $hojaCM $rc $cmMap "Medio").ToUpper()
+    if ($medio -match "^WH") { $medio = "WHATSAPP" }
+    elseif ($medio -match "MAIL|CORREO") { $medio = "EMAIL" }
+    $statusRaw = (Get-CmText $hojaCM $rc $cmMap "Status").ToUpper()
+    $statusKey = if ($statusRaw -match "^APROB") { "APROBADA" } elseif ($statusRaw -match "^NEG") { "NEGADA" } elseif ($statusRaw -match "^EVAL") { "EVALUACION" } elseif ($statusRaw -match "^RELANZ") { "RELANZADA" } else { "OTRO" }
+    $base = Get-CmNum $hojaCM $rc $cmMap "Base"
+    $exo = Get-CmNum $hojaCM $rc $cmMap "Exonerado"
+    $iva = Get-CmNum $hojaCM $rc $cmMap "IVA"
+    $igtf = Get-CmNum $hojaCM $rc $cmMap "IGTF"
+    $cmRows.Add([PSCustomObject]@{
+      Fecha = $fecha; MesKey = $fecha.ToString("yyyy-MM"); Medio = $medio
+      Licitacion = (Get-CmText $hojaCM $rc $cmMap "Licitacion"); Cliente = $cliente
+      Costo = (Get-CmNum $hojaCM $rc $cmMap "Costo"); Base = $base; Exonerado = $exo; IVA = $iva; IGTF = $igtf
+      Neto = ($base + $exo); Total = ($base + $exo + $iva + $igtf)
+      Utilidad = (Get-CmNum $hojaCM $rc $cmMap "Utilidad")
+      Presupuesto = (Get-CmText $hojaCM $rc $cmMap "Presupuesto").ToUpper()
+      Status = $statusRaw; StatusKey = $statusKey
+      Elaborado = (Get-CmText $hojaCM $rc $cmMap "Elaborado").ToUpper()
+    }) | Out-Null
+  }
+}
+
 $wb.Close($false)
 $excel.Quit()
 [System.Runtime.Interopservices.Marshal]::ReleaseComObject($excel) | Out-Null
@@ -461,6 +556,7 @@ Write-Host "Filas leidas: $($raw.Count)"
 Write-Host "Filas leidas de CC INPROCCA: $($inproccaRows.Count)"
 Write-Host "Filas leidas de DISPONIBILIDAD: $($dispoRows.Count)"
 Write-Host "Filas leidas de CUENTAS POR PAGAR: $($cxpProveedores.Count) proveedores, $($cxpProvisiones.Count) provisiones, $($cxpDeposito.Count) items de deposito"
+Write-Host "Filas leidas del TABLERO COMERCIAL ('$cmSheetName'): $($cmRows.Count) cotizaciones"
 if (-not $cxpProvisionesCuadra) {
   Write-Host "Aviso: el total de provisiones de 'cuentas por pagar' en el Excel no cuadra con la suma de sus items; se uso la suma de los items."
 }
@@ -1082,6 +1178,244 @@ $cxpDepositoPanelHtml
 "@
 }
 
+# ---------- Tablero comercial: resumen mensual y analisis (hoja "tablero comercial") ----------
+function Get-CmStats($lista) {
+  $items = New-Object System.Collections.ArrayList
+  foreach ($e in $lista) { if ($null -ne $e) { [void]$items.Add($e) } }
+  $s = @{ N = $items.Count; Neto = 0.0; Util = 0.0; NAprob = 0; NetoAprob = 0.0; NNeg = 0; NetoNeg = 0.0; NEval = 0; NetoEval = 0.0; NRel = 0; NetoRel = 0.0 }
+  foreach ($x in $items) {
+    $s['Neto'] += $x.Neto
+    $s['Util'] += $x.Utilidad
+    if ($x.StatusKey -eq "APROBADA") { $s['NAprob'] += 1; $s['NetoAprob'] += $x.Neto }
+    elseif ($x.StatusKey -eq "NEGADA") { $s['NNeg'] += 1; $s['NetoNeg'] += $x.Neto }
+    elseif ($x.StatusKey -eq "EVALUACION") { $s['NEval'] += 1; $s['NetoEval'] += $x.Neto }
+    elseif ($x.StatusKey -eq "RELANZADA") { $s['NRel'] += 1; $s['NetoRel'] += $x.Neto }
+  }
+  $dec = $s['NAprob'] + $s['NNeg']
+  $decMonto = $s['NetoAprob'] + $s['NetoNeg']
+  $s['TasaCant'] = if ($dec -gt 0) { 100.0 * $s['NAprob'] / $dec } else { $null }
+  $s['TasaMonto'] = if ($decMonto -gt 0) { 100.0 * $s['NetoAprob'] / $decMonto } else { $null }
+  $s['Margen'] = if ($s['Neto'] -gt 0) { 100.0 * $s['Util'] / $s['Neto'] } else { 0.0 }
+  $s['NAbierto'] = $s['NEval'] + $s['NRel']
+  $s['NetoAbierto'] = $s['NetoEval'] + $s['NetoRel']
+  return [PSCustomObject]$s
+}
+function FmtTasaCm($v) { if ($null -eq $v) { return "&mdash;" } return (Fmt1Pct $v) }
+function HtmlEnc($s) { return [System.Net.WebUtility]::HtmlEncode([string]$s) }
+function MesLabelCm($mk) {
+  $nombres = @("Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic")
+  $p = $mk.Split("-")
+  return ($nombres[[int]$p[1] - 1] + " " + $p[0])
+}
+function Badge-Cm($key, $raw) {
+  if ($key -eq "APROBADA") { return "<span class='badge badge-green'>Aprobada</span>" }
+  if ($key -eq "NEGADA") { return "<span class='badge badge-red'>Negada</span>" }
+  if ($key -eq "EVALUACION") { return "<span class='badge badge-amber'>Evaluaci&oacute;n</span>" }
+  if ($key -eq "RELANZADA") { return "<span class='badge badge-slate'>Relanzada</span>" }
+  return "<span class='badge badge-slate'>$(HtmlEnc $raw)</span>"
+}
+
+$cmTabBtnHtml = ""
+$cmPanelHtml = ""
+if ($cmRows.Count -gt 0) {
+  $mesActualKey = $FechaCorte.ToString("yyyy-MM")
+  $cmAll = Get-CmStats $cmRows
+  $cmFechaMin = ($cmRows | Measure-Object Fecha -Minimum).Minimum
+  $cmFechaMax = ($cmRows | Measure-Object Fecha -Maximum).Maximum
+
+  # --- Resumen mensual ---
+  $cmMeses = @($cmRows | Group-Object MesKey | Sort-Object Name | ForEach-Object {
+    $g = @($_.Group)
+    $mk = $_.Name
+    $st = Get-CmStats $g
+    $topCli = $g | Group-Object Cliente | ForEach-Object {
+      [PSCustomObject]@{ Cliente = $_.Name; Neto = (($_.Group | Measure-Object Neto -Sum).Sum) }
+    } | Sort-Object Neto -Descending | Select-Object -First 1
+    [PSCustomObject]@{ MesKey = $mk; Label = (MesLabelCm $mk); Stats = $st; TopCliente = $topCli.Cliente; TopNeto = $topCli.Neto; Parcial = ($mk -eq $mesActualKey) }
+  })
+  $filasCmMes = ($cmMeses | ForEach-Object {
+    $s = $_.Stats
+    $lab = $_.Label
+    if ($_.Parcial) { $lab = "$lab (en curso)" }
+    "<tr><td><b>$lab</b></td><td class=n>$($s.N)</td><td class=n>$(FmtCell $s.Neto)</td><td class=n>$(FmtCell $s.Util)</td><td class=n>$(Fmt1Pct $s.Margen)</td><td class=n>$($s.NAprob)</td><td class=n>$(FmtCell $s.NetoAprob)</td><td class=n>$($s.NNeg)</td><td class=n>$($s.NAbierto)</td><td class=n>$(FmtCell $s.NetoAbierto)</td><td class=n>$(FmtTasaCm $s.TasaCant)</td><td>$(HtmlEnc $_.TopCliente)</td></tr>"
+  }) -join "`n"
+  $tfootCmMes = "<tr><td>TOTAL</td><td class=n>$($cmAll.N)</td><td class=n>$(FmtCell $cmAll.Neto)</td><td class=n>$(FmtCell $cmAll.Util)</td><td class=n>$(Fmt1Pct $cmAll.Margen)</td><td class=n>$($cmAll.NAprob)</td><td class=n>$(FmtCell $cmAll.NetoAprob)</td><td class=n>$($cmAll.NNeg)</td><td class=n>$($cmAll.NAbierto)</td><td class=n>$(FmtCell $cmAll.NetoAbierto)</td><td class=n>$(FmtTasaCm $cmAll.TasaCant)</td><td></td></tr>"
+  $liCmMeses = ($cmMeses | ForEach-Object {
+    $s = $_.Stats
+    $parcialTxt = if ($_.Parcial) { " (mes en curso, cifras parciales)" } else { "" }
+    $tasaTxt = if ($null -ne $s.TasaCant) { "tasa de aprobaci${e_o}n de $(Fmt1Pct $s.TasaCant) sobre las cotizaciones ya resueltas" } else { "a${e_u}n sin cotizaciones resueltas" }
+    "<li><b>$($_.Label)</b>${parcialTxt}: $($s.N) cotizaciones por <b>USD $(Fmt0 $s.Neto)</b> (utilidad estimada USD $(Fmt0 $s.Util), margen $(Fmt1Pct $s.Margen)); aprobadas $($s.NAprob) (USD $(Fmt0 $s.NetoAprob)), negadas $($s.NNeg), abiertas $($s.NAbierto) (USD $(Fmt0 $s.NetoAbierto)); ${tasaTxt}. Mayor cliente cotizado: $(HtmlEnc $_.TopCliente) (USD $(Fmt0 $_.TopNeto)).</li>"
+  }) -join "`n"
+
+  # --- Por cliente ---
+  $cmClientes = @($cmRows | Group-Object Cliente | ForEach-Object {
+    $g = @($_.Group)
+    $nm = $_.Name
+    [PSCustomObject]@{ Cliente = $nm; Stats = (Get-CmStats $g) }
+  } | Sort-Object { $_.Stats.Neto } -Descending)
+  $filasCmClientes = ($cmClientes | ForEach-Object {
+    $s = $_.Stats
+    $pctTot = Pct $s.Neto $cmAll.Neto
+    "<tr><td><b>$(HtmlEnc $_.Cliente)</b></td><td class=n>$($s.N)</td><td class=n>$(FmtCell $s.Neto)</td><td class=n>$(Fmt1Pct $pctTot)</td><td class=n>$(FmtCell $s.NetoAprob)</td><td class=n>$(FmtCell $s.NetoNeg)</td><td class=n>$(FmtCell $s.NetoAbierto)</td><td class=n>$(FmtTasaCm $s.TasaCant)</td></tr>"
+  }) -join "`n"
+  $cmChartItems = @($cmClientes | Select-Object -First 12 | ForEach-Object { [PSCustomObject]@{ Label = $_.Cliente; Value = $_.Stats.Neto; Docs = $_.Stats.N } })
+  $cmChartSvg = New-RankingChartSvg $cmChartItems "Monto cotizado por cliente"
+
+  # --- Por responsable ---
+  $cmEjec = @($cmRows | Where-Object { $_.Elaborado -ne "" } | Group-Object Elaborado | ForEach-Object {
+    $g = @($_.Group)
+    $nm = $_.Name
+    [PSCustomObject]@{ Nombre = $nm; Stats = (Get-CmStats $g) }
+  } | Sort-Object { $_.Stats.NetoAprob } -Descending)
+  $filasCmEjec = ($cmEjec | ForEach-Object {
+    $s = $_.Stats
+    "<tr><td><b>$(HtmlEnc $_.Nombre)</b></td><td class=n>$($s.N)</td><td class=n>$(FmtCell $s.Neto)</td><td class=n>$($s.NAprob)</td><td class=n>$(FmtCell $s.NetoAprob)</td><td class=n>$($s.NNeg)</td><td class=n>$($s.NAbierto)</td><td class=n>$(FmtTasaCm $s.TasaCant)</td></tr>"
+  }) -join "`n"
+
+  # --- Detalle de cotizaciones ---
+  $filasCmDetalle = ($cmRows | Sort-Object Fecha -Descending | ForEach-Object {
+    $mg = if ($_.Neto -gt 0) { Fmt1Pct (100.0 * $_.Utilidad / $_.Neto) } else { "&mdash;" }
+    "<tr><td class=ctr>$($_.Fecha.ToString('dd/MM/yyyy'))</td><td><span class=mono>$(HtmlEnc $_.Presupuesto)</span></td><td><b>$(HtmlEnc $_.Cliente)</b></td><td>$(HtmlEnc $_.Licitacion)</td><td>$(HtmlEnc $_.Elaborado)</td><td class=n>$(FmtCell $_.Neto)</td><td class=n>$(FmtCell $_.Utilidad)</td><td class=n>$mg</td><td class=ctr>$(Badge-Cm $_.StatusKey $_.Status)</td></tr>"
+  }) -join "`n"
+
+  # --- Analisis comercial (se recalcula con cada actualizacion del Excel) ---
+  $cmAprobRows = @($cmRows | Where-Object { $_.StatusKey -eq "APROBADA" })
+  $cmNegRows = @($cmRows | Where-Object { $_.StatusKey -eq "NEGADA" })
+  $cmAbiertas = @($cmRows | Where-Object { $_.StatusKey -eq "EVALUACION" -or $_.StatusKey -eq "RELANZADA" })
+  $mgAprob = if ($cmAprobRows.Count -gt 0) { (Get-CmStats $cmAprobRows).Margen } else { $null }
+  $mgNeg = if ($cmNegRows.Count -gt 0) { (Get-CmStats $cmNegRows).Margen } else { $null }
+  $cmCliTop = $cmClientes | Select-Object -First 1
+  $cmTop3Pct = Pct (($cmClientes | Select-Object -First 3 | ForEach-Object { $_.Stats.Neto } | Measure-Object -Sum).Sum) $cmAll.Neto
+  $cmMayorAbierta = $cmAbiertas | Sort-Object Neto -Descending | Select-Object -First 1
+  $cmConv = @($cmClientes | Where-Object { ($_.Stats.NAprob + $_.Stats.NNeg) -ge 3 })
+  $cmEmailPct = Pct (@($cmRows | Where-Object { $_.Medio -eq "EMAIL" }).Count) $cmAll.N
+  $cmMesTop = $cmMeses | Sort-Object { $_.Stats.N } -Descending | Select-Object -First 1
+  $cmMesesCompletos = @($cmMeses | Where-Object { -not $_.Parcial })
+
+  $liAn = New-Object System.Collections.Generic.List[string]
+  $liAn.Add("<li><b>Actividad:</b> entre el $($cmFechaMin.ToString('dd/MM/yyyy')) y el $($cmFechaMax.ToString('dd/MM/yyyy')) se emitieron <b>$($cmAll.N) cotizaciones</b> por <b>USD $(Fmt0 $cmAll.Neto)</b> (monto neto: base imponible + exonerado), con utilidad estimada de USD $(Fmt0 $cmAll.Util) (margen $(Fmt1Pct $cmAll.Margen)).</li>")
+  if ($null -ne $cmAll.TasaCant) {
+    $liAn.Add("<li><b>Resultado:</b> de las cotizaciones ya resueltas, <b>$($cmAll.NAprob) fueron aprobadas</b> (USD $(Fmt0 $cmAll.NetoAprob)) y <b>$($cmAll.NNeg) negadas</b> (USD $(Fmt0 $cmAll.NetoNeg)): tasa de aprobaci${e_o}n de <b>$(Fmt1Pct $cmAll.TasaCant)</b> por cantidad y $(Fmt1Pct $cmAll.TasaMonto) por monto.</li>")
+  }
+  if ($cmAbiertas.Count -gt 0) {
+    $pctAbierto = Pct $cmAll.NetoAbierto $cmAll.Neto
+    $mayorTxt = ""
+    if ($cmMayorAbierta) {
+      $pctMayor = Pct $cmMayorAbierta.Neto $cmAll.NetoAbierto
+      $mayorTxt = " La mayor es de <b>$(HtmlEnc $cmMayorAbierta.Cliente)</b> ($(HtmlEnc $cmMayorAbierta.Licitacion)) por USD $(Fmt0 $cmMayorAbierta.Neto), el $(Fmt1Pct $pctMayor) del pipeline abierto."
+    }
+    $liAn.Add("<li><b>Pipeline abierto:</b> $($cmAbiertas.Count) cotizaciones por <b>USD $(Fmt0 $cmAll.NetoAbierto)</b> siguen en evaluaci${e_o}n ($($cmAll.NEval)) o relanzadas ($($cmAll.NRel)), el $(Fmt1Pct $pctAbierto) del monto cotizado.${mayorTxt}</li>")
+  }
+  $liAn.Add("<li><b>Concentraci${e_o}n:</b> <b>$(HtmlEnc $cmCliTop.Cliente)</b> concentra el $(Fmt1Pct (Pct $cmCliTop.Stats.Neto $cmAll.Neto)) del monto cotizado y los tres primeros clientes el <b>$(Fmt1Pct $cmTop3Pct)</b>.</li>")
+  if ($cmConv.Count -ge 2) {
+    $mejor = $cmConv | Sort-Object { $_.Stats.TasaCant } -Descending | Select-Object -First 1
+    $peor = $cmConv | Sort-Object { $_.Stats.TasaCant } | Select-Object -First 1
+    $liAn.Add("<li><b>Conversi${e_o}n por cliente</b> (clientes con al menos 3 cotizaciones resueltas): mejor tasa de aprobaci${e_o}n en <b>$(HtmlEnc $mejor.Cliente)</b> ($(Fmt1Pct $mejor.Stats.TasaCant)) y la m${e_a}s baja en <b>$(HtmlEnc $peor.Cliente)</b> ($(Fmt1Pct $peor.Stats.TasaCant)).</li>")
+  }
+  if ($null -ne $mgAprob -and $null -ne $mgNeg) {
+    $lectura = if ($mgNeg -gt ($mgAprob + 0.5)) { "las negadas llevaban un margen mayor, lo que sugiere sensibilidad al precio" } else { "las negadas no tenian un margen mayor, por lo que el precio no parece explicar por si solo las negativas" }
+    $lectura = $lectura -replace "tenian", "ten${e_i}an" -replace "por si solo", "por s${e_i} solo"
+    $liAn.Add("<li><b>M${e_a}rgenes:</b> las cotizaciones aprobadas tienen un margen estimado de $(Fmt1Pct $mgAprob) frente a $(Fmt1Pct $mgNeg) en las negadas; ${lectura}.</li>")
+  }
+  if ($cmEjec.Count -gt 0 -and $cmEjec[0].Stats.NetoAprob -gt 0) {
+    $liAn.Add("<li><b>Equipo:</b> <b>$(HtmlEnc $cmEjec[0].Nombre)</b> lidera el monto aprobado (USD $(Fmt0 $cmEjec[0].Stats.NetoAprob), $($cmEjec[0].Stats.NAprob) cotizaciones aprobadas).</li>")
+  }
+  if ($cmMesTop) {
+    $tendTxt = ""
+    if ($cmMesesCompletos.Count -ge 2) {
+      $ult = $cmMesesCompletos[$cmMesesCompletos.Count - 1]
+      $pen = $cmMesesCompletos[$cmMesesCompletos.Count - 2]
+      $varN = $ult.Stats.N - $pen.Stats.N
+      $varM = if ($pen.Stats.Neto -gt 0) { 100.0 * ($ult.Stats.Neto - $pen.Stats.Neto) / $pen.Stats.Neto } else { 0.0 }
+      $signoN = if ($varN -ge 0) { "+" } else { "" }
+      $signoM = if ($varM -ge 0) { "+" } else { "" }
+      $tendTxt = " Frente a $($pen.Label), $($ult.Label) cerr${e_o} con $signoN$varN cotizaciones y una variaci${e_o}n de $signoM$(Fmt1Pct $varM) en el monto cotizado."
+    }
+    $liAn.Add("<li><b>Tendencia:</b> el mes de mayor actividad fue <b>$($cmMesTop.Label)</b> con $($cmMesTop.Stats.N) cotizaciones.${tendTxt} El $(Fmt1Pct $cmEmailPct) de las solicitudes llega por correo electr${e_o}nico.</li>")
+  }
+  $cmAnalisisHtml = $liAn -join "`n"
+
+  $liRec = New-Object System.Collections.Generic.List[string]
+  if ($cmAbiertas.Count -gt 0) {
+    $liRec.Add("<li><b>Dar seguimiento al pipeline abierto.</b> Hay USD $(Fmt0 $cmAll.NetoAbierto) en $($cmAbiertas.Count) cotizaciones sin resolver; priorizar las de mayor monto y definir fecha de cierre para las relanzadas.</li>")
+  }
+  $bajaConv = @($cmConv | Where-Object { $_.Stats.TasaCant -lt 40 })
+  if ($bajaConv.Count -gt 0) {
+    $nombresBaja = ($bajaConv | ForEach-Object { HtmlEnc $_.Cliente }) -join ", "
+    $liRec.Add("<li><b>Revisar la estrategia con clientes de baja conversi${e_o}n</b> ($nombresBaja): analizar precio, plazo y especificaciones de las cotizaciones negadas.</li>")
+  }
+  if ($cmTop3Pct -gt 60) {
+    $liRec.Add("<li><b>Diversificar la cartera comercial.</b> Los tres primeros clientes concentran $(Fmt1Pct $cmTop3Pct) del monto cotizado; conviene ampliar la base de clientes activos.</li>")
+  }
+  $liRec.Add("<li><b>Registrar el motivo de las negativas</b> en el tablero para medir si el rechazo se debe a precio, tiempo de entrega o especificaci${e_o}n t${e_e}cnica.</li>")
+  $cmRecomHtml = $liRec -join "`n"
+
+  # --- Calidad de datos del tablero ---
+  $dupPres = @($cmRows | Where-Object { $_.Presupuesto -ne "" } | Group-Object Presupuesto | Where-Object { $_.Count -gt 1 })
+  $cmAvisoHtml = ""
+  if ($dupPres.Count -gt 0) {
+    $txtDup = ($dupPres | ForEach-Object { "$(HtmlEnc $_.Name) ($($_.Count) veces)" }) -join ", "
+    $cmAvisoHtml = "<div class=`"callout`">Hay n${e_u}meros de presupuesto repetidos en el tablero: $txtDup. Conviene revisar la numeraci${e_o}n.</div>"
+  }
+
+  $cmTabBtnHtml = "<button class=`"tab-btn`" data-tab=`"tab-comercial`" onclick=`"mostrarTab('tab-comercial', this)`">Tablero comercial</button>"
+  $cmPanelHtml = @"
+<div id="tab-comercial" class="tab-panel">
+<div class="kpis">
+<div class="kpi featured"><div class="lbl">Cotizaciones emitidas</div><div class="val teal">$($cmAll.N)</div><div class="sub">USD $(Fmt0 $cmAll.Neto) cotizados (neto)</div></div>
+<div class="kpi"><div class="lbl">Utilidad estimada</div><div class="val teal">$(Fmt0 $cmAll.Util)</div><div class="sub">Margen $(Fmt1Pct $cmAll.Margen) sobre lo cotizado</div></div>
+<div class="kpi"><div class="lbl">Aprobadas</div><div class="val green">$(Fmt0 $cmAll.NetoAprob)</div><div class="sub">$($cmAll.NAprob) cotizaciones $([char]0xB7) tasa $(FmtTasaCm $cmAll.TasaCant)</div></div>
+<div class="kpi"><div class="lbl">Negadas</div><div class="val red">$(Fmt0 $cmAll.NetoNeg)</div><div class="sub">$($cmAll.NNeg) cotizaciones</div></div>
+<div class="kpi"><div class="lbl">Pipeline abierto</div><div class="val amber">$(Fmt0 $cmAll.NetoAbierto)</div><div class="sub">$($cmAll.NEval) en evaluaci${e_o}n $([char]0xB7) $($cmAll.NRel) relanzadas</div></div>
+<div class="kpi"><div class="lbl">Margen aprobadas</div><div class="val slate">$(if ($null -ne $mgAprob) { Fmt1Pct $mgAprob } else { '&mdash;' })</div><div class="sub">Negadas: $(if ($null -ne $mgNeg) { Fmt1Pct $mgNeg } else { '&mdash;' })</div></div>
+</div>
+<div class="panel-head"><div class="eyebrow">An${e_a}lisis</div><h2>An${e_a}lisis comercial</h2><p class="panel-desc">Lectura autom${e_a}tica del tablero comercial (hoja "$cmSheetName" del Excel). Se recalcula cada vez que se actualiza el archivo.</p></div>
+<div class="note"><ul>
+$cmAnalisisHtml
+</ul></div>
+$cmAvisoHtml
+<div class="panel-head"><div class="eyebrow">Mensual</div><h2>Resumen mensual</h2><p class="panel-desc">Cotizaciones agrupadas por mes de la solicitud. Monto neto = base imponible + exonerado. Tasa de aprobaci${e_o}n = aprobadas / (aprobadas + negadas).</p></div>
+<div class="table-scroll">
+<table class="wide-table"><thead><tr><th>Mes</th><th class=n>Cotiz.</th><th class=n>Monto cotizado</th><th class=n>Utilidad est.</th><th class=n>Margen</th><th class=n>Aprob.</th><th class=n>Monto aprobado</th><th class=n>Negadas</th><th class=n>Abiertas</th><th class=n>Monto abierto</th><th class=n>Tasa aprob.</th><th>Cliente principal</th></tr></thead>
+<tbody>
+$filasCmMes
+</tbody>
+<tfoot>$tfootCmMes</tfoot></table>
+</div>
+<div class="note" style="margin-top:12px"><ul>
+$liCmMeses
+</ul></div>
+<div class="panel-head"><div class="eyebrow">Clientes</div><h2>Cotizaciones por cliente</h2><p class="panel-desc">Monto cotizado y resultado por cliente.</p></div>
+$cmChartSvg
+<div class="table-scroll">
+<table><thead><tr><th>Cliente</th><th class=n>Cotiz.</th><th class=n>Monto cotizado</th><th class=n>% del total</th><th class=n>Aprobado</th><th class=n>Negado</th><th class=n>Abierto</th><th class=n>Tasa aprob.</th></tr></thead>
+<tbody>
+$filasCmClientes
+</tbody>
+<tfoot><tr><td>TOTAL</td><td class=n>$($cmAll.N)</td><td class=n>$(FmtCell $cmAll.Neto)</td><td class=n>100,0%</td><td class=n>$(FmtCell $cmAll.NetoAprob)</td><td class=n>$(FmtCell $cmAll.NetoNeg)</td><td class=n>$(FmtCell $cmAll.NetoAbierto)</td><td class=n>$(FmtTasaCm $cmAll.TasaCant)</td></tr></tfoot></table>
+</div>
+<div class="panel-head"><div class="eyebrow">Equipo</div><h2>Desempe${e_n}o por responsable</h2><p class="panel-desc">Cotizaciones elaboradas por cada persona del equipo comercial.</p></div>
+<div class="table-scroll">
+<table><thead><tr><th>Responsable</th><th class=n>Cotiz.</th><th class=n>Monto cotizado</th><th class=n>Aprob.</th><th class=n>Monto aprobado</th><th class=n>Negadas</th><th class=n>Abiertas</th><th class=n>Tasa aprob.</th></tr></thead>
+<tbody>
+$filasCmEjec
+</tbody></table>
+</div>
+<div class="panel-head"><div class="eyebrow">Acciones</div><h2>Recomendaciones comerciales</h2></div>
+<div class="note"><ul>
+$cmRecomHtml
+</ul></div>
+<div class="panel-head"><div class="eyebrow">Detalle</div><h2>Detalle de cotizaciones</h2><p class="panel-desc">Todas las cotizaciones del tablero, de la m${e_a}s reciente a la m${e_a}s antigua.</p></div>
+<div class="table-scroll">
+<table><thead><tr><th class=ctr>Fecha</th><th>Presupuesto</th><th>Cliente</th><th>Descripci${e_o}n</th><th>Elaborado por</th><th class=n>Monto neto</th><th class=n>Utilidad est.</th><th class=n>Margen</th><th class=ctr>Estado</th></tr></thead>
+<tbody>
+$filasCmDetalle
+</tbody></table>
+</div>
+</div>
+"@
+}
+
 $dispoTabBtnHtml = ""
 $dispoPanelHtml = ""
 if ($dispoRows.Count -gt 0) {
@@ -1213,6 +1547,7 @@ td.bar{width:160px} td.bar div{height:8px;background:var(--brand-teal);border-ra
 .badge-green{background:var(--green-100);color:var(--green-600)}
 .badge-amber{background:var(--amber-100);color:var(--amber-600)}
 .badge-red{background:var(--red-100);color:var(--red-600)}
+.badge-slate{background:var(--teal-100);color:var(--brand-teal-dark)}
 .wide-table{font-size:10px}
 .wide-table th{white-space:normal;padding:5px 6px}
 .wide-table td{white-space:nowrap;padding:5px 6px}
@@ -1265,6 +1600,7 @@ $inproccaTabBtnHtml
 $dispoTabBtnHtml
 $cxpTabBtnHtml
 $expTabBtnHtml
+$cmTabBtnHtml
 </div>
 </div>
 
@@ -1366,6 +1702,8 @@ $dispoPanelHtml
 $cxpPanelHtml
 
 $expPanelHtml
+
+$cmPanelHtml
 
 <footer>Informe generado autom${e_a}ticamente a partir de "$([System.IO.Path]::GetFileName($ExcelPath))" $([char]0x2014) hoja $SheetName. $([char]0xB7) $generadoTs</footer>
 </div>
