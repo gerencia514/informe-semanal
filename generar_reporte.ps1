@@ -536,7 +536,7 @@ if ($hojaCM) {
     $iva = Get-CmNum $hojaCM $rc $cmMap "IVA"
     $igtf = Get-CmNum $hojaCM $rc $cmMap "IGTF"
     $cmRows.Add([PSCustomObject]@{
-      Fecha = $fecha; MesKey = $fecha.ToString("yyyy-MM"); Medio = $medio
+      Fecha = $fecha; FechaOferta = $fechaOferta; MesKey = $fecha.ToString("yyyy-MM"); Medio = $medio
       Licitacion = (Get-CmText $hojaCM $rc $cmMap "Licitacion"); Cliente = $cliente
       Costo = (Get-CmNum $hojaCM $rc $cmMap "Costo"); Base = $base; Exonerado = $exo; IVA = $iva; IGTF = $igtf
       Neto = ($base + $exo); Total = ($base + $exo + $iva + $igtf)
@@ -1244,7 +1244,7 @@ if ($cmRows.Count -gt 0) {
     $s = $_.Stats
     $parcialTxt = if ($_.Parcial) { " (mes en curso, cifras parciales)" } else { "" }
     $tasaTxt = if ($null -ne $s.TasaCant) { "tasa de aprobaci${e_o}n de $(Fmt1Pct $s.TasaCant) sobre las cotizaciones ya resueltas" } else { "a${e_u}n sin cotizaciones resueltas" }
-    "<li><b>$($_.Label)</b>${parcialTxt}: $($s.N) cotizaciones por <b>USD $(Fmt0 $s.Neto)</b> (utilidad estimada USD $(Fmt0 $s.Util), margen $(Fmt1Pct $s.Margen)); aprobadas $($s.NAprob) (USD $(Fmt0 $s.NetoAprob)), negadas $($s.NNeg), abiertas $($s.NAbierto) (USD $(Fmt0 $s.NetoAbierto)); ${tasaTxt}. Mayor cliente cotizado: $(HtmlEnc $_.TopCliente) (USD $(Fmt0 $_.TopNeto)).</li>"
+    "<li><b>$($_.Label)</b>${parcialTxt}: $($s.N) $(if ($s.N -eq 1) { 'cotizaci&oacute;n' } else { 'cotizaciones' }) por <b>USD $(Fmt0 $s.Neto)</b> (utilidad estimada USD $(Fmt0 $s.Util), margen $(Fmt1Pct $s.Margen)); aprobadas $($s.NAprob) (USD $(Fmt0 $s.NetoAprob)), negadas $($s.NNeg), abiertas $($s.NAbierto) (USD $(Fmt0 $s.NetoAbierto)); ${tasaTxt}. Mayor cliente cotizado: $(HtmlEnc $_.TopCliente) (USD $(Fmt0 $_.TopNeto)).</li>"
   }) -join "`n"
 
   # --- Por cliente ---
@@ -1325,11 +1325,14 @@ if ($cmRows.Count -gt 0) {
     if ($cmMesesCompletos.Count -ge 2) {
       $ult = $cmMesesCompletos[$cmMesesCompletos.Count - 1]
       $pen = $cmMesesCompletos[$cmMesesCompletos.Count - 2]
+      $consecutivos = (([datetime]::ParseExact($pen.MesKey + "-01", "yyyy-MM-dd", $culture)).AddMonths(1).ToString("yyyy-MM") -eq $ult.MesKey)
+      if ($consecutivos) {
       $varN = $ult.Stats.N - $pen.Stats.N
       $varM = if ($pen.Stats.Neto -gt 0) { 100.0 * ($ult.Stats.Neto - $pen.Stats.Neto) / $pen.Stats.Neto } else { 0.0 }
       $signoN = if ($varN -ge 0) { "+" } else { "" }
       $signoM = if ($varM -ge 0) { "+" } else { "" }
       $tendTxt = " Frente a $($pen.Label), $($ult.Label) cerr${e_o} con $signoN$varN cotizaciones y una variaci${e_o}n de $signoM$(Fmt1Pct $varM) en el monto cotizado."
+      }
     }
     $liAn.Add("<li><b>Tendencia:</b> el mes de mayor actividad fue <b>$($cmMesTop.Label)</b> con $($cmMesTop.Stats.N) cotizaciones.${tendTxt} El $(Fmt1Pct $cmEmailPct) de las solicitudes llega por correo electr${e_o}nico.</li>")
   }
@@ -1353,9 +1356,14 @@ if ($cmRows.Count -gt 0) {
   # --- Calidad de datos del tablero ---
   $dupPres = @($cmRows | Where-Object { $_.Presupuesto -ne "" } | Group-Object Presupuesto | Where-Object { $_.Count -gt 1 })
   $cmAvisoHtml = ""
+  $cmFechasRaras = @($cmRows | Where-Object { $_.FechaOferta -and ([math]::Abs(($_.FechaOferta - $_.Fecha).TotalDays) -gt 31) })
+  if ($cmFechasRaras.Count -gt 0) {
+    $txtFr = ($cmFechasRaras | ForEach-Object { "$(HtmlEnc $_.Presupuesto) (solicitud $($_.Fecha.ToString('dd/MM/yyyy')) vs oferta $($_.FechaOferta.ToString('dd/MM/yyyy')))" }) -join "; "
+    $cmAvisoHtml += "<div class=`"callout`">Fechas sospechosas en el tablero (la fecha de la solicitud dista m${e_a}s de un mes de la fecha de la oferta): $txtFr. Revisar si hay un error de digitaci${e_o}n, ya que altera el resumen mensual.</div>"
+  }
   if ($dupPres.Count -gt 0) {
     $txtDup = ($dupPres | ForEach-Object { "$(HtmlEnc $_.Name) ($($_.Count) veces)" }) -join ", "
-    $cmAvisoHtml = "<div class=`"callout`">Hay n${e_u}meros de presupuesto repetidos en el tablero: $txtDup. Conviene revisar la numeraci${e_o}n.</div>"
+    $cmAvisoHtml += "<div class=`"callout`">Hay n${e_u}meros de presupuesto repetidos en el tablero: $txtDup. Conviene revisar la numeraci${e_o}n.</div>"
   }
 
   $cmTabBtnHtml = "<button class=`"tab-btn`" data-tab=`"tab-comercial`" onclick=`"mostrarTab('tab-comercial', this)`">Tablero comercial</button>"
