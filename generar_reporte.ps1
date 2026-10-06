@@ -1273,7 +1273,7 @@ if ($cmRows.Count -gt 0) {
   }) -join "`n"
 
   # --- Detalle de cotizaciones ---
-  $filasCmDetalle = ($cmRows | Sort-Object Fecha -Descending | ForEach-Object {
+  $filasCmDetalle = ($cmRows | Sort-Object @{ Expression = { if ($_.Presupuesto -match '(\d+)\D+\d{4}\s*$') { [int]$Matches[1] } else { 0 } }; Descending = $true }, @{ Expression = { $_.Fecha }; Descending = $true } | ForEach-Object {
     $mg = if ($_.Neto -gt 0) { Fmt1Pct (100.0 * $_.Utilidad / $_.Neto) } else { "&mdash;" }
     "<tr><td class=ctr>$($_.Fecha.ToString('dd/MM/yyyy'))</td><td><span class=mono>$(HtmlEnc $_.Presupuesto)</span></td><td><b>$(HtmlEnc $_.Cliente)</b></td><td>$(HtmlEnc $_.Licitacion)</td><td>$(HtmlEnc $_.Elaborado)</td><td class=n>$(FmtCell $_.Neto)</td><td class=n>$(FmtCell $_.Utilidad)</td><td class=n>$mg</td><td class=ctr>$(Badge-Cm $_.StatusKey $_.Status)</td></tr>"
   }) -join "`n"
@@ -1405,7 +1405,7 @@ $filasCmEjec
 <div class="note"><ul>
 $cmRecomHtml
 </ul></div>
-<div class="panel-head"><div class="eyebrow">Detalle</div><h2>Detalle de cotizaciones</h2><p class="panel-desc">Todas las cotizaciones del tablero, de la m${e_a}s reciente a la m${e_a}s antigua.</p></div>
+<div class="panel-head"><div class="eyebrow">Detalle</div><h2>Detalle de cotizaciones</h2><p class="panel-desc">Todas las cotizaciones del tablero, ordenadas por n${e_u}mero de presupuesto, de mayor a menor.</p></div>
 <div class="table-scroll">
 <table><thead><tr><th class=ctr>Fecha</th><th>Presupuesto</th><th>Cliente</th><th>Descripci${e_o}n</th><th>Elaborado por</th><th class=n>Monto neto</th><th class=n>Utilidad est.</th><th class=n>Margen</th><th class=ctr>Estado</th></tr></thead>
 <tbody>
