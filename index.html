@@ -147,7 +147,7 @@ td.bar{width:80px}
 <div class="header-right">
 <div class="corte-label">Corte al 09/10/2026</div>
 <div class="refresh-row">
-<span class="refresh-ts">Actualizado 09/10/2026 20:54</span>
+<span class="refresh-ts">Actualizado 09/10/2026 21:17</span>
 <button class="refresh-btn" onclick="actualizarDashboard(this)" title="Vuelve a cargar la &uacute;ltima versi&oacute;n publicada de este dashboard">
 <span class="refresh-ic">&#8635;</span> Actualizar
 </button>
@@ -172,15 +172,15 @@ td.bar{width:80px}
 <div class="kpis">
 <div class="kpi featured"><div class="lbl">Ventas totales (con IVA e IGTF)</div><div class="val teal">2.026.167</div><div class="sub">125 operaciones · ticket promedio 16.209</div></div>
 <div class="kpi"><div class="lbl">Base imponible + exento</div><div class="val teal">1.756.277</div><div class="sub">Ingreso neto de impuestos</div></div>
-<div class="kpi"><div class="lbl">Facturado y cobrado</div><div class="val green">1.409.620</div><div class="sub">69,6% de las ventas</div></div>
-<div class="kpi"><div class="lbl">Facturado por cobrar</div><div class="val amber">216.499</div><div class="sub">10,7% de las ventas</div></div>
+<div class="kpi"><div class="lbl">Facturado y cobrado</div><div class="val green">1.418.841</div><div class="sub">70,0% de las ventas</div></div>
+<div class="kpi"><div class="lbl">Facturado por cobrar</div><div class="val amber">207.278</div><div class="sub">10,2% de las ventas</div></div>
 <div class="kpi"><div class="lbl">Pendiente de facturar</div><div class="val red">400.048</div><div class="sub">19,7% de las ventas</div></div>
 <div class="kpi"><div class="lbl">Impuestos gestionados</div><div class="val slate">269.891</div><div class="sub">IVA 237.946 · IGTF 31.945</div></div>
 </div>
 <div class="panel-head"><div class="eyebrow">S&iacute;ntesis</div><h2>Resumen ejecutivo</h2><p class="panel-desc">Lectura general de ventas, cobranza y concentraci&oacute;n de cartera.</p></div>
 <div class="note"><ul>
 <li>Las ventas acumuladas del ejercicio 2026 alcanzan <b>USD 2.026.167</b> distribuidas en <b>125 operaciones</b>, de las cuales <b>106</b> ya est&aacute;n facturadas (<b>1.626.119</b>, 80,3%).</li>
-<li>La conversi&oacute;n a caja es el punto cr&iacute;tico: solo <b>69,6%</b> de la venta est&aacute; efectivamente cobrada. Entre cuentas por cobrar (216.499) y ventas sin facturar (400.048) hay <b>USD 616.548</b> pendientes de convertir en efectivo (30,4% del total).</li>
+<li>La conversi&oacute;n a caja es el punto cr&iacute;tico: solo <b>70,0%</b> de la venta est&aacute; efectivamente cobrada. Entre cuentas por cobrar (207.278) y ventas sin facturar (400.048) hay <b>USD 607.326</b> pendientes de convertir en efectivo (30,0% del total).</li>
 <li>Concentraci&oacute;n de cartera: <b>UNICEF</b> representa 35,4% de la facturaci&oacute;n y los tres primeros clientes concentran <b>68,6%</b>.</li>
 <li>El mes de mayor actividad fue <b>Jul 2026</b> con 860.320 (42,5% del a&ntilde;o).</li>
 <li>La estructura tributaria muestra <b>237.946</b> de IVA y <b>31.945</b> de IGTF; el rubro exento asciende a 52.089 (2,6%).</li>
@@ -302,16 +302,16 @@ td.bar{width:80px}
 <div class="table-scroll">
 <table><thead><tr><th>Estado</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% del total</th></tr></thead>
 <tbody>
-<tr><td><span class='badge badge-amber'>Por cobrar</span></td><td class=n>26</td><td class=n>216.499</td><td class=n>10,7%</td></tr>
+<tr><td><span class='badge badge-amber'>Por cobrar</span></td><td class=n>17</td><td class=n>207.278</td><td class=n>10,2%</td></tr>
 <tr><td><span class='badge badge-red'>Sin facturar</span></td><td class=n>19</td><td class=n>400.048</td><td class=n>19,7%</td></tr>
 </tbody>
-<tfoot><tr><td>TOTAL PENDIENTE</td><td class=n>45</td><td class=n>616.548</td><td class=n>30,4%</td></tr></tfoot></table>
+<tfoot><tr><td>TOTAL PENDIENTE</td><td class=n>36</td><td class=n>607.326</td><td class=n>30,0%</td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">Cobranza · ONG</div><h2>Cartera pendiente — ONG</h2><p class="panel-desc">Saldo cobrado, por cobrar y sin facturar de clientes ONG.</p></div>
 <div class="table-scroll">
 <table><thead><tr><th>Cliente</th><th class=n>Cobrado</th><th class=n>Por cobrar</th><th class=n>Sin facturar</th><th class=n>Total pendiente</th></tr></thead>
 <tbody>
-<tr class='cliente-row' onclick="toggleCliente('cxc-ong-UNICEF', this)"><td><b><span class='expand-ic'>&#9656;</span> UNICEF</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF-cob')">628.225</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF-pc')">19.089</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF-sf')">69.909</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF')">88.998</span></td></tr>
+<tr class='cliente-row' onclick="toggleCliente('cxc-ong-UNICEF', this)"><td><b><span class='expand-ic'>&#9656;</span> UNICEF</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF-cob')">635.553</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF-pc')">11.761</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF-sf')">69.909</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF')">81.670</span></td></tr>
 <tr id='cxc-ong-UNICEF-cob' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
 <tr><td><span class=mono>00000678</span></td><td class=ctr>21/01/2026</td><td>FLETE</td><td class=n>1.100</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
 <tr><td><span class=mono>00000677</span></td><td class=ctr>21/01/2026</td><td>KIT DE HIGIENE REPOSICION</td><td class=n>41.390</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
@@ -340,18 +340,18 @@ td.bar{width:80px}
 <tr><td><span class=mono>00000776</span></td><td class=ctr>24/08/2026</td><td>FLETES</td><td class=n>114</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
 <tr><td><span class=mono>00000788</span></td><td class=ctr>31/08/2026</td><td>FLETES PO 81157327 KIT ESCOLARES</td><td class=n>852</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
 <tr><td><span class=mono>00000787</span></td><td class=ctr>31/08/2026</td><td>FLETES PO 81155673 KIT ESCOLARES</td><td class=n>1.438</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000803</span></td><td class=ctr>25/09/2026</td><td>FLETES KIT FERRETEROS PILAS COMUNITARIAS</td><td class=n>1.000</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000813</span></td><td class=ctr>30/09/2026</td><td>FLETES MOB. DE DORMITORIO</td><td class=n>71</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000814</span></td><td class=ctr>30/09/2026</td><td>FLETES MOB. DE DORMITORIO</td><td class=n>275</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000815</span></td><td class=ctr>30/09/2026</td><td>FLETES MOB. DE DORMITORIO</td><td class=n>204</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000812</span></td><td class=ctr>30/09/2026</td><td>MOBILIARIO DE DORMITORIO</td><td class=n>2.088</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
 <tr><td><span class=mono>00000809</span></td><td class=ctr>30/09/2026</td><td>KIT DE AULA REGULAR</td><td class=n>22.880</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000810</span></td><td class=ctr>30/09/2026</td><td>FLETES PO 81158050</td><td class=n>3.140</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000811</span></td><td class=ctr>30/09/2026</td><td>FLETES KIT FERRETERÍA SAN JUAN PAYARA APURE</td><td class=n>550</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
 </tbody></table></div></td></tr>
 <tr id='cxc-ong-UNICEF-pc' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
-<tr><td><span class=mono>00000803</span></td><td class=ctr>25/09/2026</td><td>FLETES KIT FERRETEROS PILAS COMUNITARIAS</td><td class=n>1.000</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><span class=mono>00000801</span></td><td class=ctr>25/09/2026</td><td>KIT FERRETEROS PILAS COMUNITARIAS</td><td class=n>7.109</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><span class=mono>00000805-806-807-808</span></td><td class=ctr>29/09/2026</td><td>Ferretería San Juan de Payara Apure</td><td class=n>1.317</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000813</span></td><td class=ctr>30/09/2026</td><td>FLETES MOB. DE DORMITORIO</td><td class=n>71</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000814</span></td><td class=ctr>30/09/2026</td><td>FLETES MOB. DE DORMITORIO</td><td class=n>275</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000815</span></td><td class=ctr>30/09/2026</td><td>FLETES MOB. DE DORMITORIO</td><td class=n>204</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000810</span></td><td class=ctr>30/09/2026</td><td>FLETES PO 81158050</td><td class=n>3.140</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000811</span></td><td class=ctr>30/09/2026</td><td>FLETES KIT FERRETERÍA SAN JUAN PAYARA APURE</td><td class=n>550</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000812</span></td><td class=ctr>30/09/2026</td><td>MOBILIARIO DE DORMITORIO</td><td class=n>2.088</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><span class=mono>00000823</span></td><td class=ctr>06/10/2026</td><td>MATERIAL PAPELERÍA CLUSTERS ADR</td><td class=n>350</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><span class=mono>00000821</span></td><td class=ctr>06/10/2026</td><td>MATERIAL PAPELERÍA CLUSTERS ADR</td><td class=n>2.985</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 </tbody></table></div></td></tr>
@@ -362,17 +362,10 @@ td.bar{width:80px}
 <tr id='cxc-ong-UNICEF' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
 <tr><td><i>por facturar</i></td><td class=ctr>25/03/2026</td><td>KIT VARIOS</td><td class=n>65.396</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
 <tr><td><i>por facturar</i></td><td class=ctr>28/08/2026</td><td>FLETES PO 81155123</td><td class=n>4.513</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
-<tr><td><span class=mono>00000803</span></td><td class=ctr>25/09/2026</td><td>FLETES KIT FERRETEROS PILAS COMUNITARIAS</td><td class=n>1.000</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><span class=mono>00000801</span></td><td class=ctr>25/09/2026</td><td>KIT FERRETEROS PILAS COMUNITARIAS</td><td class=n>7.109</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><span class=mono>00000805-806-807-808</span></td><td class=ctr>29/09/2026</td><td>Ferretería San Juan de Payara Apure</td><td class=n>1.317</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000810</span></td><td class=ctr>30/09/2026</td><td>FLETES PO 81158050</td><td class=n>3.140</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000812</span></td><td class=ctr>30/09/2026</td><td>MOBILIARIO DE DORMITORIO</td><td class=n>2.088</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000811</span></td><td class=ctr>30/09/2026</td><td>FLETES KIT FERRETERÍA SAN JUAN PAYARA APURE</td><td class=n>550</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000813</span></td><td class=ctr>30/09/2026</td><td>FLETES MOB. DE DORMITORIO</td><td class=n>71</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000814</span></td><td class=ctr>30/09/2026</td><td>FLETES MOB. DE DORMITORIO</td><td class=n>275</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000815</span></td><td class=ctr>30/09/2026</td><td>FLETES MOB. DE DORMITORIO</td><td class=n>204</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000821</span></td><td class=ctr>06/10/2026</td><td>MATERIAL PAPELERÍA CLUSTERS ADR</td><td class=n>2.985</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><span class=mono>00000823</span></td><td class=ctr>06/10/2026</td><td>MATERIAL PAPELERÍA CLUSTERS ADR</td><td class=n>350</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td><span class=mono>00000821</span></td><td class=ctr>06/10/2026</td><td>MATERIAL PAPELERÍA CLUSTERS ADR</td><td class=n>2.985</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 </tbody></table></div></td></tr>
 <tr class='cliente-row' onclick="toggleCliente('cxc-ong-OIM', this)"><td><b><span class='expand-ic'>&#9656;</span> OIM</b></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-OIM-sf')">31.434</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-OIM')">31.434</span></td></tr>
 
@@ -440,7 +433,7 @@ td.bar{width:80px}
 <tr><td><i>por facturar</i></td><td class=ctr>03/07/2026</td><td>116 KIT DE ALBERGUE, parte 2.</td><td class=n>1.700</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
 <tr><td><i>por facturar</i></td><td class=ctr>14/07/2026</td><td>884 KIT DE ALBERGUE, parte 1</td><td class=n>3.399</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
 </tbody></table></div></td></tr>
-<tr class='cliente-row' onclick="toggleCliente('cxc-ong-SCI', this)"><td><b><span class='expand-ic'>&#9656;</span> SCI</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-SCI-cob')">50.643</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-SCI-pc')">2.538</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-SCI-sf')">1.018</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-SCI')">3.556</span></td></tr>
+<tr class='cliente-row' onclick="toggleCliente('cxc-ong-SCI', this)"><td><b><span class='expand-ic'>&#9656;</span> SCI</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-SCI-cob')">52.536</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-SCI-pc')">645</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-SCI-sf')">1.018</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-SCI')">1.663</span></td></tr>
 <tr id='cxc-ong-SCI-cob' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
 <tr><td><span class=mono>00000682</span></td><td class=ctr>20/02/2026</td><td>FLETE</td><td class=n>618</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
 <tr><td><span class=mono>00000681</span></td><td class=ctr>20/02/2026</td><td>SUMINISTRO (JUGOS Y CAFÉ)</td><td class=n>3.478</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
@@ -462,10 +455,10 @@ td.bar{width:80px}
 <tr><td><span class=mono>00000766</span></td><td class=ctr>30/07/2026</td><td>Refrigerios</td><td class=n>299</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
 <tr><td><span class=mono>00000790</span></td><td class=ctr>02/09/2026</td><td>REFRIGERIOS</td><td class=n>624</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
 <tr><td><span class=mono>00000789</span></td><td class=ctr>02/09/2026</td><td>REFRIGERIOS</td><td class=n>283</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000800</span></td><td class=ctr>24/09/2026</td><td>REFRIGERIOS</td><td class=n>1.281</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000799</span></td><td class=ctr>24/09/2026</td><td>REFRIGERIOS</td><td class=n>612</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
 </tbody></table></div></td></tr>
 <tr id='cxc-ong-SCI-pc' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
-<tr><td><span class=mono>00000800</span></td><td class=ctr>24/09/2026</td><td>REFRIGERIOS</td><td class=n>1.281</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000799</span></td><td class=ctr>24/09/2026</td><td>REFRIGERIOS</td><td class=n>612</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><span class=mono>00000819</span></td><td class=ctr>05/10/2026</td><td>REFRIGERIO RECURSOS HUMANOS</td><td class=n>167</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><span class=mono>00000820</span></td><td class=ctr>05/10/2026</td><td>REFRIGERIO RECURSOS HUMANOS</td><td class=n>160</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><span class=mono>00000817</span></td><td class=ctr>05/10/2026</td><td>REFRIGERIO RECURSOS HUMANOS</td><td class=n>146</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
@@ -476,8 +469,6 @@ td.bar{width:80px}
 <tr><td><i>por facturar</i></td><td class=ctr>09/10/2026</td><td>REFRIGERIO</td><td class=n>576</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
 </tbody></table></div></td></tr>
 <tr id='cxc-ong-SCI' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
-<tr><td><span class=mono>00000799</span></td><td class=ctr>24/09/2026</td><td>REFRIGERIOS</td><td class=n>612</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000800</span></td><td class=ctr>24/09/2026</td><td>REFRIGERIOS</td><td class=n>1.281</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><span class=mono>00000817</span></td><td class=ctr>05/10/2026</td><td>REFRIGERIO RECURSOS HUMANOS</td><td class=n>146</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><span class=mono>00000818</span></td><td class=ctr>05/10/2026</td><td>REFRIGERIO RECURSOS HUMANOS</td><td class=n>172</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><span class=mono>00000819</span></td><td class=ctr>05/10/2026</td><td>REFRIGERIO RECURSOS HUMANOS</td><td class=n>167</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
@@ -530,7 +521,7 @@ td.bar{width:80px}
 
 
 </tbody>
-<tfoot><tr><td>TOTAL</td><td class=n>1.358.793</td><td class=n>24.083</td><td class=n>140.256</td><td class=n>164.339</td></tr></tfoot></table>
+<tfoot><tr><td>TOTAL</td><td class=n>1.368.014</td><td class=n>14.862</td><td class=n>140.256</td><td class=n>155.118</td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">Cobranza · Petr&oacute;leo</div><h2>Cartera pendiente — Petr&oacute;leo</h2><p class="panel-desc">Saldo cobrado, por cobrar y sin facturar de clientes del sector petrolero.</p></div>
 <div class="table-scroll">
@@ -601,23 +592,14 @@ td.bar{width:80px}
 <div class="table-scroll">
 <table><thead><tr><th>Tramo (d&iacute;as desde la factura)</th><th class=n>Monto USD</th><th class=n>% de la cartera</th></tr></thead>
 <tbody>
-<tr><td>0-30 dias</td><td class=n><span class='monto-click' onclick="toggleMonto('aging-030dias')">76.828</span></td><td class=n>35,5%</td></tr>
+<tr><td>0-30 dias</td><td class=n><span class='monto-click' onclick="toggleMonto('aging-030dias')">67.607</span></td><td class=n>32,6%</td></tr>
 <tr id='aging-030dias' class='cliente-detalle'><td colspan=3><div class="table-scroll"><table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
 <tr><td><b>MAURELL</b></td><td><span class=mono>00000794</span></td><td class=ctr>17/09/2026</td><td>ADQ. MAT. FERROSOS PTEROREGIONAL DEL LAGO</td><td class=n>46.617</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE -014-2026</span></td><td class=ctr>17/09/2026</td><td>BRAGAS ROJAS 121 UNIDADES</td><td class=n>4.945</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE -015-2026</span></td><td class=ctr>24/09/2026</td><td>INSUMOS PETROLEROS</td><td class=n>1.051</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><b>SCI</b></td><td><span class=mono>00000800</span></td><td class=ctr>24/09/2026</td><td>REFRIGERIOS</td><td class=n>1.281</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><b>SCI</b></td><td><span class=mono>00000799</span></td><td class=ctr>24/09/2026</td><td>REFRIGERIOS</td><td class=n>612</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000803</span></td><td class=ctr>25/09/2026</td><td>FLETES KIT FERRETEROS PILAS COMUNITARIAS</td><td class=n>1.000</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><b>UNICEF</b></td><td><span class=mono>00000801</span></td><td class=ctr>25/09/2026</td><td>KIT FERRETEROS PILAS COMUNITARIAS</td><td class=n>7.109</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><b>PNUD</b></td><td><span class=mono>00000804</span></td><td class=ctr>28/09/2026</td><td>REFRIGERIOS</td><td class=n>1.452</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><b>UNICEF</b></td><td><span class=mono>00000805-806-807-808</span></td><td class=ctr>29/09/2026</td><td>Ferretería San Juan de Payara Apure</td><td class=n>1.317</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000813</span></td><td class=ctr>30/09/2026</td><td>FLETES MOB. DE DORMITORIO</td><td class=n>71</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000814</span></td><td class=ctr>30/09/2026</td><td>FLETES MOB. DE DORMITORIO</td><td class=n>275</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000815</span></td><td class=ctr>30/09/2026</td><td>FLETES MOB. DE DORMITORIO</td><td class=n>204</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000810</span></td><td class=ctr>30/09/2026</td><td>FLETES PO 81158050</td><td class=n>3.140</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000811</span></td><td class=ctr>30/09/2026</td><td>FLETES KIT FERRETERÍA SAN JUAN PAYARA APURE</td><td class=n>550</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000812</span></td><td class=ctr>30/09/2026</td><td>MOBILIARIO DE DORMITORIO</td><td class=n>2.088</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE -016-2026</span></td><td class=ctr>02/10/2026</td><td>GUANTES ANTI-IMPACTO</td><td class=n>132</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><b>SCI</b></td><td><span class=mono>00000819</span></td><td class=ctr>05/10/2026</td><td>REFRIGERIO RECURSOS HUMANOS</td><td class=n>167</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><b>SCI</b></td><td><span class=mono>00000820</span></td><td class=ctr>05/10/2026</td><td>REFRIGERIO RECURSOS HUMANOS</td><td class=n>160</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
@@ -627,7 +609,7 @@ td.bar{width:80px}
 <tr><td><b>CNR</b></td><td><span class=mono>00000822</span></td><td class=ctr>06/10/2026</td><td>MCB1362_REFRIGERIOS_ICLA_PFV_EDC</td><td class=n>1.004</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><b>UNICEF</b></td><td><span class=mono>00000821</span></td><td class=ctr>06/10/2026</td><td>MATERIAL PAPELERÍA CLUSTERS ADR</td><td class=n>2.985</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 </tbody></table></div></td></tr>
-<tr><td>31-60 dias</td><td class=n><span class='monto-click' onclick="toggleMonto('aging-3160dias')">139.671</span></td><td class=n>64,5%</td></tr>
+<tr><td>31-60 dias</td><td class=n><span class='monto-click' onclick="toggleMonto('aging-3160dias')">139.671</span></td><td class=n>67,4%</td></tr>
 <tr id='aging-3160dias' class='cliente-detalle'><td colspan=3><div class="table-scroll"><table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
 <tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE-011-2026</span></td><td class=ctr>19/08/2026</td><td>INSUMOS PETROLEROS</td><td class=n>109.555</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE-010-2026</span></td><td class=ctr>19/08/2026</td><td>GUANTES</td><td class=n>10.770</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
@@ -638,7 +620,7 @@ td.bar{width:80px}
 <tr><td>+90 dias</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
 
 </tbody>
-<tfoot><tr><td>TOTAL POR COBRAR</td><td class=n>216.499</td><td class=n>100,0%</td></tr></tfoot></table>
+<tfoot><tr><td>TOTAL POR COBRAR</td><td class=n>207.278</td><td class=n>100,0%</td></tr></tfoot></table>
 </div>
 </div>
 
@@ -728,7 +710,7 @@ td.bar{width:80px}
 <div class="table-scroll">
 <table class="wide-table">
 <thead>
-<tr><th class=ctr>Fecha</th><th>Documento</th><th class=n>Monto</th><th class=n>Abono al  07/05/2026</th><th class=n>Saldo de crédito al 07/05/2026</th><th class=n>Abonos al 14/07/2026</th><th class=n>Crédito al 14/07/2026</th><th class=n>Abonos al 06/08/2026</th><th class=n>Crédito al 06/08/2026</th><th class=n>abono al 01/09/2026</th><th class=n>crédito al 01/09/2026</th><th class=n>abono 24/09/2023</th><th class=n>crédito al 02/10/2026</th><th class=n>Saldo pendiente</th></tr>
+<tr><th class=ctr>Fecha</th><th>Documento</th><th class=n>Monto</th><th class=n>Abono al  07/05/2026</th><th class=n>Saldo de crédito al 07/05/2026</th><th class=n>Abonos al 14/07/2026</th><th class=n>Crédito al 14/07/2026</th><th class=n>Abonos al 06/08/2026</th><th class=n>Crédito al 06/08/2026</th><th class=n>abono al 01/09/2026</th><th class=n>crédito al 01/09/2026</th><th class=n>abono 24/09/2023</th><th class=n>crédito al 09/10/2026</th><th class=n>Saldo pendiente</th></tr>
 </thead>
 <tbody>
 <tr><td class=ctr>04/08/2025</td><td>1068-2025</td><td class=n>$ 14.260,00</td><td class=n>$ 1.285,00</td><td class=n>$ 12.975,00</td><td class=n>$ 1.206,00</td><td class=n>$ 11.769,00</td><td class=n>$ 10.000,00</td><td class=n>$ 1.769,00</td><td class=n>$ 1.200,00</td><td class=n>$ 569,00</td><td class=n>$ 569,00</td><td class=n>$ -</td><td class=n>$ -</td></tr>
@@ -819,30 +801,21 @@ td.bar{width:80px}
 <div class="table-scroll">
 <table><thead><tr><th>Rango</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% del pendiente</th></tr></thead>
 <tbody>
-<tr class='resumen'><td>Vencidas</td><td class=n>3</td><td class=n>139.671</td><td class=n>64,5%</td></tr>
-<tr><td>Vence en 0-30 dias</td><td class=n>22</td><td class=n>30.211</td><td class=n>14,0%</td></tr>
+<tr class='resumen'><td>Vencidas</td><td class=n>3</td><td class=n>139.671</td><td class=n>67,4%</td></tr>
+<tr><td>Vence en 0-30 dias</td><td class=n>13</td><td class=n>20.990</td><td class=n>10,1%</td></tr>
 <tr><td>Vence en 31-60 dias</td><td class=n>0</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
-<tr><td>Vence en 61-90 dias</td><td class=n>1</td><td class=n>46.617</td><td class=n>21,5%</td></tr>
+<tr><td>Vence en 61-90 dias</td><td class=n>1</td><td class=n>46.617</td><td class=n>22,5%</td></tr>
 <tr><td>Vence en +90 dias</td><td class=n>0</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
 </tbody>
-<tfoot><tr><td>TOTAL</td><td class=n>26</td><td class=n>216.499</td><td class=n>100,0%</td></tr></tfoot></table>
+<tfoot><tr><td>TOTAL</td><td class=n>17</td><td class=n>207.278</td><td class=n>100,0%</td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">ONG</div><h2>Cuentas por cobrar &mdash; ONG</h2></div>
 <div class="table-scroll">
 <table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha factura</th><th class=ctr>Plazo</th><th class=ctr>Fecha esperada de cobro</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead>
 <tbody>
-<tr><td><b>SCI</b></td><td><span class=mono>00000800</span></td><td class=ctr>24/09/2026</td><td class=ctr>30 d</td><td class=ctr>24/10/2026</td><td class=n>1.281</td><td class=ctr><span class='badge badge-green'>Vence en 15 d</span></td></tr>
-<tr><td><b>SCI</b></td><td><span class=mono>00000799</span></td><td class=ctr>24/09/2026</td><td class=ctr>30 d</td><td class=ctr>24/10/2026</td><td class=n>612</td><td class=ctr><span class='badge badge-green'>Vence en 15 d</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000803</span></td><td class=ctr>25/09/2026</td><td class=ctr>30 d</td><td class=ctr>25/10/2026</td><td class=n>1.000</td><td class=ctr><span class='badge badge-green'>Vence en 16 d</span></td></tr>
 <tr><td><b>UNICEF</b></td><td><span class=mono>00000801</span></td><td class=ctr>25/09/2026</td><td class=ctr>30 d</td><td class=ctr>25/10/2026</td><td class=n>7.109</td><td class=ctr><span class='badge badge-green'>Vence en 16 d</span></td></tr>
 <tr><td><b>PNUD</b></td><td><span class=mono>00000804</span></td><td class=ctr>28/09/2026</td><td class=ctr>30 d</td><td class=ctr>28/10/2026</td><td class=n>1.452</td><td class=ctr><span class='badge badge-green'>Vence en 19 d</span></td></tr>
 <tr><td><b>UNICEF</b></td><td><span class=mono>00000805-806-807-808</span></td><td class=ctr>29/09/2026</td><td class=ctr>30 d</td><td class=ctr>29/10/2026</td><td class=n>1.317</td><td class=ctr><span class='badge badge-green'>Vence en 20 d</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000813</span></td><td class=ctr>30/09/2026</td><td class=ctr>30 d</td><td class=ctr>30/10/2026</td><td class=n>71</td><td class=ctr><span class='badge badge-green'>Vence en 21 d</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000814</span></td><td class=ctr>30/09/2026</td><td class=ctr>30 d</td><td class=ctr>30/10/2026</td><td class=n>275</td><td class=ctr><span class='badge badge-green'>Vence en 21 d</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000815</span></td><td class=ctr>30/09/2026</td><td class=ctr>30 d</td><td class=ctr>30/10/2026</td><td class=n>204</td><td class=ctr><span class='badge badge-green'>Vence en 21 d</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000810</span></td><td class=ctr>30/09/2026</td><td class=ctr>30 d</td><td class=ctr>30/10/2026</td><td class=n>3.140</td><td class=ctr><span class='badge badge-green'>Vence en 21 d</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000811</span></td><td class=ctr>30/09/2026</td><td class=ctr>30 d</td><td class=ctr>30/10/2026</td><td class=n>550</td><td class=ctr><span class='badge badge-green'>Vence en 21 d</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000812</span></td><td class=ctr>30/09/2026</td><td class=ctr>30 d</td><td class=ctr>30/10/2026</td><td class=n>2.088</td><td class=ctr><span class='badge badge-green'>Vence en 21 d</span></td></tr>
 <tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE -016-2026</span></td><td class=ctr>02/10/2026</td><td class=ctr>30 d</td><td class=ctr>01/11/2026</td><td class=n>132</td><td class=ctr><span class='badge badge-green'>Vence en 23 d</span></td></tr>
 <tr><td><b>SCI</b></td><td><span class=mono>00000819</span></td><td class=ctr>05/10/2026</td><td class=ctr>30 d</td><td class=ctr>04/11/2026</td><td class=n>167</td><td class=ctr><span class='badge badge-green'>Vence en 26 d</span></td></tr>
 <tr><td><b>SCI</b></td><td><span class=mono>00000820</span></td><td class=ctr>05/10/2026</td><td class=ctr>30 d</td><td class=ctr>04/11/2026</td><td class=n>160</td><td class=ctr><span class='badge badge-green'>Vence en 26 d</span></td></tr>
@@ -852,7 +825,7 @@ td.bar{width:80px}
 <tr><td><b>CNR</b></td><td><span class=mono>00000822</span></td><td class=ctr>06/10/2026</td><td class=ctr>30 d</td><td class=ctr>05/11/2026</td><td class=n>1.004</td><td class=ctr><span class='badge badge-green'>Vence en 27 d</span></td></tr>
 <tr><td><b>UNICEF</b></td><td><span class=mono>00000821</span></td><td class=ctr>06/10/2026</td><td class=ctr>30 d</td><td class=ctr>05/11/2026</td><td class=n>2.985</td><td class=ctr><span class='badge badge-green'>Vence en 27 d</span></td></tr>
 </tbody>
-<tfoot><tr><td colspan=5>TOTAL ONG</td><td class=n>24.215</td><td></td></tr></tfoot></table>
+<tfoot><tr><td colspan=5>TOTAL ONG</td><td class=n>14.994</td><td></td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">Petr&oacute;leo</div><h2>Cuentas por cobrar &mdash; Petr&oacute;leo</h2></div>
 <div class="table-scroll">
@@ -881,31 +854,22 @@ td.bar{width:80px}
 <tr><td><span class=mono>INVOICE -016-2026</span></td><td class=ctr>02/10/2026</td><td class=ctr>30 d</td><td class=ctr>01/11/2026</td><td class=n>132</td><td class=ctr><span class='badge badge-green'>Vence en 23 d</span></td></tr>
 <tr class='resumen'><td colspan=6><b>MAURELL</b> &middot; 1 factura(s) pendiente(s) &middot; total 46.617</td></tr>
 <tr><td><span class=mono>00000794</span></td><td class=ctr>17/09/2026</td><td class=ctr>90 d</td><td class=ctr>16/12/2026</td><td class=n>46.617</td><td class=ctr><span class='badge badge-green'>Vence en 68 d</span></td></tr>
-<tr class='resumen'><td colspan=6><b>UNICEF</b> &middot; 11 factura(s) pendiente(s) &middot; total 19.089</td></tr>
-<tr><td><span class=mono>00000803</span></td><td class=ctr>25/09/2026</td><td class=ctr>30 d</td><td class=ctr>25/10/2026</td><td class=n>1.000</td><td class=ctr><span class='badge badge-green'>Vence en 16 d</span></td></tr>
+<tr class='resumen'><td colspan=6><b>UNICEF</b> &middot; 4 factura(s) pendiente(s) &middot; total 11.761</td></tr>
 <tr><td><span class=mono>00000801</span></td><td class=ctr>25/09/2026</td><td class=ctr>30 d</td><td class=ctr>25/10/2026</td><td class=n>7.109</td><td class=ctr><span class='badge badge-green'>Vence en 16 d</span></td></tr>
 <tr><td><span class=mono>00000805-806-807-808</span></td><td class=ctr>29/09/2026</td><td class=ctr>30 d</td><td class=ctr>29/10/2026</td><td class=n>1.317</td><td class=ctr><span class='badge badge-green'>Vence en 20 d</span></td></tr>
-<tr><td><span class=mono>00000813</span></td><td class=ctr>30/09/2026</td><td class=ctr>30 d</td><td class=ctr>30/10/2026</td><td class=n>71</td><td class=ctr><span class='badge badge-green'>Vence en 21 d</span></td></tr>
-<tr><td><span class=mono>00000814</span></td><td class=ctr>30/09/2026</td><td class=ctr>30 d</td><td class=ctr>30/10/2026</td><td class=n>275</td><td class=ctr><span class='badge badge-green'>Vence en 21 d</span></td></tr>
-<tr><td><span class=mono>00000815</span></td><td class=ctr>30/09/2026</td><td class=ctr>30 d</td><td class=ctr>30/10/2026</td><td class=n>204</td><td class=ctr><span class='badge badge-green'>Vence en 21 d</span></td></tr>
-<tr><td><span class=mono>00000810</span></td><td class=ctr>30/09/2026</td><td class=ctr>30 d</td><td class=ctr>30/10/2026</td><td class=n>3.140</td><td class=ctr><span class='badge badge-green'>Vence en 21 d</span></td></tr>
-<tr><td><span class=mono>00000811</span></td><td class=ctr>30/09/2026</td><td class=ctr>30 d</td><td class=ctr>30/10/2026</td><td class=n>550</td><td class=ctr><span class='badge badge-green'>Vence en 21 d</span></td></tr>
-<tr><td><span class=mono>00000812</span></td><td class=ctr>30/09/2026</td><td class=ctr>30 d</td><td class=ctr>30/10/2026</td><td class=n>2.088</td><td class=ctr><span class='badge badge-green'>Vence en 21 d</span></td></tr>
 <tr><td><span class=mono>00000823</span></td><td class=ctr>06/10/2026</td><td class=ctr>30 d</td><td class=ctr>05/11/2026</td><td class=n>350</td><td class=ctr><span class='badge badge-green'>Vence en 27 d</span></td></tr>
 <tr><td><span class=mono>00000821</span></td><td class=ctr>06/10/2026</td><td class=ctr>30 d</td><td class=ctr>05/11/2026</td><td class=n>2.985</td><td class=ctr><span class='badge badge-green'>Vence en 27 d</span></td></tr>
-<tr class='resumen'><td colspan=6><b>SCI</b> &middot; 6 factura(s) pendiente(s) &middot; total 2.538</td></tr>
-<tr><td><span class=mono>00000800</span></td><td class=ctr>24/09/2026</td><td class=ctr>30 d</td><td class=ctr>24/10/2026</td><td class=n>1.281</td><td class=ctr><span class='badge badge-green'>Vence en 15 d</span></td></tr>
-<tr><td><span class=mono>00000799</span></td><td class=ctr>24/09/2026</td><td class=ctr>30 d</td><td class=ctr>24/10/2026</td><td class=n>612</td><td class=ctr><span class='badge badge-green'>Vence en 15 d</span></td></tr>
-<tr><td><span class=mono>00000819</span></td><td class=ctr>05/10/2026</td><td class=ctr>30 d</td><td class=ctr>04/11/2026</td><td class=n>167</td><td class=ctr><span class='badge badge-green'>Vence en 26 d</span></td></tr>
-<tr><td><span class=mono>00000820</span></td><td class=ctr>05/10/2026</td><td class=ctr>30 d</td><td class=ctr>04/11/2026</td><td class=n>160</td><td class=ctr><span class='badge badge-green'>Vence en 26 d</span></td></tr>
-<tr><td><span class=mono>00000817</span></td><td class=ctr>05/10/2026</td><td class=ctr>30 d</td><td class=ctr>04/11/2026</td><td class=n>146</td><td class=ctr><span class='badge badge-green'>Vence en 26 d</span></td></tr>
-<tr><td><span class=mono>00000818</span></td><td class=ctr>05/10/2026</td><td class=ctr>30 d</td><td class=ctr>04/11/2026</td><td class=n>172</td><td class=ctr><span class='badge badge-green'>Vence en 26 d</span></td></tr>
 <tr class='resumen'><td colspan=6><b>PNUD</b> &middot; 1 factura(s) pendiente(s) &middot; total 1.452</td></tr>
 <tr><td><span class=mono>00000804</span></td><td class=ctr>28/09/2026</td><td class=ctr>30 d</td><td class=ctr>28/10/2026</td><td class=n>1.452</td><td class=ctr><span class='badge badge-green'>Vence en 19 d</span></td></tr>
 <tr class='resumen'><td colspan=6><b>CNR</b> &middot; 1 factura(s) pendiente(s) &middot; total 1.004</td></tr>
 <tr><td><span class=mono>00000822</span></td><td class=ctr>06/10/2026</td><td class=ctr>30 d</td><td class=ctr>05/11/2026</td><td class=n>1.004</td><td class=ctr><span class='badge badge-green'>Vence en 27 d</span></td></tr>
+<tr class='resumen'><td colspan=6><b>SCI</b> &middot; 4 factura(s) pendiente(s) &middot; total 645</td></tr>
+<tr><td><span class=mono>00000819</span></td><td class=ctr>05/10/2026</td><td class=ctr>30 d</td><td class=ctr>04/11/2026</td><td class=n>167</td><td class=ctr><span class='badge badge-green'>Vence en 26 d</span></td></tr>
+<tr><td><span class=mono>00000820</span></td><td class=ctr>05/10/2026</td><td class=ctr>30 d</td><td class=ctr>04/11/2026</td><td class=n>160</td><td class=ctr><span class='badge badge-green'>Vence en 26 d</span></td></tr>
+<tr><td><span class=mono>00000817</span></td><td class=ctr>05/10/2026</td><td class=ctr>30 d</td><td class=ctr>04/11/2026</td><td class=n>146</td><td class=ctr><span class='badge badge-green'>Vence en 26 d</span></td></tr>
+<tr><td><span class=mono>00000818</span></td><td class=ctr>05/10/2026</td><td class=ctr>30 d</td><td class=ctr>04/11/2026</td><td class=n>172</td><td class=ctr><span class='badge badge-green'>Vence en 26 d</span></td></tr>
 </tbody>
-<tfoot><tr><td colspan=4>TOTAL (26 facturas)</td><td class=n>216.499</td><td></td></tr></tfoot></table>
+<tfoot><tr><td colspan=4>TOTAL (17 facturas)</td><td class=n>207.278</td><td></td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">INPROCCA</div><h2>INPROCCA &mdash; facturas con m&aacute;s de 30 d&iacute;as</h2><p class="panel-desc">Subconjunto de la cartera Petr&oacute;leo: facturas de INPROCCA que superan su cr&eacute;dito de 30 d&iacute;as sin cobrar.</p></div>
 <div class="table-scroll">
@@ -921,23 +885,23 @@ td.bar{width:80px}
 
 <div id="tab-comercial" class="tab-panel">
 <div class="kpis">
-<div class="kpi featured"><div class="lbl">Cotizaciones emitidas</div><div class="val teal">61</div><div class="sub">USD 950.336 cotizados (neto)</div></div>
-<div class="kpi"><div class="lbl">Utilidad estimada</div><div class="val teal">204.701</div><div class="sub">Margen 21,5% sobre lo cotizado</div></div>
-<div class="kpi"><div class="lbl">Aprobadas</div><div class="val green">100.071</div><div class="sub">18 cotizaciones · tasa 62,1%</div></div>
+<div class="kpi featured"><div class="lbl">Cotizaciones emitidas</div><div class="val teal">63</div><div class="sub">USD 954.090 cotizados (neto)</div></div>
+<div class="kpi"><div class="lbl">Utilidad estimada</div><div class="val teal">205.389</div><div class="sub">Margen 21,5% sobre lo cotizado</div></div>
+<div class="kpi"><div class="lbl">Aprobadas</div><div class="val green">101.056</div><div class="sub">19 cotizaciones · tasa 63,3%</div></div>
 <div class="kpi"><div class="lbl">Negadas</div><div class="val red">402.719</div><div class="sub">11 cotizaciones</div></div>
-<div class="kpi"><div class="lbl">Pipeline abierto</div><div class="val amber">447.546</div><div class="sub">23 en evaluaci&oacute;n · 9 relanzadas</div></div>
-<div class="kpi"><div class="lbl">Margen aprobadas</div><div class="val slate">29,1%</div><div class="sub">Negadas: 21,7%</div></div>
+<div class="kpi"><div class="lbl">Pipeline abierto</div><div class="val amber">450.315</div><div class="sub">24 en evaluaci&oacute;n · 9 relanzadas</div></div>
+<div class="kpi"><div class="lbl">Margen aprobadas</div><div class="val slate">29,0%</div><div class="sub">Negadas: 21,7%</div></div>
 </div>
 <div class="panel-head"><div class="eyebrow">An&aacute;lisis</div><h2>An&aacute;lisis comercial</h2><p class="panel-desc">Lectura autom&aacute;tica del tablero comercial (hoja "TABLERO COMERCIAL" del Excel). Se recalcula cada vez que se actualiza el archivo.</p></div>
 <div class="note"><ul>
-<li><b>Actividad:</b> entre el 01/09/2026 y el 07/10/2026 se emitieron <b>61 cotizaciones</b> por <b>USD 950.336</b> (monto neto: base imponible + exonerado), con utilidad estimada de USD 204.701 (margen 21,5%).</li>
-<li><b>Resultado:</b> de las cotizaciones ya resueltas, <b>18 fueron aprobadas</b> (USD 100.071) y <b>11 negadas</b> (USD 402.719): tasa de aprobaci&oacute;n de <b>62,1%</b> por cantidad y 19,9% por monto.</li>
-<li><b>Pipeline abierto:</b> 32 cotizaciones por <b>USD 447.546</b> siguen en evaluaci&oacute;n (23) o relanzadas (9), el 47,1% del monto cotizado. La mayor es de <b>TINTA VIOLETA</b> (KIT WASH) por USD 100.115, el 22,4% del pipeline abierto.</li>
-<li><b>Concentraci&oacute;n:</b> <b>OIM</b> concentra el 36,2% del monto cotizado y los tres primeros clientes el <b>69,6%</b>.</li>
-<li><b>Conversi&oacute;n por cliente</b> (clientes con al menos 3 cotizaciones resueltas): mejor tasa de aprobaci&oacute;n en <b>INPROCCA</b> (100,0%) y la m&aacute;s baja en <b>WVV</b> (33,3%).</li>
-<li><b>M&aacute;rgenes:</b> las cotizaciones aprobadas tienen un margen estimado de 29,1% frente a 21,7% en las negadas; las negadas no ten&iacute;an un margen mayor, por lo que el precio no parece explicar por s&iacute; solo las negativas.</li>
+<li><b>Actividad:</b> entre el 01/09/2026 y el 09/10/2026 se emitieron <b>63 cotizaciones</b> por <b>USD 954.090</b> (monto neto: base imponible + exonerado), con utilidad estimada de USD 205.389 (margen 21,5%).</li>
+<li><b>Resultado:</b> de las cotizaciones ya resueltas, <b>19 fueron aprobadas</b> (USD 101.056) y <b>11 negadas</b> (USD 402.719): tasa de aprobaci&oacute;n de <b>63,3%</b> por cantidad y 20,1% por monto.</li>
+<li><b>Pipeline abierto:</b> 33 cotizaciones por <b>USD 450.315</b> siguen en evaluaci&oacute;n (24) o relanzadas (9), el 47,2% del monto cotizado. La mayor es de <b>TINTA VIOLETA</b> (KIT WASH) por USD 100.115, el 22,2% del pipeline abierto.</li>
+<li><b>Concentraci&oacute;n:</b> <b>OIM</b> concentra el 36,4% del monto cotizado y los tres primeros clientes el <b>69,6%</b>.</li>
+<li><b>Conversi&oacute;n por cliente</b> (clientes con al menos 3 cotizaciones resueltas): mejor tasa de aprobaci&oacute;n en <b>SCI</b> (100,0%) y la m&aacute;s baja en <b>WVV</b> (33,3%).</li>
+<li><b>M&aacute;rgenes:</b> las cotizaciones aprobadas tienen un margen estimado de 29,0% frente a 21,7% en las negadas; las negadas no ten&iacute;an un margen mayor, por lo que el precio no parece explicar por s&iacute; solo las negativas.</li>
 <li><b>Equipo:</b> <b>MARIELIS VILLALOBOS</b> lidera el monto aprobado (USD 55.181, 5 cotizaciones aprobadas).</li>
-<li><b>Tendencia:</b> el mes de mayor actividad fue <b>Sep 2026</b> con 52 cotizaciones. El 93,4% de las solicitudes llega por correo electr&oacute;nico.</li>
+<li><b>Tendencia:</b> el mes de mayor actividad fue <b>Sep 2026</b> con 52 cotizaciones. El 93,7% de las solicitudes llega por correo electr&oacute;nico.</li>
 </ul></div>
 <div class="callout">Hay n&uacute;meros de presupuesto repetidos en el tablero: V-202-2026 (2 veces), V-228-2026 (2 veces). Conviene revisar la numeraci&oacute;n.</div>
 <div class="panel-head"><div class="eyebrow">Mensual</div><h2>Resumen mensual</h2><p class="panel-desc">Cotizaciones agrupadas por mes de la solicitud. Monto neto = base imponible + exonerado. Tasa de aprobaci&oacute;n = aprobadas / (aprobadas + negadas).</p></div>
@@ -945,13 +909,13 @@ td.bar{width:80px}
 <table class="wide-table"><thead><tr><th>Mes</th><th class=n>Cotiz.</th><th class=n>Monto cotizado</th><th class=n>Utilidad est.</th><th class=n>Margen</th><th class=n>Aprob.</th><th class=n>Monto aprobado</th><th class=n>Negadas</th><th class=n>Abiertas</th><th class=n>Monto abierto</th><th class=n>Tasa aprob.</th><th>Cliente principal</th></tr></thead>
 <tbody>
 <tr><td><b>Sep 2026</b></td><td class=n>52</td><td class=n>584.917</td><td class=n>129.093</td><td class=n>22,1%</td><td class=n>16</td><td class=n>69.408</td><td class=n>10</td><td class=n>26</td><td class=n>361.969</td><td class=n>61,5%</td><td>TINTA VIOLETA</td></tr>
-<tr><td><b>Oct 2026 (en curso)</b></td><td class=n>9</td><td class=n>365.419</td><td class=n>75.608</td><td class=n>20,7%</td><td class=n>2</td><td class=n>30.662</td><td class=n>1</td><td class=n>6</td><td class=n>85.577</td><td class=n>66,7%</td><td>OIM</td></tr>
+<tr><td><b>Oct 2026 (en curso)</b></td><td class=n>11</td><td class=n>369.173</td><td class=n>76.296</td><td class=n>20,7%</td><td class=n>3</td><td class=n>31.648</td><td class=n>1</td><td class=n>7</td><td class=n>88.346</td><td class=n>75,0%</td><td>OIM</td></tr>
 </tbody>
-<tfoot><tr><td>TOTAL</td><td class=n>61</td><td class=n>950.336</td><td class=n>204.701</td><td class=n>21,5%</td><td class=n>18</td><td class=n>100.071</td><td class=n>11</td><td class=n>32</td><td class=n>447.546</td><td class=n>62,1%</td><td></td></tr></tfoot></table>
+<tfoot><tr><td>TOTAL</td><td class=n>63</td><td class=n>954.090</td><td class=n>205.389</td><td class=n>21,5%</td><td class=n>19</td><td class=n>101.056</td><td class=n>11</td><td class=n>33</td><td class=n>450.315</td><td class=n>63,3%</td><td></td></tr></tfoot></table>
 </div>
 <div class="note" style="margin-top:12px"><ul>
 <li><b>Sep 2026</b>: 52 cotizaciones por <b>USD 584.917</b> (utilidad estimada USD 129.093, margen 22,1%); aprobadas 16 (USD 69.408), negadas 10, abiertas 26 (USD 361.969); tasa de aprobaci&oacute;n de 61,5% sobre las cotizaciones ya resueltas. Mayor cliente cotizado: TINTA VIOLETA (USD 178.938).</li>
-<li><b>Oct 2026</b> (mes en curso, cifras parciales): 9 cotizaciones por <b>USD 365.419</b> (utilidad estimada USD 75.608, margen 20,7%); aprobadas 2 (USD 30.662), negadas 1, abiertas 6 (USD 85.577); tasa de aprobaci&oacute;n de 66,7% sobre las cotizaciones ya resueltas. Mayor cliente cotizado: OIM (USD 273.087).</li>
+<li><b>Oct 2026</b> (mes en curso, cifras parciales): 11 cotizaciones por <b>USD 369.173</b> (utilidad estimada USD 76.296, margen 20,7%); aprobadas 3 (USD 31.648), negadas 1, abiertas 7 (USD 88.346); tasa de aprobaci&oacute;n de 75,0% sobre las cotizaciones ya resueltas. Mayor cliente cotizado: OIM (USD 275.856).</li>
 </ul></div>
 <div class="panel-head"><div class="eyebrow">Clientes</div><h2>Cotizaciones por cliente</h2><p class="panel-desc">Monto cotizado y resultado por cliente.</p></div>
 <div class="chart-card">
@@ -962,7 +926,7 @@ td.bar{width:80px}
 <line x1='651' y1='10' x2='651' y2='370' class='chart-grid'></line><text x='651' y='386' text-anchor='middle' class='chart-ylabel'>375.000</text>
 <line x1='836' y1='10' x2='836' y2='370' class='chart-grid'></line><text x='836' y='386' text-anchor='middle' class='chart-ylabel'>500.000</text>
 
-<rect class='bar-hit' tabindex='0' x='0' y='10' width='900' height='30' data-label='OIM' data-value='344.165' data-docs='7'></rect><rect class='bar-rect peak' x='96' y='15' width='509.4' height='20' rx='4'></rect><text x='88' y='29' text-anchor='end' class='chart-xlabel mono'>OIM</text><text x='613.4' y='29' text-anchor='start' class='chart-toplabel'>344.165</text>
+<rect class='bar-hit' tabindex='0' x='0' y='10' width='900' height='30' data-label='OIM' data-value='346.934' data-docs='8'></rect><rect class='bar-rect peak' x='96' y='15' width='513.5' height='20' rx='4'></rect><text x='88' y='29' text-anchor='end' class='chart-xlabel mono'>OIM</text><text x='617.5' y='29' text-anchor='start' class='chart-toplabel'>346.934</text>
 <rect class='bar-hit' tabindex='0' x='0' y='40' width='900' height='30' data-label='TINTA VIOLETA' data-value='178.938' data-docs='3'></rect><rect class='bar-rect' x='96' y='45' width='264.8' height='20' rx='4'></rect><text x='88' y='59' text-anchor='end' class='chart-xlabel mono'>TINTA VIOLETA</text>
 <rect class='bar-hit' tabindex='0' x='0' y='70' width='900' height='30' data-label='CIR' data-value='138.341' data-docs='17'></rect><rect class='bar-rect' x='96' y='75' width='204.7' height='20' rx='4'></rect><text x='88' y='89' text-anchor='end' class='chart-xlabel mono'>CIR</text>
 <rect class='bar-hit' tabindex='0' x='0' y='100' width='900' height='30' data-label='CISP' data-value='99.531' data-docs='3'></rect><rect class='bar-rect' x='96' y='105' width='147.3' height='20' rx='4'></rect><text x='88' y='119' text-anchor='end' class='chart-xlabel mono'>CISP</text>
@@ -971,7 +935,7 @@ td.bar{width:80px}
 <rect class='bar-hit' tabindex='0' x='0' y='190' width='900' height='30' data-label='UNICEF' data-value='15.945' data-docs='6'></rect><rect class='bar-rect' x='96' y='195' width='23.6' height='20' rx='4'></rect><text x='88' y='209' text-anchor='end' class='chart-xlabel mono'>UNICEF</text>
 <rect class='bar-hit' tabindex='0' x='0' y='220' width='900' height='30' data-label='GUSTAVO CAMACHO' data-value='12.525' data-docs='1'></rect><rect class='bar-rect' x='96' y='225' width='18.5' height='20' rx='4'></rect><text x='88' y='239' text-anchor='end' class='chart-xlabel mono'>GUSTAVO CAMACHO</text>
 <rect class='bar-hit' tabindex='0' x='0' y='250' width='900' height='30' data-label='ACH' data-value='8.083' data-docs='2'></rect><rect class='bar-rect' x='96' y='255' width='12' height='20' rx='4'></rect><text x='88' y='269' text-anchor='end' class='chart-xlabel mono'>ACH</text>
-<rect class='bar-hit' tabindex='0' x='0' y='280' width='900' height='30' data-label='SCI' data-value='4.730' data-docs='5'></rect><rect class='bar-rect' x='96' y='285' width='7' height='20' rx='4'></rect><text x='88' y='299' text-anchor='end' class='chart-xlabel mono'>SCI</text>
+<rect class='bar-hit' tabindex='0' x='0' y='280' width='900' height='30' data-label='SCI' data-value='5.715' data-docs='6'></rect><rect class='bar-rect' x='96' y='285' width='8.5' height='20' rx='4'></rect><text x='88' y='299' text-anchor='end' class='chart-xlabel mono'>SCI</text>
 <rect class='bar-hit' tabindex='0' x='0' y='310' width='900' height='30' data-label='CNR' data-value='1.898' data-docs='1'></rect><rect class='bar-rect' x='96' y='315' width='2.8' height='20' rx='4'></rect><text x='88' y='329' text-anchor='end' class='chart-xlabel mono'>CNR</text>
 <rect class='bar-hit' tabindex='0' x='0' y='340' width='900' height='30' data-label='ACF' data-value='1.636' data-docs='2'></rect><rect class='bar-rect' x='96' y='345' width='2.4' height='20' rx='4'></rect><text x='88' y='359' text-anchor='end' class='chart-xlabel mono'>ACF</text>
 
@@ -981,37 +945,37 @@ td.bar{width:80px}
 <div class="table-scroll">
 <table><thead><tr><th>Cliente</th><th class=n>Cotiz.</th><th class=n>Monto cotizado</th><th class=n>% del total</th><th class=n>Aprobado</th><th class=n>Negado</th><th class=n>Abierto</th><th class=n>Tasa aprob.</th></tr></thead>
 <tbody>
-<tr><td><b>OIM</b></td><td class=n>7</td><td class=n>344.165</td><td class=n>36,2%</td><td class=n>26.275</td><td class=n>314.755</td><td class=n>3.135</td><td class=n>40,0%</td></tr>
+<tr><td><b>OIM</b></td><td class=n>8</td><td class=n>346.934</td><td class=n>36,4%</td><td class=n>26.275</td><td class=n>314.755</td><td class=n>5.904</td><td class=n>40,0%</td></tr>
 <tr><td><b>TINTA VIOLETA</b></td><td class=n>3</td><td class=n>178.938</td><td class=n>18,8%</td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n>178.938</td><td class=n>&mdash;</td></tr>
-<tr><td><b>CIR</b></td><td class=n>17</td><td class=n>138.341</td><td class=n>14,6%</td><td class=n>666</td><td class=n>1.338</td><td class=n>136.337</td><td class=n>50,0%</td></tr>
-<tr><td><b>CISP</b></td><td class=n>3</td><td class=n>99.531</td><td class=n>10,5%</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>12.431</td><td class=n>87.100</td><td class=n>0,0%</td></tr>
-<tr><td><b>INPROCCA</b></td><td class=n>6</td><td class=n>82.319</td><td class=n>8,7%</td><td class=n>55.181</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>27.138</td><td class=n>100,0%</td></tr>
+<tr><td><b>CIR</b></td><td class=n>17</td><td class=n>138.341</td><td class=n>14,5%</td><td class=n>666</td><td class=n>1.338</td><td class=n>136.337</td><td class=n>50,0%</td></tr>
+<tr><td><b>CISP</b></td><td class=n>3</td><td class=n>99.531</td><td class=n>10,4%</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>12.431</td><td class=n>87.100</td><td class=n>0,0%</td></tr>
+<tr><td><b>INPROCCA</b></td><td class=n>6</td><td class=n>82.319</td><td class=n>8,6%</td><td class=n>55.181</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>27.138</td><td class=n>100,0%</td></tr>
 <tr><td><b>WVV</b></td><td class=n>3</td><td class=n>59.724</td><td class=n>6,3%</td><td class=n>556</td><td class=n>59.168</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>33,3%</td></tr>
 <tr><td><b>UNICEF</b></td><td class=n>6</td><td class=n>15.945</td><td class=n>1,7%</td><td class=n>14.087</td><td class=n>1.332</td><td class=n>525</td><td class=n>80,0%</td></tr>
 <tr><td><b>GUSTAVO CAMACHO</b></td><td class=n>1</td><td class=n>12.525</td><td class=n>1,3%</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>12.525</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
-<tr><td><b>ACH</b></td><td class=n>2</td><td class=n>8.083</td><td class=n>0,9%</td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n>8.083</td><td class=n>&mdash;</td></tr>
-<tr><td><b>SCI</b></td><td class=n>5</td><td class=n>4.730</td><td class=n>0,5%</td><td class=n>1.970</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>2.760</td><td class=n>100,0%</td></tr>
+<tr><td><b>ACH</b></td><td class=n>2</td><td class=n>8.083</td><td class=n>0,8%</td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n>8.083</td><td class=n>&mdash;</td></tr>
+<tr><td><b>SCI</b></td><td class=n>6</td><td class=n>5.715</td><td class=n>0,6%</td><td class=n>2.955</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>2.760</td><td class=n>100,0%</td></tr>
 <tr><td><b>CNR</b></td><td class=n>1</td><td class=n>1.898</td><td class=n>0,2%</td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n>1.898</td><td class=n>&mdash;</td></tr>
 <tr><td><b>ACF</b></td><td class=n>2</td><td class=n>1.636</td><td class=n>0,2%</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>525</td><td class=n>1.111</td><td class=n>0,0%</td></tr>
 <tr><td><b>PNUD</b></td><td class=n>1</td><td class=n>1.216</td><td class=n>0,1%</td><td class=n>1.216</td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n>100,0%</td></tr>
 <tr><td><b>HIAS</b></td><td class=n>3</td><td class=n>765</td><td class=n>0,1%</td><td class=n>120</td><td class=n>645</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>66,7%</td></tr>
 <tr><td><b>OPECA</b></td><td class=n>1</td><td class=n>520</td><td class=n>0,1%</td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n>520</td><td class=n>&mdash;</td></tr>
 </tbody>
-<tfoot><tr><td>TOTAL</td><td class=n>61</td><td class=n>950.336</td><td class=n>100,0%</td><td class=n>100.071</td><td class=n>402.719</td><td class=n>447.546</td><td class=n>62,1%</td></tr></tfoot></table>
+<tfoot><tr><td>TOTAL</td><td class=n>63</td><td class=n>954.090</td><td class=n>100,0%</td><td class=n>101.056</td><td class=n>402.719</td><td class=n>450.315</td><td class=n>63,3%</td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">Equipo</div><h2>Desempe&ntilde;o por responsable</h2><p class="panel-desc">Cotizaciones elaboradas por cada persona del equipo comercial.</p></div>
 <div class="table-scroll">
 <table><thead><tr><th>Responsable</th><th class=n>Cotiz.</th><th class=n>Monto cotizado</th><th class=n>Aprob.</th><th class=n>Monto aprobado</th><th class=n>Negadas</th><th class=n>Abiertas</th><th class=n>Tasa aprob.</th></tr></thead>
 <tbody>
 <tr><td><b>MARIELIS VILLALOBOS</b></td><td class=n>6</td><td class=n>55.701</td><td class=n>5</td><td class=n>55.181</td><td class=n>0</td><td class=n>1</td><td class=n>100,0%</td></tr>
-<tr><td><b>JOS&#201; MORENO</b></td><td class=n>42</td><td class=n>744.972</td><td class=n>6</td><td class=n>38.678</td><td class=n>8</td><td class=n>28</td><td class=n>42,9%</td></tr>
-<tr><td><b>KATHERINE MORENO</b></td><td class=n>4</td><td class=n>16.881</td><td class=n>3</td><td class=n>3.185</td><td class=n>0</td><td class=n>1</td><td class=n>100,0%</td></tr>
+<tr><td><b>JOS&#201; MORENO</b></td><td class=n>43</td><td class=n>747.741</td><td class=n>6</td><td class=n>38.678</td><td class=n>8</td><td class=n>29</td><td class=n>42,9%</td></tr>
+<tr><td><b>KATHERINE MORENO</b></td><td class=n>5</td><td class=n>17.866</td><td class=n>4</td><td class=n>4.170</td><td class=n>0</td><td class=n>1</td><td class=n>100,0%</td></tr>
 <tr><td><b>ANDR&#201;S ROJAS</b></td><td class=n>9</td><td class=n>132.782</td><td class=n>4</td><td class=n>3.027</td><td class=n>3</td><td class=n>2</td><td class=n>57,1%</td></tr>
 </tbody></table>
 </div>
 <div class="panel-head"><div class="eyebrow">Acciones</div><h2>Recomendaciones comerciales</h2></div>
 <div class="note"><ul>
-<li><b>Dar seguimiento al pipeline abierto.</b> Hay USD 447.546 en 32 cotizaciones sin resolver; priorizar las de mayor monto y definir fecha de cierre para las relanzadas.</li>
+<li><b>Dar seguimiento al pipeline abierto.</b> Hay USD 450.315 en 33 cotizaciones sin resolver; priorizar las de mayor monto y definir fecha de cierre para las relanzadas.</li>
 <li><b>Revisar la estrategia con clientes de baja conversi&oacute;n</b> (WVV): analizar precio, plazo y especificaciones de las cotizaciones negadas.</li>
 <li><b>Diversificar la cartera comercial.</b> Los tres primeros clientes concentran 69,6% del monto cotizado; conviene ampliar la base de clientes activos.</li>
 <li><b>Registrar el motivo de las negativas</b> en el tablero para medir si el rechazo se debe a precio, tiempo de entrega o especificaci&oacute;n t&eacute;cnica.</li>
@@ -1020,6 +984,8 @@ td.bar{width:80px}
 <div class="table-scroll">
 <table><thead><tr><th class=ctr>Fecha</th><th>Presupuesto</th><th>Cliente</th><th>Descripci&oacute;n</th><th>Elaborado por</th><th class=n>Monto neto</th><th class=n>Utilidad est.</th><th class=n>Margen</th><th class=ctr>Estado</th></tr></thead>
 <tbody>
+<tr><td class=ctr>09/10/2026</td><td><span class=mono>V-256-2026</span></td><td><b>SCI</b></td><td>SC-VEN-MAR-COT-2026-376 REFRIGERIOS HALDO</td><td>KATHERINE MORENO</td><td class=n>985</td><td class=n>149</td><td class=n>15,1%</td><td class=ctr><span class='badge badge-green'>Aprobada</span></td></tr>
+<tr><td class=ctr>08/10/2026</td><td><span class=mono>V-255-2026</span></td><td><b>OIM</b></td><td>MINI RFQ VE42000001934 UTENSILIOS DE COCINA</td><td>JOS&#201; MORENO</td><td class=n>2.769</td><td class=n>539</td><td class=n>19,5%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
 <tr><td class=ctr>07/10/2026</td><td><span class=mono>V-253-2026</span></td><td><b>OIM</b></td><td>VE4200001554_INSUMOS DE HIGIENE</td><td>JOS&#201; MORENO</td><td class=n>20.772</td><td class=n>4.651</td><td class=n>22,4%</td><td class=ctr><span class='badge badge-green'>Aprobada</span></td></tr>
 <tr><td class=ctr>05/10/2026</td><td><span class=mono>V-252-2026</span></td><td><b>OIM</b></td><td>Mini RFQ VE42000001931 Lencer&#237;a de hogar CAT</td><td>JOS&#201; MORENO</td><td class=n>2.285</td><td class=n>407</td><td class=n>17,8%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
 <tr><td class=ctr>29/09/2026</td><td><span class=mono>V-251-2026</span></td><td><b>SCI</b></td><td>SC-VEN-MAR-COT-2026  368 Adecuacion de bolsos</td><td>JOS&#201; MORENO</td><td class=n>975</td><td class=n>225</td><td class=n>23,1%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
@@ -1085,7 +1051,7 @@ td.bar{width:80px}
 </div>
 </div>
 
-<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 09/10/2026 20:54</footer>
+<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 09/10/2026 21:17</footer>
 </div>
 <script>
 function actualizarDashboard(btn) {
