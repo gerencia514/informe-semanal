@@ -147,7 +147,7 @@ td.bar{width:80px}
 <div class="header-right">
 <div class="corte-label">Corte al 27/10/2026</div>
 <div class="refresh-row">
-<span class="refresh-ts">Actualizado 27/10/2026 20:50</span>
+<span class="refresh-ts">Actualizado 27/10/2026 20:53</span>
 <button class="refresh-btn" onclick="actualizarDashboard(this)" title="Vuelve a cargar la &uacute;ltima versi&oacute;n publicada de este dashboard">
 <span class="refresh-ic">&#8635;</span> Actualizar
 </button>
@@ -1156,6 +1156,31 @@ td.bar{width:80px}
 <li><b>Ventas vs. cotizado:</b> las ventas registradas (152.968) equivalen al 110,6% de lo cotizado, lo que muestra el potencial a convertir si se concretan las cotizaciones abiertas.</li>
 </ul></div>
 <div class="callout">En el tablero comercial este cliente aparece escrito como "CIR" y "IRC"; ambos se agrupan como <b>IRC</b>.</div>
+<div class="panel-head"><div class="eyebrow">Resumen</div><h2>Resumen de cuentas por cobrar a IRC</h2><p class="panel-desc">Situaci&oacute;n de las ventas del cliente por estado de cobro y vencimiento de lo que est&aacute; por cobrar.</p></div>
+<div class="table-scroll">
+<table><thead><tr><th>Estado</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% de las ventas</th></tr></thead>
+<tbody>
+<tr><td><span class='badge badge-green'>Cobrado</span></td><td class=n>4</td><td class=n>1.316</td><td class=n>0,9%</td></tr>
+<tr><td><span class='badge badge-amber'>Por cobrar</span></td><td class=n>11</td><td class=n>151.652</td><td class=n>99,1%</td></tr>
+<tr><td><span class='badge badge-red'>Sin facturar</span></td><td class=n>0</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
+
+</tbody>
+<tfoot><tr><td>TOTAL VENTAS</td><td class=n>15</td><td class=n>152.968</td><td class=n>100,0%</td></tr></tfoot></table>
+</div>
+<div class="panel-head"><div class="eyebrow">Vencimiento</div><h2>Vencimiento de lo por cobrar</h2></div>
+<div class="table-scroll">
+<table><thead><tr><th>Rango</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% de lo por cobrar</th></tr></thead>
+<tbody>
+<tr class='resumen'><td>Vencidas</td><td class=n>0</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
+<tr><td>Vence en 0-30 dias</td><td class=n>11</td><td class=n>151.652</td><td class=n>100,0%</td></tr>
+<tr><td>Vence en 31-60 dias</td><td class=n>0</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
+<tr><td>Vence en 61-90 dias</td><td class=n>0</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
+<tr><td>Vence en +90 dias</td><td class=n>0</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
+
+</tbody>
+<tfoot><tr><td>TOTAL POR COBRAR</td><td class=n>11</td><td class=n>151.652</td><td class=n>100,0%</td></tr></tfoot></table>
+</div>
+<div class="callout">Pr&oacute;ximo vencimiento: <b>15/11/2026</b> (USD 1.169); &uacute;ltimo vencimiento: <b>26/11/2026</b>. Plazo de cr&eacute;dito: 30 d&iacute;as desde la fecha de la factura.</div>
 <div class="panel-head"><div class="eyebrow">Cobranza</div><h2>Ventas pendientes por cobrar</h2><p class="panel-desc">Documentos de IRC a&uacute;n sin cobrar, del m&aacute;s antiguo al m&aacute;s reciente. Fecha esperada de cobro = fecha de factura + 30 d&iacute;as.</p></div>
 <div class="table-scroll">
 <table><thead><tr><th class=ctr>Fecha factura</th><th>Documento</th><th>PO</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Plazo</th><th class=ctr>Fecha esperada de cobro</th><th class=ctr>Estado</th></tr></thead>
@@ -1230,7 +1255,7 @@ td.bar{width:80px}
 </div>
 </div>
 
-<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 27/10/2026 20:50</footer>
+<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 27/10/2026 20:53</footer>
 </div>
 <script>
 function actualizarDashboard(btn) {

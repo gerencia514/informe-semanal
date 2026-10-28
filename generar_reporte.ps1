@@ -1478,6 +1478,42 @@ if ($ccVentas.Count -gt 0 -or $ccCotiz.Count -gt 0) {
     "<tr><td class=ctr>$fchP</td><td>$docP</td><td><span class=mono>$(HtmlEnc $_.PO)</span></td><td>$(HtmlEnc $_.Descripcion)</td><td class=n>$(FmtCell $_.TotalFac)</td><td class=ctr>$plazoTxt</td><td class=ctr>$feTxt</td><td class=ctr>$estTxt</td></tr>"
   }) -join "`n"
 
+  # --- Resumen de cuentas por cobrar: por estado y por rango de vencimiento ---
+  $ccPCItems = @($ccVentas | Where-Object { $_.Estado -eq "Facturado sin cobrar" -and $_.FechaFactura } | ForEach-Object {
+    [PSCustomObject]@{ Monto = $_.TotalFac; FechaEsp = $_.FechaFactura.AddDays($ccPlazo); Dv = (($FechaCorte - $_.FechaFactura).Days - $ccPlazo) }
+  })
+  $ccEstados = @(
+    @{ Nombre = "Facturado y cobrado"; Items = @($ccVentas | Where-Object { $_.Estado -eq "Facturado y cobrado" }) },
+    @{ Nombre = "Facturado sin cobrar"; Items = @($ccVentas | Where-Object { $_.Estado -eq "Facturado sin cobrar" }) },
+    @{ Nombre = "Sin facturar"; Items = @($ccVentas | Where-Object { $_.Estado -eq "Sin facturar" }) }
+  )
+  $filasCcEstado = ""
+  foreach ($est in $ccEstados) {
+    $mEst = ($est.Items | Measure-Object TotalFac -Sum).Sum
+    if (-not $mEst) { $mEst = 0.0 }
+    $filasCcEstado += "<tr><td>$(Badge $est.Nombre)</td><td class=n>$($est.Items.Count)</td><td class=n>$(FmtCell $mEst)</td><td class=n>$(Fmt1Pct (Pct $mEst $ccVTotal))</td></tr>`n"
+  }
+  $ccRangos = [ordered]@{ "Vencidas" = @(0, 0.0); "Vence en 0-30 dias" = @(0, 0.0); "Vence en 31-60 dias" = @(0, 0.0); "Vence en 61-90 dias" = @(0, 0.0); "Vence en +90 dias" = @(0, 0.0) }
+  foreach ($it in $ccPCItems) {
+    $k = if ($it.Dv -gt 0) { "Vencidas" } elseif ((-$it.Dv) -le 30) { "Vence en 0-30 dias" } elseif ((-$it.Dv) -le 60) { "Vence en 31-60 dias" } elseif ((-$it.Dv) -le 90) { "Vence en 61-90 dias" } else { "Vence en +90 dias" }
+    $ccRangos[$k][0] += 1
+    $ccRangos[$k][1] += $it.Monto
+  }
+  $ccPCMonto = ($ccPCItems | Measure-Object Monto -Sum).Sum
+  if (-not $ccPCMonto) { $ccPCMonto = 0.0 }
+  $filasCcRangos = ""
+  foreach ($kv in $ccRangos.GetEnumerator()) {
+    $clase = if ($kv.Key -eq "Vencidas") { " class='resumen'" } else { "" }
+    $filasCcRangos += "<tr$clase><td>$($kv.Key)</td><td class=n>$($kv.Value[0])</td><td class=n>$(FmtCell $kv.Value[1])</td><td class=n>$(Fmt1Pct (Pct $kv.Value[1] $ccPCMonto))</td></tr>`n"
+  }
+  $ccProximoTxt = ""
+  if ($ccPCItems.Count -gt 0) {
+    $ccProx = $ccPCItems | Sort-Object FechaEsp | Select-Object -First 1
+    $ccUlt = $ccPCItems | Sort-Object FechaEsp -Descending | Select-Object -First 1
+    $ccMontoProx = (@($ccPCItems | Where-Object { $_.FechaEsp -eq $ccProx.FechaEsp }) | Measure-Object Monto -Sum).Sum
+    $ccProximoTxt = "Pr${e_o}ximo vencimiento: <b>$($ccProx.FechaEsp.ToString('dd/MM/yyyy'))</b> (USD $(Fmt0 $ccMontoProx)); ${e_u}ltimo vencimiento: <b>$($ccUlt.FechaEsp.ToString('dd/MM/yyyy'))</b>. Plazo de cr${e_e}dito: $ccPlazo d${e_i}as desde la fecha de la factura."
+  }
+
   # --- Cotizaciones (tablero comercial) ---
   $ccS = Get-CmStats $ccCotiz
   $ccMeses = @($ccCotiz | Group-Object MesKey | Sort-Object Name | ForEach-Object {
@@ -1545,6 +1581,23 @@ if ($ccVentas.Count -gt 0 -or $ccCotiz.Count -gt 0) {
 $ccAnalisisHtml
 </ul></div>
 <div class="callout">En el tablero comercial este cliente aparece escrito como "CIR" y "IRC"; ambos se agrupan como <b>IRC</b>.</div>
+<div class="panel-head"><div class="eyebrow">Resumen</div><h2>Resumen de cuentas por cobrar a $(HtmlEnc $clienteFoco)</h2><p class="panel-desc">Situaci${e_o}n de las ventas del cliente por estado de cobro y vencimiento de lo que est${e_a} por cobrar.</p></div>
+<div class="table-scroll">
+<table><thead><tr><th>Estado</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% de las ventas</th></tr></thead>
+<tbody>
+$filasCcEstado
+</tbody>
+<tfoot><tr><td>TOTAL VENTAS</td><td class=n>$($ccVentas.Count)</td><td class=n>$(FmtCell $ccVTotal)</td><td class=n>100,0%</td></tr></tfoot></table>
+</div>
+<div class="panel-head"><div class="eyebrow">Vencimiento</div><h2>Vencimiento de lo por cobrar</h2></div>
+<div class="table-scroll">
+<table><thead><tr><th>Rango</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% de lo por cobrar</th></tr></thead>
+<tbody>
+$filasCcRangos
+</tbody>
+<tfoot><tr><td>TOTAL POR COBRAR</td><td class=n>$($ccPCItems.Count)</td><td class=n>$(FmtCell $ccPCMonto)</td><td class=n>100,0%</td></tr></tfoot></table>
+</div>
+<div class="callout">$ccProximoTxt</div>
 <div class="panel-head"><div class="eyebrow">Cobranza</div><h2>Ventas pendientes por cobrar</h2><p class="panel-desc">Documentos de $(HtmlEnc $clienteFoco) a${e_u}n sin cobrar, del m${e_a}s antiguo al m${e_a}s reciente. Fecha esperada de cobro = fecha de factura + $ccPlazo d${e_i}as.</p></div>
 <div class="table-scroll">
 <table><thead><tr><th class=ctr>Fecha factura</th><th>Documento</th><th>PO</th><th>Descripci${e_o}n</th><th class=n>Monto USD</th><th class=ctr>Plazo</th><th class=ctr>Fecha esperada de cobro</th><th class=ctr>Estado</th></tr></thead>
