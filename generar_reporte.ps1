@@ -1576,10 +1576,6 @@ if ($ccVentas.Count -gt 0 -or $ccCotiz.Count -gt 0) {
 <div class="kpi"><div class="lbl">Cotizaciones aprobadas</div><div class="val green">$(Fmt0 $ccS.NetoAprob)</div><div class="sub">$($ccS.NAprob) aprobadas $([char]0xB7) tasa $(FmtTasaCm $ccS.TasaCant)</div></div>
 <div class="kpi"><div class="lbl">Pipeline abierto</div><div class="val amber">$(Fmt0 $ccS.NetoAbierto)</div><div class="sub">$($ccS.NRel) relanzadas $([char]0xB7) $($ccS.NEval) en evaluaci${e_o}n</div></div>
 </div>
-<div class="panel-head"><div class="eyebrow">Cliente</div><h2>An${e_a}lisis del cliente $(HtmlEnc $clienteFoco)</h2><p class="panel-desc">Lectura autom${e_a}tica combinando las ventas (hoja VENTAS) y las cotizaciones (tablero comercial). Se recalcula con cada actualizaci${e_o}n del Excel.</p></div>
-<div class="note"><ul>
-$ccAnalisisHtml
-</ul></div>
 <div class="callout">En el tablero comercial este cliente aparece escrito como "CIR" y "IRC"; ambos se agrupan como <b>IRC</b>.</div>
 <div class="panel-head"><div class="eyebrow">Resumen</div><h2>Resumen de cuentas por cobrar a $(HtmlEnc $clienteFoco)</h2><p class="panel-desc">Situaci${e_o}n de las ventas del cliente por estado de cobro y vencimiento de lo que est${e_a} por cobrar.</p></div>
 <div class="table-scroll">
