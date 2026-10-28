@@ -172,16 +172,20 @@ if (-not $colFechaFactura) { $colFechaFactura = 3 }
 $raw = New-Object System.Collections.Generic.List[object]
 $firstRow = 2
 $r = $firstRow
-while ($true) {
+$ultimaFilaHoja = $ws.UsedRange.Row + $ws.UsedRange.Rows.Count - 1
+while ($r -le $ultimaFilaHoja) {
+  # La tabla puede traer filas de relleno en blanco entre operaciones: se saltan.
+  # Los datos terminan en la fila de resumen "TOTALES:" (columna de la fecha de factura).
+  if (($ws.Cells.Item($r, $colFechaFactura).Text).Trim() -match "(?i)^total") { break }
   $totalText = $ws.Cells.Item($r, $colTotalFac).Text
-  if ([string]::IsNullOrWhiteSpace($totalText)) { break }
+  if ([string]::IsNullOrWhiteSpace($totalText)) { $r++; continue }
 
   $facturado = ($ws.Cells.Item($r, $colFacturado).Text).Trim().ToUpper()
   $cobranza  = ($ws.Cells.Item($r, $colCobranza).Text).Trim().ToUpper()
   $cliente   = ($ws.Cells.Item($r, $colCliente).Text).Trim().ToUpper()
   # Filas de resumen (p.ej. "TOTALES:") a veces traen un monto en la columna TOTAL FAC
   # pero no tienen cliente; se tratan como fin de los datos, no como una operacion mas.
-  if ($cliente -eq "") { break }
+  if ($cliente -eq "") { $r++; continue }
   $tipoCliente = if ($colTipoCliente) { ($ws.Cells.Item($r, $colTipoCliente).Text).Trim().ToUpper() } else { "" }
   $nroFactura = ($ws.Cells.Item($r, $colNroFactura).Text).Trim()
   $descripcion = ($ws.Cells.Item($r, $colDescripcion).Text).Trim()
