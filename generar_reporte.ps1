@@ -1452,6 +1452,32 @@ if ($ccVentas.Count -gt 0 -or $ccCotiz.Count -gt 0) {
     "<tr><td class=ctr>$fch</td><td>$doc</td><td><span class=mono>$(HtmlEnc $_.PO)</span></td><td>$(HtmlEnc $_.Descripcion)</td><td class=n>$(FmtCell $_.TotalFac)</td><td class=ctr>$(Badge $_.Estado)</td></tr>"
   }) -join "`n"
 
+  # --- Ventas pendientes por cobrar (plazo del cliente desde la fecha de factura) ---
+  $ccPlazo = Get-PlazoCobranza $clienteFoco
+  $ccPend = @($ccVentas | Where-Object { $_.Estado -eq "Facturado sin cobrar" -or $_.Estado -eq "Sin facturar" })
+  $ccPendMonto = ($ccPend | Measure-Object TotalFac -Sum).Sum
+  if (-not $ccPendMonto) { $ccPendMonto = 0.0 }
+  $ccPendVencidas = 0
+  $ccPendVencidasMonto = 0.0
+  $filasCcPend = ($ccPend | Sort-Object @{ Expression = { if ($_.FechaFactura) { $_.FechaFactura } else { [datetime]::MaxValue } } } | ForEach-Object {
+    $docP = if ($_.NroFactura -ne "") { "<span class=mono>$(HtmlEnc $_.NroFactura)</span>" } else { "<i>por facturar</i>" }
+    if ($_.Estado -eq "Facturado sin cobrar" -and $_.FechaFactura) {
+      $fe = $_.FechaFactura.AddDays($ccPlazo)
+      $dv = ($FechaCorte - $_.FechaFactura).Days - $ccPlazo
+      if ($dv -gt 0) { $ccPendVencidas++; $ccPendVencidasMonto += $_.TotalFac }
+      $fchP = $_.FechaFactura.ToString("dd/MM/yyyy")
+      $plazoTxt = "$ccPlazo d"
+      $feTxt = $fe.ToString("dd/MM/yyyy")
+      $estTxt = Badge-Vencimiento $dv
+    } else {
+      $fchP = if ($_.MesRef) { $_.MesRef.ToString("dd/MM/yyyy") } else { "" }
+      $plazoTxt = ""
+      $feTxt = ""
+      $estTxt = Badge $_.Estado
+    }
+    "<tr><td class=ctr>$fchP</td><td>$docP</td><td><span class=mono>$(HtmlEnc $_.PO)</span></td><td>$(HtmlEnc $_.Descripcion)</td><td class=n>$(FmtCell $_.TotalFac)</td><td class=ctr>$plazoTxt</td><td class=ctr>$feTxt</td><td class=ctr>$estTxt</td></tr>"
+  }) -join "`n"
+
   # --- Cotizaciones (tablero comercial) ---
   $ccS = Get-CmStats $ccCotiz
   $ccMeses = @($ccCotiz | Group-Object MesKey | Sort-Object Name | ForEach-Object {
@@ -1471,6 +1497,11 @@ if ($ccVentas.Count -gt 0 -or $ccCotiz.Count -gt 0) {
   # --- Analisis automatico ---
   $liCc = New-Object System.Collections.Generic.List[string]
   $liCc.Add("<li><b>Relaci${e_o}n comercial:</b> en ventas registra <b>$($ccVentas.Count) documentos por USD $(Fmt0 $ccVTotal)</b> (cobrado $(Fmt0 $ccVCobrado), por cobrar $(Fmt0 $ccVPorCobrar), sin facturar $(Fmt0 $ccVSinFact)) y en el tablero comercial <b>$($ccS.N) cotizaciones por USD $(Fmt0 $ccS.Neto)</b>.</li>")
+  if ($ccPend.Count -gt 0) {
+    $ccMayorPend = $ccPend | Sort-Object TotalFac -Descending | Select-Object -First 1
+    $vencTxt = if ($ccPendVencidas -gt 0) { " De ellas, $ccPendVencidas ya est${e_a}n vencidas (USD $(Fmt0 $ccPendVencidasMonto))." } else { " Ninguna est${e_a} vencida a la fecha de corte (plazo de $ccPlazo d${e_i}as desde la factura)." }
+    $liCc.Add("<li><b>Pendiente por cobrar:</b> <b>$($ccPend.Count) documentos por USD $(Fmt0 $ccPendMonto)</b> ($(Fmt1Pct (Pct $ccPendMonto $ccVTotal)) de las ventas del cliente).${vencTxt} El mayor es <b>$(HtmlEnc $ccMayorPend.Descripcion)</b> por USD $(Fmt0 $ccMayorPend.TotalFac), que concentra el $(Fmt1Pct (Pct $ccMayorPend.TotalFac $ccPendMonto)) del saldo.</li>")
+  }
   if ($ccS.N -gt 0) {
     $tasaCc = if ($null -ne $ccS.TasaCant) { "tasa de aprobaci${e_o}n de <b>$(Fmt1Pct $ccS.TasaCant)</b> sobre lo ya resuelto" } else { "a${e_u}n sin cotizaciones resueltas" }
     $liCc.Add("<li><b>Resultado de las cotizaciones:</b> aprobadas $($ccS.NAprob) (USD $(Fmt0 $ccS.NetoAprob)), negadas $($ccS.NNeg) (USD $(Fmt0 $ccS.NetoNeg)), relanzadas $($ccS.NRel) (USD $(Fmt0 $ccS.NetoRel)) y en evaluaci${e_o}n $($ccS.NEval) (USD $(Fmt0 $ccS.NetoEval)); ${tasaCc}.</li>")
@@ -1514,6 +1545,14 @@ if ($ccVentas.Count -gt 0 -or $ccCotiz.Count -gt 0) {
 $ccAnalisisHtml
 </ul></div>
 <div class="callout">En el tablero comercial este cliente aparece escrito como "CIR" y "IRC"; ambos se agrupan como <b>IRC</b>.</div>
+<div class="panel-head"><div class="eyebrow">Cobranza</div><h2>Ventas pendientes por cobrar</h2><p class="panel-desc">Documentos de $(HtmlEnc $clienteFoco) a${e_u}n sin cobrar, del m${e_a}s antiguo al m${e_a}s reciente. Fecha esperada de cobro = fecha de factura + $ccPlazo d${e_i}as.</p></div>
+<div class="table-scroll">
+<table><thead><tr><th class=ctr>Fecha factura</th><th>Documento</th><th>PO</th><th>Descripci${e_o}n</th><th class=n>Monto USD</th><th class=ctr>Plazo</th><th class=ctr>Fecha esperada de cobro</th><th class=ctr>Estado</th></tr></thead>
+<tbody>
+$filasCcPend
+</tbody>
+<tfoot><tr><td colspan=4>TOTAL PENDIENTE POR COBRAR</td><td class=n>$(FmtCell $ccPendMonto)</td><td colspan=3></td></tr></tfoot></table>
+</div>
 <div class="panel-head"><div class="eyebrow">Ventas</div><h2>Ventas de $(HtmlEnc $clienteFoco)</h2><p class="panel-desc">Documentos registrados en la hoja VENTAS, del m${e_a}s reciente al m${e_a}s antiguo.</p></div>
 <div class="table-scroll">
 <table><thead><tr><th class=ctr>Fecha</th><th>Documento</th><th>PO</th><th>Descripci${e_o}n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead>
