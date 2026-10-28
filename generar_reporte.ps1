@@ -526,6 +526,7 @@ if ($hojaCM) {
     $cliente = (Get-CmText $hojaCM $rc $cmMap "Cliente").ToUpper()
     if ($cliente -eq "") { continue }
     if ($cliente -eq "IOM") { $cliente = "OIM" }
+    if ($cliente -eq "CIR") { $cliente = "IRC" }
     $fecha = Get-CmDate $hojaCM $rc $cmMap "Fecha"
     $fechaOferta = Get-CmDate $hojaCM $rc $cmMap "FechaOferta"
     if (-not $fecha) { $fecha = $fechaOferta }
@@ -1428,6 +1429,118 @@ $filasCmDetalle
 "@
 }
 
+# ---------- Analisis de un cliente (IRC): ventas + cotizaciones ----------
+# Para analizar otro cliente basta con cambiar $clienteFoco.
+$clienteFoco = "IRC"
+$ccTabBtnHtml = ""
+$ccPanelHtml = ""
+$ccVentas = @($raw | Where-Object { $_.Cliente -eq $clienteFoco })
+$ccCotiz = @($cmRows | Where-Object { $_.Cliente -eq $clienteFoco })
+if ($ccVentas.Count -gt 0 -or $ccCotiz.Count -gt 0) {
+  # --- Ventas (hoja VENTAS) ---
+  $ccVTotal = ($ccVentas | Measure-Object TotalFac -Sum).Sum
+  $ccVCobrado = (@($ccVentas | Where-Object { $_.Estado -eq "Facturado y cobrado" }) | Measure-Object TotalFac -Sum).Sum
+  $ccVPorCobrar = (@($ccVentas | Where-Object { $_.Estado -eq "Facturado sin cobrar" }) | Measure-Object TotalFac -Sum).Sum
+  $ccVSinFact = (@($ccVentas | Where-Object { $_.Estado -eq "Sin facturar" }) | Measure-Object TotalFac -Sum).Sum
+  if (-not $ccVTotal) { $ccVTotal = 0.0 }
+  if (-not $ccVCobrado) { $ccVCobrado = 0.0 }
+  if (-not $ccVPorCobrar) { $ccVPorCobrar = 0.0 }
+  if (-not $ccVSinFact) { $ccVSinFact = 0.0 }
+  $filasCcVentas = ($ccVentas | Sort-Object @{ Expression = { if ($_.FechaFactura) { $_.FechaFactura } else { $_.MesRef } }; Descending = $true } | ForEach-Object {
+    $fch = if ($_.FechaFactura) { $_.FechaFactura.ToString("dd/MM/yyyy") } elseif ($_.MesRef) { $_.MesRef.ToString("dd/MM/yyyy") } else { "" }
+    $doc = if ($_.NroFactura -ne "") { "<span class=mono>$(HtmlEnc $_.NroFactura)</span>" } else { "<i>por facturar</i>" }
+    "<tr><td class=ctr>$fch</td><td>$doc</td><td><span class=mono>$(HtmlEnc $_.PO)</span></td><td>$(HtmlEnc $_.Descripcion)</td><td class=n>$(FmtCell $_.TotalFac)</td><td class=ctr>$(Badge $_.Estado)</td></tr>"
+  }) -join "`n"
+
+  # --- Cotizaciones (tablero comercial) ---
+  $ccS = Get-CmStats $ccCotiz
+  $ccMeses = @($ccCotiz | Group-Object MesKey | Sort-Object Name | ForEach-Object {
+    $g = @($_.Group)
+    $mk = $_.Name
+    [PSCustomObject]@{ Label = (MesLabelCm $mk); Stats = (Get-CmStats $g) }
+  })
+  $filasCcMes = ($ccMeses | ForEach-Object {
+    $s = $_.Stats
+    "<tr><td><b>$($_.Label)</b></td><td class=n>$($s.N)</td><td class=n>$(FmtCell $s.Neto)</td><td class=n>$(FmtCell $s.Util)</td><td class=n>$(Fmt1Pct $s.Margen)</td><td class=n>$($s.NAprob)</td><td class=n>$($s.NNeg)</td><td class=n>$($s.NRel)</td><td class=n>$($s.NEval)</td><td class=n>$(FmtTasaCm $s.TasaCant)</td></tr>"
+  }) -join "`n"
+  $filasCcCotiz = ($ccCotiz | Sort-Object @{ Expression = { if ($_.Presupuesto -match '(\d+)\D+\d{4}\s*$') { [int]$Matches[1] } else { 0 } }; Descending = $true }, @{ Expression = { $_.Fecha }; Descending = $true } | ForEach-Object {
+    $mg = if ($_.Neto -gt 0) { Fmt1Pct (100.0 * $_.Utilidad / $_.Neto) } else { "&mdash;" }
+    "<tr><td class=ctr>$($_.Fecha.ToString('dd/MM/yyyy'))</td><td><span class=mono>$(HtmlEnc $_.Presupuesto)</span></td><td>$(HtmlEnc $_.Licitacion)</td><td>$(HtmlEnc $_.Elaborado)</td><td class=n>$(FmtCell $_.Neto)</td><td class=n>$(FmtCell $_.Utilidad)</td><td class=n>$mg</td><td class=ctr>$(Badge-Cm $_.StatusKey $_.Status)</td></tr>"
+  }) -join "`n"
+
+  # --- Analisis automatico ---
+  $liCc = New-Object System.Collections.Generic.List[string]
+  $liCc.Add("<li><b>Relaci${e_o}n comercial:</b> en ventas registra <b>$($ccVentas.Count) documentos por USD $(Fmt0 $ccVTotal)</b> (cobrado $(Fmt0 $ccVCobrado), por cobrar $(Fmt0 $ccVPorCobrar), sin facturar $(Fmt0 $ccVSinFact)) y en el tablero comercial <b>$($ccS.N) cotizaciones por USD $(Fmt0 $ccS.Neto)</b>.</li>")
+  if ($ccS.N -gt 0) {
+    $tasaCc = if ($null -ne $ccS.TasaCant) { "tasa de aprobaci${e_o}n de <b>$(Fmt1Pct $ccS.TasaCant)</b> sobre lo ya resuelto" } else { "a${e_u}n sin cotizaciones resueltas" }
+    $liCc.Add("<li><b>Resultado de las cotizaciones:</b> aprobadas $($ccS.NAprob) (USD $(Fmt0 $ccS.NetoAprob)), negadas $($ccS.NNeg) (USD $(Fmt0 $ccS.NetoNeg)), relanzadas $($ccS.NRel) (USD $(Fmt0 $ccS.NetoRel)) y en evaluaci${e_o}n $($ccS.NEval) (USD $(Fmt0 $ccS.NetoEval)); ${tasaCc}.</li>")
+    if ($ccS.NAbierto -gt 0) {
+      $ccAbiertas = @($ccCotiz | Where-Object { $_.StatusKey -eq "EVALUACION" -or $_.StatusKey -eq "RELANZADA" })
+      $ccMayor = $ccAbiertas | Sort-Object Neto -Descending | Select-Object -First 1
+      $pctAb = Pct $ccS.NetoAbierto $ccS.Neto
+      $liCc.Add("<li><b>Pipeline abierto:</b> $($ccS.NAbierto) cotizaciones por <b>USD $(Fmt0 $ccS.NetoAbierto)</b> ($(Fmt1Pct $pctAb) de lo cotizado a este cliente) siguen sin resolverse. La mayor es <b>$(HtmlEnc $ccMayor.Licitacion)</b> por USD $(Fmt0 $ccMayor.Neto).</li>")
+    }
+    if ($ccS.NRel -ge 3) {
+      $liCc.Add("<li><b>Cotizaciones relanzadas:</b> $($ccS.NRel) cotizaciones fueron relanzadas (USD $(Fmt0 $ccS.NetoRel)); conviene confirmar con el cliente cu${e_a}les siguen vigentes para depurar el pipeline.</li>")
+    }
+    if ($cmAll -and $cmAll.Neto -gt 0) {
+      $posCli = 0
+      for ($i = 0; $i -lt $cmClientes.Count; $i++) { if ($cmClientes[$i].Cliente -eq $clienteFoco) { $posCli = $i + 1 } }
+      $liCc.Add("<li><b>Peso en el tablero:</b> concentra el $(Fmt1Pct (Pct $ccS.Neto $cmAll.Neto)) del monto cotizado total (puesto $posCli de $($cmClientes.Count) clientes) con un margen estimado de $(Fmt1Pct $ccS.Margen) frente a $(Fmt1Pct $cmAll.Margen) del promedio general.</li>")
+    }
+    $respCc = $ccCotiz | Where-Object { $_.Elaborado -ne "" } | Group-Object Elaborado | Sort-Object Count -Descending | Select-Object -First 1
+    if ($respCc) {
+      $liCc.Add("<li><b>Atenci${e_o}n del cliente:</b> $(HtmlEnc $respCc.Name) elabor${e_o} $($respCc.Count) de las $($ccS.N) cotizaciones.</li>")
+    }
+  }
+  if ($ccVentas.Count -gt 0 -and $ccS.N -gt 0 -and $ccS.Neto -gt 0) {
+    $liCc.Add("<li><b>Ventas vs. cotizado:</b> las ventas registradas ($(Fmt0 $ccVTotal)) equivalen al $(Fmt1Pct (Pct $ccVTotal $ccS.Neto)) de lo cotizado, lo que muestra el potencial a convertir si se concretan las cotizaciones abiertas.</li>")
+  }
+  $ccAnalisisHtml = $liCc -join "`n"
+
+  $ccTabBtnHtml = "<button class=`"tab-btn`" data-tab=`"tab-cliente`" onclick=`"mostrarTab('tab-cliente', this)`">Cliente $(HtmlEnc $clienteFoco)</button>"
+  $ccPanelHtml = @"
+<div id="tab-cliente" class="tab-panel">
+<div class="kpis">
+<div class="kpi featured"><div class="lbl">Ventas registradas</div><div class="val teal">$(Fmt0 $ccVTotal)</div><div class="sub">$($ccVentas.Count) documentos</div></div>
+<div class="kpi"><div class="lbl">Cobrado</div><div class="val green">$(Fmt0 $ccVCobrado)</div><div class="sub">Ventas ya cobradas</div></div>
+<div class="kpi"><div class="lbl">Por cobrar + sin facturar</div><div class="val amber">$(Fmt0 ($ccVPorCobrar + $ccVSinFact))</div><div class="sub">Por cobrar $(Fmt0 $ccVPorCobrar) $([char]0xB7) sin facturar $(Fmt0 $ccVSinFact)</div></div>
+<div class="kpi"><div class="lbl">Cotizado (neto)</div><div class="val teal">$(Fmt0 $ccS.Neto)</div><div class="sub">$($ccS.N) cotizaciones $([char]0xB7) margen $(Fmt1Pct $ccS.Margen)</div></div>
+<div class="kpi"><div class="lbl">Cotizaciones aprobadas</div><div class="val green">$(Fmt0 $ccS.NetoAprob)</div><div class="sub">$($ccS.NAprob) aprobadas $([char]0xB7) tasa $(FmtTasaCm $ccS.TasaCant)</div></div>
+<div class="kpi"><div class="lbl">Pipeline abierto</div><div class="val amber">$(Fmt0 $ccS.NetoAbierto)</div><div class="sub">$($ccS.NRel) relanzadas $([char]0xB7) $($ccS.NEval) en evaluaci${e_o}n</div></div>
+</div>
+<div class="panel-head"><div class="eyebrow">Cliente</div><h2>An${e_a}lisis del cliente $(HtmlEnc $clienteFoco)</h2><p class="panel-desc">Lectura autom${e_a}tica combinando las ventas (hoja VENTAS) y las cotizaciones (tablero comercial). Se recalcula con cada actualizaci${e_o}n del Excel.</p></div>
+<div class="note"><ul>
+$ccAnalisisHtml
+</ul></div>
+<div class="callout">En el tablero comercial este cliente aparece escrito como "CIR" y "IRC"; ambos se agrupan como <b>IRC</b>.</div>
+<div class="panel-head"><div class="eyebrow">Ventas</div><h2>Ventas de $(HtmlEnc $clienteFoco)</h2><p class="panel-desc">Documentos registrados en la hoja VENTAS, del m${e_a}s reciente al m${e_a}s antiguo.</p></div>
+<div class="table-scroll">
+<table><thead><tr><th class=ctr>Fecha</th><th>Documento</th><th>PO</th><th>Descripci${e_o}n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead>
+<tbody>
+$filasCcVentas
+</tbody>
+<tfoot><tr><td colspan=4>TOTAL</td><td class=n>$(FmtCell $ccVTotal)</td><td></td></tr></tfoot></table>
+</div>
+<div class="panel-head"><div class="eyebrow">Mensual</div><h2>Cotizaciones por mes</h2><p class="panel-desc">Cotizaciones del cliente agrupadas por mes de la solicitud (monto neto = base imponible + exonerado).</p></div>
+<div class="table-scroll">
+<table><thead><tr><th>Mes</th><th class=n>Cotiz.</th><th class=n>Monto cotizado</th><th class=n>Utilidad est.</th><th class=n>Margen</th><th class=n>Aprob.</th><th class=n>Negadas</th><th class=n>Relanz.</th><th class=n>Evaluaci${e_o}n</th><th class=n>Tasa aprob.</th></tr></thead>
+<tbody>
+$filasCcMes
+</tbody>
+<tfoot><tr><td>TOTAL</td><td class=n>$($ccS.N)</td><td class=n>$(FmtCell $ccS.Neto)</td><td class=n>$(FmtCell $ccS.Util)</td><td class=n>$(Fmt1Pct $ccS.Margen)</td><td class=n>$($ccS.NAprob)</td><td class=n>$($ccS.NNeg)</td><td class=n>$($ccS.NRel)</td><td class=n>$($ccS.NEval)</td><td class=n>$(FmtTasaCm $ccS.TasaCant)</td></tr></tfoot></table>
+</div>
+<div class="panel-head"><div class="eyebrow">Detalle</div><h2>Detalle de cotizaciones</h2><p class="panel-desc">Cotizaciones del cliente ordenadas por n${e_u}mero de presupuesto, de mayor a menor.</p></div>
+<div class="table-scroll">
+<table><thead><tr><th class=ctr>Fecha</th><th>Presupuesto</th><th>Descripci${e_o}n</th><th>Elaborado por</th><th class=n>Monto neto</th><th class=n>Utilidad est.</th><th class=n>Margen</th><th class=ctr>Estado</th></tr></thead>
+<tbody>
+$filasCcCotiz
+</tbody></table>
+</div>
+</div>
+"@
+}
+
 $dispoTabBtnHtml = ""
 $dispoPanelHtml = ""
 if ($dispoRows.Count -gt 0) {
@@ -1613,6 +1726,7 @@ $dispoTabBtnHtml
 $cxpTabBtnHtml
 $expTabBtnHtml
 $cmTabBtnHtml
+$ccTabBtnHtml
 </div>
 </div>
 
@@ -1716,6 +1830,8 @@ $cxpPanelHtml
 $expPanelHtml
 
 $cmPanelHtml
+
+$ccPanelHtml
 
 <footer>Informe generado autom${e_a}ticamente a partir de "$([System.IO.Path]::GetFileName($ExcelPath))" $([char]0x2014) hoja $SheetName. $([char]0xB7) $generadoTs</footer>
 </div>

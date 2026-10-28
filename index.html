@@ -147,7 +147,7 @@ td.bar{width:80px}
 <div class="header-right">
 <div class="corte-label">Corte al 27/10/2026</div>
 <div class="refresh-row">
-<span class="refresh-ts">Actualizado 27/10/2026 20:37</span>
+<span class="refresh-ts">Actualizado 27/10/2026 20:47</span>
 <button class="refresh-btn" onclick="actualizarDashboard(this)" title="Vuelve a cargar la &uacute;ltima versi&oacute;n publicada de este dashboard">
 <span class="refresh-ic">&#8635;</span> Actualizar
 </button>
@@ -165,6 +165,7 @@ td.bar{width:80px}
 <button class="tab-btn" data-tab="tab-cxp" onclick="mostrarTab('tab-cxp', this)">Cuentas por pagar</button>
 <button class="tab-btn" data-tab="tab-expectativa" onclick="mostrarTab('tab-expectativa', this)">Expectativa de Cobranza</button>
 <button class="tab-btn" data-tab="tab-comercial" onclick="mostrarTab('tab-comercial', this)">Tablero comercial</button>
+<button class="tab-btn" data-tab="tab-cliente" onclick="mostrarTab('tab-cliente', this)">Cliente IRC</button>
 </div>
 </div>
 
@@ -1009,7 +1010,7 @@ td.bar{width:80px}
 
 <rect class='bar-hit' tabindex='0' x='0' y='10' width='900' height='30' data-label='OIM' data-value='515.164' data-docs='9'></rect><rect class='bar-rect peak' x='96' y='15' width='381.2' height='20' rx='4'></rect><text x='88' y='29' text-anchor='end' class='chart-xlabel mono'>OIM</text><text x='485.2' y='29' text-anchor='start' class='chart-toplabel'>515.164</text>
 <rect class='bar-hit' tabindex='0' x='0' y='40' width='900' height='30' data-label='TINTA VIOLETA' data-value='178.938' data-docs='3'></rect><rect class='bar-rect' x='96' y='45' width='132.4' height='20' rx='4'></rect><text x='88' y='59' text-anchor='end' class='chart-xlabel mono'>TINTA VIOLETA</text>
-<rect class='bar-hit' tabindex='0' x='0' y='70' width='900' height='30' data-label='CIR' data-value='138.341' data-docs='17'></rect><rect class='bar-rect' x='96' y='75' width='102.4' height='20' rx='4'></rect><text x='88' y='89' text-anchor='end' class='chart-xlabel mono'>CIR</text>
+<rect class='bar-hit' tabindex='0' x='0' y='70' width='900' height='30' data-label='IRC' data-value='138.341' data-docs='17'></rect><rect class='bar-rect' x='96' y='75' width='102.4' height='20' rx='4'></rect><text x='88' y='89' text-anchor='end' class='chart-xlabel mono'>IRC</text>
 <rect class='bar-hit' tabindex='0' x='0' y='100' width='900' height='30' data-label='CISP' data-value='99.531' data-docs='3'></rect><rect class='bar-rect' x='96' y='105' width='73.7' height='20' rx='4'></rect><text x='88' y='119' text-anchor='end' class='chart-xlabel mono'>CISP</text>
 <rect class='bar-hit' tabindex='0' x='0' y='130' width='900' height='30' data-label='INPROCCA' data-value='82.319' data-docs='6'></rect><rect class='bar-rect' x='96' y='135' width='60.9' height='20' rx='4'></rect><text x='88' y='149' text-anchor='end' class='chart-xlabel mono'>INPROCCA</text>
 <rect class='bar-hit' tabindex='0' x='0' y='160' width='900' height='30' data-label='WVV' data-value='59.724' data-docs='3'></rect><rect class='bar-rect' x='96' y='165' width='44.2' height='20' rx='4'></rect><text x='88' y='179' text-anchor='end' class='chart-xlabel mono'>WVV</text>
@@ -1028,7 +1029,7 @@ td.bar{width:80px}
 <tbody>
 <tr><td><b>OIM</b></td><td class=n>9</td><td class=n>515.164</td><td class=n>45,7%</td><td class=n>26.275</td><td class=n>486.604</td><td class=n>2.285</td><td class=n>25,0%</td></tr>
 <tr><td><b>TINTA VIOLETA</b></td><td class=n>3</td><td class=n>178.938</td><td class=n>15,9%</td><td class=n><span class='zero'>&mdash;</span></td><td class=n><span class='zero'>&mdash;</span></td><td class=n>178.938</td><td class=n>&mdash;</td></tr>
-<tr><td><b>CIR</b></td><td class=n>17</td><td class=n>138.341</td><td class=n>12,3%</td><td class=n>666</td><td class=n>1.338</td><td class=n>136.337</td><td class=n>50,0%</td></tr>
+<tr><td><b>IRC</b></td><td class=n>17</td><td class=n>138.341</td><td class=n>12,3%</td><td class=n>666</td><td class=n>1.338</td><td class=n>136.337</td><td class=n>50,0%</td></tr>
 <tr><td><b>CISP</b></td><td class=n>3</td><td class=n>99.531</td><td class=n>8,8%</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>12.431</td><td class=n>87.100</td><td class=n>0,0%</td></tr>
 <tr><td><b>INPROCCA</b></td><td class=n>6</td><td class=n>82.319</td><td class=n>7,3%</td><td class=n>55.181</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>27.138</td><td class=n>100,0%</td></tr>
 <tr><td><b>WVV</b></td><td class=n>3</td><td class=n>59.724</td><td class=n>5,3%</td><td class=n>556</td><td class=n>59.168</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>33,3%</td></tr>
@@ -1076,14 +1077,14 @@ td.bar{width:80px}
 <tr><td class=ctr>05/10/2026</td><td><span class=mono>V-249-2026</span></td><td><b>ACF</b></td><td>INSUMOS VARIOS</td><td>JOS&#201; MORENO</td><td class=n>1.111</td><td class=n>348</td><td class=n>31,3%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
 <tr><td class=ctr>05/10/2026</td><td><span class=mono>V-248-2026</span></td><td><b>CISP</b></td><td>MATERIALES DE CONSTRUCCI&#211;N-GUAIRA</td><td>JOS&#201; MORENO</td><td class=n>78.962</td><td class=n>14.616</td><td class=n>18,5%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
 <tr><td class=ctr>05/10/2026</td><td><span class=mono>V-247-2026</span></td><td><b>OIM</b></td><td>POWER STATIONS</td><td>JOS&#201; MORENO</td><td class=n>850</td><td class=n>170</td><td class=n>20,0%</td><td class=ctr><span class='badge badge-red'>Negada</span></td></tr>
-<tr><td class=ctr>04/10/2026</td><td><span class=mono>V-246-2026</span></td><td><b>CIR</b></td><td>INSUMOS DE OFICINA</td><td>JOS&#201; MORENO</td><td class=n>1.844</td><td class=n>348</td><td class=n>18,9%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
+<tr><td class=ctr>04/10/2026</td><td><span class=mono>V-246-2026</span></td><td><b>IRC</b></td><td>INSUMOS DE OFICINA</td><td>JOS&#201; MORENO</td><td class=n>1.844</td><td class=n>348</td><td class=n>18,9%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
 <tr><td class=ctr>05/10/2026</td><td><span class=mono>V-245-2026</span></td><td><b>OIM</b></td><td>INSUMOS DE HIGIENE</td><td>JOS&#201; MORENO</td><td class=n>249.180</td><td class=n>51.891</td><td class=n>20,8%</td><td class=ctr><span class='badge badge-red'>Negada</span></td></tr>
 <tr><td class=ctr>02/10/2026</td><td><span class=mono>V-244-2026</span></td><td><b>UNICEF</b></td><td>MATERIALES PARA CONSULTA DE NNA 2026</td><td>JOS&#201; MORENO</td><td class=n>525</td><td class=n>124</td><td class=n>23,5%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
-<tr><td class=ctr>30/09/2026</td><td><span class=mono>V-243-2026</span></td><td><b>CIR</b></td><td>KIT DE APOYO INSTITuCIONAL</td><td>JOS&#201; MORENO</td><td class=n>4.725</td><td class=n>829</td><td class=n>17,5%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
-<tr><td class=ctr>30/09/2026</td><td><span class=mono>V-242-2026</span></td><td><b>CIR</b></td><td>KIT Y ARTICULOS HIGIENE ESTUDIANTES IIEE</td><td>JOS&#201; MORENO</td><td class=n>30.181</td><td class=n>5.432</td><td class=n>18,0%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
-<tr><td class=ctr>30/09/2026</td><td><span class=mono>V-241-2026</span></td><td><b>CIR</b></td><td>KIT DIGNIDAD</td><td>JOS&#201; MORENO</td><td class=n>9.038</td><td class=n>1.624</td><td class=n>18,0%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
-<tr><td class=ctr>30/09/2026</td><td><span class=mono>V-240-2026</span></td><td><b>CIR</b></td><td>IMPRESIONES PROTECCI&#211;N ANASHIII</td><td>JOS&#201; MORENO</td><td class=n>1.765</td><td class=n>505</td><td class=n>28,6%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
-<tr><td class=ctr>30/09/2026</td><td><span class=mono>V-239-2026</span></td><td><b>CIR</b></td><td>IMPRESIONES WASH  ANASHII</td><td>JOS&#201; MORENO</td><td class=n>822</td><td class=n>168</td><td class=n>20,4%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
+<tr><td class=ctr>30/09/2026</td><td><span class=mono>V-243-2026</span></td><td><b>IRC</b></td><td>KIT DE APOYO INSTITuCIONAL</td><td>JOS&#201; MORENO</td><td class=n>4.725</td><td class=n>829</td><td class=n>17,5%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
+<tr><td class=ctr>30/09/2026</td><td><span class=mono>V-242-2026</span></td><td><b>IRC</b></td><td>KIT Y ARTICULOS HIGIENE ESTUDIANTES IIEE</td><td>JOS&#201; MORENO</td><td class=n>30.181</td><td class=n>5.432</td><td class=n>18,0%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
+<tr><td class=ctr>30/09/2026</td><td><span class=mono>V-241-2026</span></td><td><b>IRC</b></td><td>KIT DIGNIDAD</td><td>JOS&#201; MORENO</td><td class=n>9.038</td><td class=n>1.624</td><td class=n>18,0%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
+<tr><td class=ctr>30/09/2026</td><td><span class=mono>V-240-2026</span></td><td><b>IRC</b></td><td>IMPRESIONES PROTECCI&#211;N ANASHIII</td><td>JOS&#201; MORENO</td><td class=n>1.765</td><td class=n>505</td><td class=n>28,6%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
+<tr><td class=ctr>30/09/2026</td><td><span class=mono>V-239-2026</span></td><td><b>IRC</b></td><td>IMPRESIONES WASH  ANASHII</td><td>JOS&#201; MORENO</td><td class=n>822</td><td class=n>168</td><td class=n>20,4%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
 <tr><td class=ctr>30/09/2026</td><td><span class=mono>V-238-2026</span></td><td><b>SCI</b></td><td>SC-VEN-MAR-COT-2026-363 MATERIAL POP</td><td>JOS&#201; MORENO</td><td class=n>445</td><td class=n>136</td><td class=n>30,7%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
 <tr><td class=ctr>25/09/2026</td><td><span class=mono>V-237-2026</span></td><td><b>ACH</b></td><td>PAPELER&#205;A</td><td>JOS&#201; MORENO</td><td class=n>4.861</td><td class=n>1.080</td><td class=n>22,2%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
 <tr><td class=ctr>25/09/2026</td><td><span class=mono>V-236-2026</span></td><td><b>ACH</b></td><td>INSUMOS VARIOS</td><td>JOS&#201; MORENO</td><td class=n>3.222</td><td class=n>712</td><td class=n>22,1%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
@@ -1103,18 +1104,18 @@ td.bar{width:80px}
 <tr><td class=ctr>17/09/2026</td><td><span class=mono>V-222-2026</span></td><td><b>TINTA VIOLETA</b></td><td>KIT NI&#209;EZ</td><td>KATHERINE MORENO</td><td class=n>13.696</td><td class=n>3.534</td><td class=n>25,8%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
 <tr><td class=ctr>17/09/2026</td><td><span class=mono>V-221-2026</span></td><td><b>TINTA VIOLETA</b></td><td>KIT WASH</td><td>ANDR&#201;S ROJAS</td><td class=n>100.115</td><td class=n>18.622</td><td class=n>18,6%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
 <tr><td class=ctr>17/09/2026</td><td><span class=mono>V-220-2026</span></td><td><b>ACF</b></td><td>PAPELER&#205;A</td><td>ANDR&#201;S ROJAS</td><td class=n>525</td><td class=n>236</td><td class=n>45,0%</td><td class=ctr><span class='badge badge-red'>Negada</span></td></tr>
-<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-219-2026</span></td><td><b>CIR</b></td><td>KIT DE ALIMENTOS ANASHI</td><td>JOS&#201; MORENO</td><td class=n>1.632</td><td class=n>355</td><td class=n>21,7%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
-<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-218-2026</span></td><td><b>CIR</b></td><td>KIT Y ART&#205;CULOS DE HIGIENE PARA ESTUDIANTES DE IIEE</td><td>JOS&#201; MORENO</td><td class=n>28.767</td><td class=n>4.018</td><td class=n>14,0%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
-<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-217-2026</span></td><td><b>CIR</b></td><td>MATERIAL IMPRESO DE GU&#205;A Y USO KIT TANDAS</td><td>JOS&#201; MORENO</td><td class=n>14.965</td><td class=n>3.325</td><td class=n>22,2%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
-<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-216-2026</span></td><td><b>CIR</b></td><td>KIT DE ASEO INSTITUCIONAL ANASHI (4)</td><td>JOS&#201; MORENO</td><td class=n>28.767</td><td class=n>5.867</td><td class=n>20,4%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
-<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-215-2026</span></td><td><b>CIR</b></td><td>KIT DE ASEO INSTITUCIONAL ANASHI (1)</td><td>JOS&#201; MORENO</td><td class=n>7.192</td><td class=n>1.467</td><td class=n>20,4%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
-<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-214-2026</span></td><td><b>CIR</b></td><td>KIT DE TALLERES ASH</td><td>JOS&#201; MORENO</td><td class=n>299</td><td class=n>66</td><td class=n>22,2%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
-<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-213-2026</span></td><td><b>CIR</b></td><td>INSUMOS DE OFICINA VARIOS 2</td><td>JOS&#201; MORENO</td><td class=n>2.136</td><td class=n>411</td><td class=n>19,2%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
-<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-212-2026</span></td><td><b>CIR</b></td><td>INSUMOS DE OFICINA VARIOS</td><td>JOS&#201; MORENO</td><td class=n>666</td><td class=n>130</td><td class=n>19,6%</td><td class=ctr><span class='badge badge-green'>Aprobada</span></td></tr>
-<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-211-2026</span></td><td><b>CIR</b></td><td>KIT DE HIGIENE DE HOGAR</td><td>JOS&#201; MORENO</td><td class=n>860</td><td class=n>162</td><td class=n>18,9%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-219-2026</span></td><td><b>IRC</b></td><td>KIT DE ALIMENTOS ANASHI</td><td>JOS&#201; MORENO</td><td class=n>1.632</td><td class=n>355</td><td class=n>21,7%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-218-2026</span></td><td><b>IRC</b></td><td>KIT Y ART&#205;CULOS DE HIGIENE PARA ESTUDIANTES DE IIEE</td><td>JOS&#201; MORENO</td><td class=n>28.767</td><td class=n>4.018</td><td class=n>14,0%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-217-2026</span></td><td><b>IRC</b></td><td>MATERIAL IMPRESO DE GU&#205;A Y USO KIT TANDAS</td><td>JOS&#201; MORENO</td><td class=n>14.965</td><td class=n>3.325</td><td class=n>22,2%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-216-2026</span></td><td><b>IRC</b></td><td>KIT DE ASEO INSTITUCIONAL ANASHI (4)</td><td>JOS&#201; MORENO</td><td class=n>28.767</td><td class=n>5.867</td><td class=n>20,4%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-215-2026</span></td><td><b>IRC</b></td><td>KIT DE ASEO INSTITUCIONAL ANASHI (1)</td><td>JOS&#201; MORENO</td><td class=n>7.192</td><td class=n>1.467</td><td class=n>20,4%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-214-2026</span></td><td><b>IRC</b></td><td>KIT DE TALLERES ASH</td><td>JOS&#201; MORENO</td><td class=n>299</td><td class=n>66</td><td class=n>22,2%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-213-2026</span></td><td><b>IRC</b></td><td>INSUMOS DE OFICINA VARIOS 2</td><td>JOS&#201; MORENO</td><td class=n>2.136</td><td class=n>411</td><td class=n>19,2%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-212-2026</span></td><td><b>IRC</b></td><td>INSUMOS DE OFICINA VARIOS</td><td>JOS&#201; MORENO</td><td class=n>666</td><td class=n>130</td><td class=n>19,6%</td><td class=ctr><span class='badge badge-green'>Aprobada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-211-2026</span></td><td><b>IRC</b></td><td>KIT DE HIGIENE DE HOGAR</td><td>JOS&#201; MORENO</td><td class=n>860</td><td class=n>162</td><td class=n>18,9%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
 <tr><td class=ctr>16/09/2026</td><td><span class=mono>V-210-2026</span></td><td><b>SCI</b></td><td>SC-VEN-MAR-COT-2026-334 REFRIGERIOS</td><td>KATHERINE MORENO</td><td class=n>1.215</td><td class=n>321</td><td class=n>26,4%</td><td class=ctr><span class='badge badge-green'>Aprobada</span></td></tr>
-<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-209-2026</span></td><td><b>CIR</b></td><td>KIT DE APOYO INSTITuCIONAL ANASHI</td><td>JOS&#201; MORENO</td><td class=n>1.338</td><td class=n>267</td><td class=n>19,9%</td><td class=ctr><span class='badge badge-red'>Negada</span></td></tr>
-<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-208-2026</span></td><td><b>CIR</b></td><td>KIT DE DIGNIDAD ANASHI</td><td>JOS&#201; MORENO</td><td class=n>3.345</td><td class=n>666</td><td class=n>19,9%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-209-2026</span></td><td><b>IRC</b></td><td>KIT DE APOYO INSTITuCIONAL ANASHI</td><td>JOS&#201; MORENO</td><td class=n>1.338</td><td class=n>267</td><td class=n>19,9%</td><td class=ctr><span class='badge badge-red'>Negada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-208-2026</span></td><td><b>IRC</b></td><td>KIT DE DIGNIDAD ANASHI</td><td>JOS&#201; MORENO</td><td class=n>3.345</td><td class=n>666</td><td class=n>19,9%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
 <tr><td class=ctr>14/09/2026</td><td><span class=mono>V-207-2026</span></td><td><b>CISP</b></td><td>KIT DE HIGIENE</td><td>JOS&#201; MORENO</td><td class=n>8.138</td><td class=n>1.574</td><td class=n>19,3%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
 <tr><td class=ctr>14/09/2026</td><td><span class=mono>V-206-2026</span></td><td><b>INPROCCA</b></td><td>BRAGAS ROJAS</td><td>MARIELIS VILLALOBOS</td><td class=n>4.945</td><td class=n>1.527</td><td class=n>30,9%</td><td class=ctr><span class='badge badge-green'>Aprobada</span></td></tr>
 <tr><td class=ctr>14/09/2026</td><td><span class=mono>V-205-2026</span></td><td><b>HIAS</b></td><td>COLLARIN</td><td>ANDR&#201;S ROJAS</td><td class=n>36</td><td class=n>12</td><td class=n>31,5%</td><td class=ctr><span class='badge badge-green'>Aprobada</span></td></tr>
@@ -1134,7 +1135,83 @@ td.bar{width:80px}
 </div>
 </div>
 
-<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 27/10/2026 20:37</footer>
+<div id="tab-cliente" class="tab-panel">
+<div class="kpis">
+<div class="kpi featured"><div class="lbl">Ventas registradas</div><div class="val teal">152.968</div><div class="sub">15 documentos</div></div>
+<div class="kpi"><div class="lbl">Cobrado</div><div class="val green">1.316</div><div class="sub">Ventas ya cobradas</div></div>
+<div class="kpi"><div class="lbl">Por cobrar + sin facturar</div><div class="val amber">151.652</div><div class="sub">Por cobrar 151.652 · sin facturar 0</div></div>
+<div class="kpi"><div class="lbl">Cotizado (neto)</div><div class="val teal">138.341</div><div class="sub">17 cotizaciones · margen 18,5%</div></div>
+<div class="kpi"><div class="lbl">Cotizaciones aprobadas</div><div class="val green">666</div><div class="sub">1 aprobadas · tasa 50,0%</div></div>
+<div class="kpi"><div class="lbl">Pipeline abierto</div><div class="val amber">136.337</div><div class="sub">9 relanzadas · 6 en evaluaci&oacute;n</div></div>
+</div>
+<div class="panel-head"><div class="eyebrow">Cliente</div><h2>An&aacute;lisis del cliente IRC</h2><p class="panel-desc">Lectura autom&aacute;tica combinando las ventas (hoja VENTAS) y las cotizaciones (tablero comercial). Se recalcula con cada actualizaci&oacute;n del Excel.</p></div>
+<div class="note"><ul>
+<li><b>Relaci&oacute;n comercial:</b> en ventas registra <b>15 documentos por USD 152.968</b> (cobrado 1.316, por cobrar 151.652, sin facturar 0) y en el tablero comercial <b>17 cotizaciones por USD 138.341</b>.</li>
+<li><b>Resultado de las cotizaciones:</b> aprobadas 1 (USD 666), negadas 1 (USD 1.338), relanzadas 9 (USD 87.962) y en evaluaci&oacute;n 6 (USD 48.375); tasa de aprobaci&oacute;n de <b>50,0%</b> sobre lo ya resuelto.</li>
+<li><b>Pipeline abierto:</b> 15 cotizaciones por <b>USD 136.337</b> (98,6% de lo cotizado a este cliente) siguen sin resolverse. La mayor es <b>KIT Y ARTICULOS HIGIENE ESTUDIANTES IIEE</b> por USD 30.181.</li>
+<li><b>Cotizaciones relanzadas:</b> 9 cotizaciones fueron relanzadas (USD 87.962); conviene confirmar con el cliente cu&aacute;les siguen vigentes para depurar el pipeline.</li>
+<li><b>Peso en el tablero:</b> concentra el 12,3% del monto cotizado total (puesto 3 de 15 clientes) con un margen estimado de 18,5% frente a 20,9% del promedio general.</li>
+<li><b>Atenci&oacute;n del cliente:</b> JOS&#201; MORENO elabor&oacute; 17 de las 17 cotizaciones.</li>
+<li><b>Ventas vs. cotizado:</b> las ventas registradas (152.968) equivalen al 110,6% de lo cotizado, lo que muestra el potencial a convertir si se concretan las cotizaciones abiertas.</li>
+</ul></div>
+<div class="callout">En el tablero comercial este cliente aparece escrito como "CIR" y "IRC"; ambos se agrupan como <b>IRC</b>.</div>
+<div class="panel-head"><div class="eyebrow">Ventas</div><h2>Ventas de IRC</h2><p class="panel-desc">Documentos registrados en la hoja VENTAS, del m&aacute;s reciente al m&aacute;s antiguo.</p></div>
+<div class="table-scroll">
+<table><thead><tr><th class=ctr>Fecha</th><th>Documento</th><th>PO</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead>
+<tbody>
+<tr><td class=ctr>27/10/2026</td><td><span class=mono>00000844</span></td><td><span class=mono>PO0009399-1</span></td><td>KIT DE ASEO INSTITUCIONAL</td><td class=n>19.989</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td class=ctr>23/10/2026</td><td><span class=mono>00000837</span></td><td><span class=mono>PO0009381</span></td><td>KIT DE ALIMENTOS (40 SACOS)</td><td class=n>1.895</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td class=ctr>23/10/2026</td><td><span class=mono>00000833</span></td><td><span class=mono>PO0009330-1</span></td><td>INSUMOS DE OFICINA 2</td><td class=n>1.121</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td class=ctr>23/10/2026</td><td><span class=mono>00000836</span></td><td><span class=mono>PO0009415</span></td><td>FLETES KIT DE DIGNIDAD</td><td class=n>721</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td class=ctr>23/10/2026</td><td><span class=mono>00000840</span></td><td><span class=mono>PO0009382</span></td><td>KIT DE HIGIENE ESTUDIANTIL</td><td class=n>98.571</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td class=ctr>23/10/2026</td><td><span class=mono>00000843</span></td><td><span class=mono>PO0009419-01</span></td><td>KIT DE DIGNIDAD-89 KIT</td><td class=n>6.595</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td class=ctr>23/10/2026</td><td><span class=mono>00000842</span></td><td><span class=mono>PO0009327-1</span></td><td>KIT DE DIGNIDAD-220 KIT</td><td class=n>16.302</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td class=ctr>23/10/2026</td><td><span class=mono>00000841</span></td><td><span class=mono>PO0009334-1</span></td><td>IMPRESIONES ANASHII FLAYER, PENDON, ACRILICOS</td><td class=n>2.306</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td class=ctr>22/10/2026</td><td><span class=mono>00000834</span></td><td><span class=mono>PO0009333-1</span></td><td>INSUMOS DE OFICINA 2</td><td class=n>2.983</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td class=ctr>16/10/2026</td><td><span class=mono>00000825</span></td><td><span class=mono>PO0009301-1</span></td><td>VENTILADORES Y L&#193;MPARA</td><td class=n>812</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td class=ctr>16/10/2026</td><td><span class=mono>00000826</span></td><td><span class=mono>PO00093337-1</span></td><td>KIT DE TALLERES ASH</td><td class=n>358</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
+<tr><td class=ctr>04/06/2026</td><td><span class=mono>00000726</span></td><td><span class=mono>PO00086831</span></td><td>INSUMOS VARIOS</td><td class=n>598</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td class=ctr>11/05/2026</td><td><span class=mono>00000709</span></td><td><span class=mono>PO0008588-1</span></td><td>ESTIBAS</td><td class=n>227</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td class=ctr>02/03/2026</td><td><span class=mono>00000683</span></td><td><span class=mono>PO0008231-1</span></td><td>TULAS BLANCAS</td><td class=n>281</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td class=ctr>02/03/2026</td><td><span class=mono>00000684</span></td><td><span class=mono>PO0008233-1</span></td><td>TULAS BLANCAS</td><td class=n>211</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+</tbody>
+<tfoot><tr><td colspan=4>TOTAL</td><td class=n>152.968</td><td></td></tr></tfoot></table>
+</div>
+<div class="panel-head"><div class="eyebrow">Mensual</div><h2>Cotizaciones por mes</h2><p class="panel-desc">Cotizaciones del cliente agrupadas por mes de la solicitud (monto neto = base imponible + exonerado).</p></div>
+<div class="table-scroll">
+<table><thead><tr><th>Mes</th><th class=n>Cotiz.</th><th class=n>Monto cotizado</th><th class=n>Utilidad est.</th><th class=n>Margen</th><th class=n>Aprob.</th><th class=n>Negadas</th><th class=n>Relanz.</th><th class=n>Evaluaci&oacute;n</th><th class=n>Tasa aprob.</th></tr></thead>
+<tbody>
+<tr><td><b>Sep 2026</b></td><td class=n>16</td><td class=n>136.497</td><td class=n>25.291</td><td class=n>18,5%</td><td class=n>1</td><td class=n>1</td><td class=n>9</td><td class=n>5</td><td class=n>50,0%</td></tr>
+<tr><td><b>Oct 2026</b></td><td class=n>1</td><td class=n>1.844</td><td class=n>348</td><td class=n>18,9%</td><td class=n>0</td><td class=n>0</td><td class=n>0</td><td class=n>1</td><td class=n>&mdash;</td></tr>
+</tbody>
+<tfoot><tr><td>TOTAL</td><td class=n>17</td><td class=n>138.341</td><td class=n>25.639</td><td class=n>18,5%</td><td class=n>1</td><td class=n>1</td><td class=n>9</td><td class=n>6</td><td class=n>50,0%</td></tr></tfoot></table>
+</div>
+<div class="panel-head"><div class="eyebrow">Detalle</div><h2>Detalle de cotizaciones</h2><p class="panel-desc">Cotizaciones del cliente ordenadas por n&uacute;mero de presupuesto, de mayor a menor.</p></div>
+<div class="table-scroll">
+<table><thead><tr><th class=ctr>Fecha</th><th>Presupuesto</th><th>Descripci&oacute;n</th><th>Elaborado por</th><th class=n>Monto neto</th><th class=n>Utilidad est.</th><th class=n>Margen</th><th class=ctr>Estado</th></tr></thead>
+<tbody>
+<tr><td class=ctr>04/10/2026</td><td><span class=mono>V-246-2026</span></td><td>INSUMOS DE OFICINA</td><td>JOS&#201; MORENO</td><td class=n>1.844</td><td class=n>348</td><td class=n>18,9%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
+<tr><td class=ctr>30/09/2026</td><td><span class=mono>V-243-2026</span></td><td>KIT DE APOYO INSTITuCIONAL</td><td>JOS&#201; MORENO</td><td class=n>4.725</td><td class=n>829</td><td class=n>17,5%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
+<tr><td class=ctr>30/09/2026</td><td><span class=mono>V-242-2026</span></td><td>KIT Y ARTICULOS HIGIENE ESTUDIANTES IIEE</td><td>JOS&#201; MORENO</td><td class=n>30.181</td><td class=n>5.432</td><td class=n>18,0%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
+<tr><td class=ctr>30/09/2026</td><td><span class=mono>V-241-2026</span></td><td>KIT DIGNIDAD</td><td>JOS&#201; MORENO</td><td class=n>9.038</td><td class=n>1.624</td><td class=n>18,0%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
+<tr><td class=ctr>30/09/2026</td><td><span class=mono>V-240-2026</span></td><td>IMPRESIONES PROTECCI&#211;N ANASHIII</td><td>JOS&#201; MORENO</td><td class=n>1.765</td><td class=n>505</td><td class=n>28,6%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
+<tr><td class=ctr>30/09/2026</td><td><span class=mono>V-239-2026</span></td><td>IMPRESIONES WASH  ANASHII</td><td>JOS&#201; MORENO</td><td class=n>822</td><td class=n>168</td><td class=n>20,4%</td><td class=ctr><span class='badge badge-amber'>Evaluaci&oacute;n</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-219-2026</span></td><td>KIT DE ALIMENTOS ANASHI</td><td>JOS&#201; MORENO</td><td class=n>1.632</td><td class=n>355</td><td class=n>21,7%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-218-2026</span></td><td>KIT Y ART&#205;CULOS DE HIGIENE PARA ESTUDIANTES DE IIEE</td><td>JOS&#201; MORENO</td><td class=n>28.767</td><td class=n>4.018</td><td class=n>14,0%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-217-2026</span></td><td>MATERIAL IMPRESO DE GU&#205;A Y USO KIT TANDAS</td><td>JOS&#201; MORENO</td><td class=n>14.965</td><td class=n>3.325</td><td class=n>22,2%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-216-2026</span></td><td>KIT DE ASEO INSTITUCIONAL ANASHI (4)</td><td>JOS&#201; MORENO</td><td class=n>28.767</td><td class=n>5.867</td><td class=n>20,4%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-215-2026</span></td><td>KIT DE ASEO INSTITUCIONAL ANASHI (1)</td><td>JOS&#201; MORENO</td><td class=n>7.192</td><td class=n>1.467</td><td class=n>20,4%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-214-2026</span></td><td>KIT DE TALLERES ASH</td><td>JOS&#201; MORENO</td><td class=n>299</td><td class=n>66</td><td class=n>22,2%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-213-2026</span></td><td>INSUMOS DE OFICINA VARIOS 2</td><td>JOS&#201; MORENO</td><td class=n>2.136</td><td class=n>411</td><td class=n>19,2%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-212-2026</span></td><td>INSUMOS DE OFICINA VARIOS</td><td>JOS&#201; MORENO</td><td class=n>666</td><td class=n>130</td><td class=n>19,6%</td><td class=ctr><span class='badge badge-green'>Aprobada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-211-2026</span></td><td>KIT DE HIGIENE DE HOGAR</td><td>JOS&#201; MORENO</td><td class=n>860</td><td class=n>162</td><td class=n>18,9%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-209-2026</span></td><td>KIT DE APOYO INSTITuCIONAL ANASHI</td><td>JOS&#201; MORENO</td><td class=n>1.338</td><td class=n>267</td><td class=n>19,9%</td><td class=ctr><span class='badge badge-red'>Negada</span></td></tr>
+<tr><td class=ctr>16/09/2026</td><td><span class=mono>V-208-2026</span></td><td>KIT DE DIGNIDAD ANASHI</td><td>JOS&#201; MORENO</td><td class=n>3.345</td><td class=n>666</td><td class=n>19,9%</td><td class=ctr><span class='badge badge-slate'>Relanzada</span></td></tr>
+</tbody></table>
+</div>
+</div>
+
+<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 27/10/2026 20:47</footer>
 </div>
 <script>
 function actualizarDashboard(btn) {
