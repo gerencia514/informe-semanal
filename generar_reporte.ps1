@@ -378,6 +378,7 @@ if ($hojaDispo) {
 $cxpProveedores = New-Object System.Collections.Generic.List[object]
 $cxpProvisiones = New-Object System.Collections.Generic.List[object]
 $cxpDeposito = New-Object System.Collections.Generic.List[object]
+$cxpOtras = New-Object System.Collections.Generic.List[object]
 $cxpSubtotalProveedores = 0.0
 $cxpTotalProvisiones = 0.0
 $cxpProvisionesCuadra = $true
@@ -433,29 +434,35 @@ if ($hojaCxP) {
   # (p.ej. "PREVISION FUNCIONAMIENTO DEPOSITO"), con su propio titulo y total.
   $cxpTituloDeposito = ""
   $cxpTotalDepositoExcel = $null
+  $cxpSeccionPost = "otras"   # items sin titulo propio = otras provisiones; tras un titulo = deposito
   while ($rp -le $rowsP) {
     $etiqueta = ($wsp.Cells.Item($rp, 2).Text).Trim()
     $montoRaw = $wsp.Cells.Item($rp, 3).Value2
     $tieneMonto = ($montoRaw -ne $null -and $montoRaw -ne "")
     if ($etiqueta -eq "" -and -not $tieneMonto) { $rp++; continue }
     if ($etiqueta -ne "" -and -not $tieneMonto) {
+      # encabezado de una nueva seccion (p.ej. "PROVISION FUNCIONAMIENTO DEPOSITO")
       if ($cxpTituloDeposito -eq "") { $cxpTituloDeposito = $etiqueta }
+      $cxpSeccionPost = "deposito"
       $rp++
       continue
     }
-    if ($etiqueta -match "(?i)total") {
-      $cxpTotalDepositoExcel = [double]$montoRaw
+    if ($etiqueta -match "(?i)^total") {
+      # "TOTAL POR PAGAR" / "TOTAL": solo cierran el bloque actual, no la lectura
+      if ($cxpSeccionPost -eq "deposito") { $cxpTotalDepositoExcel = [double]$montoRaw }
       $rp++
-      break
+      continue
     }
     if ($tieneMonto) {
-      $cxpDeposito.Add([PSCustomObject]@{ Concepto = $etiqueta; Monto = [double]$montoRaw }) | Out-Null
+      $item = [PSCustomObject]@{ Concepto = $etiqueta; Monto = [double]$montoRaw }
+      if ($cxpSeccionPost -eq "deposito") { $cxpDeposito.Add($item) | Out-Null } else { $cxpOtras.Add($item) | Out-Null }
     }
     $rp++
   }
 }
-$cxpTotalDeposito = ($cxpDeposito | Measure-Object Monto -Sum).Sum
-$cxpTotalGeneral = $cxpSubtotalProveedores + $cxpTotalProvisiones + $cxpTotalDeposito
+$cxpTotalOtras = ($cxpOtras | Measure-Object Monto -Sum).Sum
+if ($null -eq $cxpTotalOtras) { $cxpTotalOtras = 0.0 }$cxpTotalDeposito = ($cxpDeposito | Measure-Object Monto -Sum).Sum
+$cxpTotalGeneral = $cxpSubtotalProveedores + $cxpTotalProvisiones + $cxpTotalOtras + $cxpTotalDeposito
 
 # ---------- Hoja "tablero comercial": cotizaciones / oportunidades comerciales ----------
 # Se ubica por nombre ("tablero...") o, si todavia se llama "Hoja1", por sus encabezados
@@ -1134,7 +1141,22 @@ if ($cxpProveedores.Count -gt 0 -or $cxpProvisiones.Count -gt 0) {
   $filasCxpProvisiones = ($cxpProvisiones | ForEach-Object {
     "<tr><td>$($_.Concepto)</td><td class=n>$(FmtCell $_.Monto)</td></tr>"
   }) -join "`n"
-  $cxpDepositoPanelHtml = ""
+  $cxpOtrasPanelHtml = ""
+  if ($cxpOtras.Count -gt 0) {
+    $filasCxpOtras = ($cxpOtras | ForEach-Object {
+      "<tr><td>$($_.Concepto)</td><td class=n>$(FmtCell $_.Monto)</td></tr>"
+    }) -join "`n"
+    $cxpOtrasPanelHtml = @"
+<div class="panel-head"><div class="eyebrow">Otras provisiones</div><h2>Otras provisiones</h2></div>
+<div class="table-scroll">
+<table><thead><tr><th>Concepto</th><th class=n>Monto USD</th></tr></thead>
+<tbody>
+$filasCxpOtras
+</tbody>
+<tfoot><tr><td>SUB-TOTAL</td><td class=n>$(FmtCell $cxpTotalOtras)</td></tr></tfoot></table>
+</div>
+"@
+  }  $cxpDepositoPanelHtml = ""
   if ($cxpDeposito.Count -gt 0) {
     $filasCxpDeposito = ($cxpDeposito | ForEach-Object {
       "<tr><td>$($_.Concepto)</td><td class=n>$(FmtCell $_.Monto)</td></tr>"
@@ -1175,6 +1197,7 @@ $filasCxpProvisiones
 </tbody>
 <tfoot><tr><td>SUB-TOTAL</td><td class=n>$(FmtCell $cxpTotalProvisiones)</td></tr></tfoot></table>
 </div>
+$cxpOtrasPanelHtml
 $cxpDepositoPanelHtml
 <div class="table-scroll">
 <table><tfoot><tr><td>TOTAL CUENTAS POR PAGAR</td><td class=n>$(FmtCell $cxpTotalGeneral)</td></tr></tfoot></table>
