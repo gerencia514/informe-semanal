@@ -3,3 +3,7 @@
 *.xlsx
 *.xls
 ~$*
+
+# Respaldo local de Claude (datos sensibles, no publicar)
+RESPALDO_CLAUDE_*/
+RESPALDO_CLAUDE_*.zip

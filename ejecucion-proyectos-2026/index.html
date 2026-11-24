@@ -1,0 +1,755 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ejecución de Proyectos 2026 &mdash; Informe de Gerencia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+:root{
+  --brand-teal:#00877A;
+  --brand-teal-dark:#045C53;
+  --brand-teal-deep:#0B3D38;
+  --slate-600:#4C6360;
+  --slate-400:#84A19C;
+  --paper:#F3FAF8;
+  --card:#FFFFFF;
+  --line:#DCEBE7;
+  --teal-100:#E1F4F0;
+  --amber-600:#B9791F; --amber-100:#FBF0DD;
+  --green-600:#256B4C; --green-100:#E3F1E8;
+  --red-600:#B3372C;  --red-100:#FBEAE8;
+  --font-display:'Space Grotesk',Arial,sans-serif;
+  --font-body:'Inter',-apple-system,'Segoe UI',Arial,sans-serif;
+  --font-mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+}
+html{background:var(--paper)}
+body{font-family:var(--font-body);margin:0;background:var(--paper);color:var(--brand-teal-deep);font-size:14px;line-height:1.5}
+.wrap{max-width:1400px;margin:0 auto;padding:0 40px 64px}
+.top-sticky{position:sticky;top:0;z-index:30;background:var(--paper)}
+header{background:linear-gradient(120deg,#FFFFFF 0%,#EAF7F4 100%);border-bottom:3px solid var(--brand-teal);padding:22px 0 18px}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;max-width:1400px;margin:0 auto;padding:0 40px}
+.eyebrow{font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--brand-teal)}
+header h1{font-family:var(--font-display);margin:2px 0 0;font-size:23px;font-weight:700;letter-spacing:.2px;color:var(--brand-teal-deep);text-wrap:balance}
+.header-sub{margin:10px 0 0;font-size:13px;color:var(--slate-600)}
+.header-right{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.refresh-row{display:flex;align-items:center;gap:10px}
+.refresh-ts{font-size:11px;color:var(--slate-400);font-family:var(--font-mono)}
+.refresh-btn{appearance:none;background:var(--card);border:1px solid var(--brand-teal);color:var(--brand-teal-dark);font:inherit;font-weight:600;font-size:12px;padding:6px 13px;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background .15s}
+.refresh-btn:hover{background:var(--teal-100)}
+.refresh-btn:active .refresh-ic{transform:rotate(180deg)}
+.refresh-btn:disabled{opacity:.55;cursor:default}
+.refresh-ic{display:inline-block;transition:transform .4s ease}
+.live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green-600);box-shadow:0 0 0 3px var(--green-100)}
+.tabs{display:flex;gap:22px;background:var(--card);border-bottom:1px solid var(--line);padding:0 40px;overflow-x:auto;max-width:1400px;margin:0 auto}
+.tab-btn{appearance:none;border:none;background:none;font-family:var(--font-body);font-weight:600;font-size:13.5px;color:var(--slate-600);padding:12px 2px;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-1px;white-space:nowrap;flex:0 0 auto}
+.tab-btn:hover{color:var(--brand-teal-dark)}
+.tab-btn.active{color:var(--brand-teal-dark);border-bottom-color:var(--brand-teal);font-weight:700}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+section{padding:26px 0 8px}
+h2{font-family:var(--font-display);font-size:16px;font-weight:700;margin:0 0 14px;color:var(--brand-teal-deep);text-wrap:balance}
+.section-sub{margin:-8px 0 16px;font-size:12.5px;color:var(--slate-600)}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:8px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.kpi .lbl{font-size:12px;color:var(--slate-600);font-weight:600}
+.kpi .val{font-family:var(--font-mono);font-size:21px;font-weight:600;margin-top:6px;font-variant-numeric:tabular-nums}
+.kpi .sub{font-size:11.5px;color:var(--slate-400);margin-top:4px}
+.kpi .val.teal{color:var(--brand-teal-dark)}
+.kpi .val.green{color:var(--green-600)}
+.kpi .val.amber{color:var(--amber-600)}
+.kpi .val.red{color:var(--red-600)}
+.kpi .val.slate{color:var(--slate-600)}
+.grid-2{display:grid;grid-template-columns:1.3fr 1fr;gap:16px;align-items:start}
+@media (max-width:900px){.grid-2{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px 20px}
+.chart-tooltip{position:absolute;pointer-events:none;background:var(--brand-teal-deep);color:#fff;font-family:var(--font-body);font-size:12px;padding:7px 11px;border-radius:6px;opacity:0;transition:opacity .1s;transform:translate(-50%,-100%);white-space:nowrap;z-index:5;text-align:left}
+.chart-tooltip b{font-family:var(--font-mono)}
+.chart-wrap{position:relative}
+.chart-axis{stroke:var(--line)}
+.chart-bar{transition:opacity .1s}
+.chart-bar:hover{opacity:.75}
+.chart-label{font-family:var(--font-mono);font-size:10.5px;fill:var(--slate-600)}
+.chart-value{font-family:var(--font-mono);font-size:10.5px;font-weight:600;fill:var(--brand-teal-deep)}
+table{width:100%;border-collapse:collapse;font-size:12.8px}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--slate-600);font-weight:700;padding:9px 10px;border-bottom:2px solid var(--line);white-space:nowrap;cursor:pointer;user-select:none}
+th:hover{color:var(--brand-teal-dark)}
+th.n,td.n{text-align:right}
+td{padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td.n,.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+tbody tr:nth-child(even){background:#FAFDFC}
+tbody tr:hover{background:var(--teal-100)}
+.table-scroll{overflow-x:auto;border-radius:10px}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:11px;font-weight:700}
+.pill.pos{background:var(--green-100);color:var(--green-600)}
+.pill.warn{background:var(--amber-100);color:var(--amber-600)}
+.pill.neg{background:var(--red-100);color:var(--red-600)}
+.pill.muted{background:var(--teal-100);color:var(--slate-600)}
+.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.toolbar input[type=search]{font:inherit;font-size:13px;padding:8px 12px;border:1px solid var(--line);border-radius:8px;min-width:240px;background:var(--card)}
+.toolbar input[type=search]:focus{outline:2px solid var(--brand-teal);outline-offset:-1px}
+.count-tag{font-size:11.5px;color:var(--slate-600);font-family:var(--font-mono)}
+.alert-list{display:flex;flex-direction:column;gap:8px}
+.alert-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:9px 12px;border-radius:8px;background:var(--red-100)}
+.alert-item .who{font-size:12.5px;font-weight:600;color:var(--brand-teal-deep)}
+.alert-item .what{font-size:11px;color:var(--slate-600)}
+.alert-item .pct{font-family:var(--font-mono);font-weight:700;color:var(--red-600);white-space:nowrap}
+.empty-note{font-size:12.5px;color:var(--slate-400);padding:10px 2px}
+.state-banner{display:none;align-items:center;gap:12px;background:var(--amber-100);color:var(--amber-600);border:1px solid #f0d8ad;border-radius:10px;padding:14px 18px;margin:18px 0;font-size:13px}
+.state-banner.show{display:flex}
+.state-banner button{appearance:none;border:1px solid var(--amber-600);background:#fff;color:var(--amber-600);font:inherit;font-weight:600;font-size:12px;padding:6px 12px;border-radius:6px;cursor:pointer}
+footer{padding:30px 0 10px;font-size:11.5px;color:var(--slate-400);text-align:center}
+</style>
+</head>
+<body>
+<div class="top-sticky">
+<header>
+  <div class="header-top">
+    <div>
+      <div class="eyebrow">Vemolca &middot; Gerencia de proyectos</div>
+      <h1>Informe de Ejecución de Proyectos 2026</h1>
+      <p class="header-sub">Datos en vivo desde Google Sheets &middot; se actualiza automáticamente cada 5 minutos</p>
+    </div>
+    <div class="header-right">
+      <div class="refresh-row">
+        <span class="live-dot" id="liveDot"></span>
+        <span class="refresh-ts" id="lastUpdated">Cargando datos&hellip;</span>
+        <button class="refresh-btn" id="refreshBtn" onclick="loadAll(true)">
+          <span class="refresh-ic">&#8635;</span> Actualizar ahora
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
+<nav class="tabs" id="tabsNav">
+  <button class="tab-btn active" data-tab="resumen">Resumen</button>
+  <button class="tab-btn" data-tab="clientes">Clientes</button>
+  <button class="tab-btn" data-tab="ong">ONG</button>
+  <button class="tab-btn" data-tab="petroleo">Petróleo</button>
+</nav>
+</div>
+
+<div class="wrap">
+
+  <div class="state-banner" id="errorBanner">
+    <span>No se pudieron cargar los datos desde Google Sheets. Verifica tu conexión o que la hoja siga publicada.</span>
+    <button onclick="loadAll(true)">Reintentar</button>
+  </div>
+
+  <div class="tab-panel active" id="panel-resumen">
+
+    <section>
+      <h2>Indicadores generales</h2>
+      <p class="section-sub">Calculado sobre los procesos con factura registrada (excluye notas de crédito y renglones sin datos).</p>
+      <div class="kpi-grid" id="kpiGrid"></div>
+    </section>
+
+    <section class="grid-2">
+      <div class="card">
+        <h2>Evolución mensual</h2>
+        <p class="section-sub">Facturado, costo real y utilidad real por mes de factura.</p>
+        <div class="chart-wrap" id="chartMonthly"></div>
+      </div>
+      <div class="card">
+        <h2>Alertas de margen</h2>
+        <p class="section-sub">Procesos con efectividad negativa o por debajo del 20%.</p>
+        <div class="alert-list" id="alertList"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="card">
+        <h2>Utilidad estimada vs. real</h2>
+        <p class="section-sub">Comparación acumulada del período.</p>
+        <div class="chart-wrap" id="chartProfit"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="tab-panel" id="panel-clientes">
+
+    <section>
+      <h2>Resumen por clientes</h2>
+      <p class="section-sub">Totales acumulados de todo el período por cliente (excluye notas de crédito y renglones sin datos).</p>
+      <div class="toolbar">
+        <input type="search" id="clientSearchBox" placeholder="Buscar cliente&hellip;">
+        <span class="count-tag" id="clientRowCount"></span>
+      </div>
+      <div class="table-scroll card" style="padding:0">
+        <table id="clientTable">
+          <thead>
+            <tr>
+              <th data-key="cliente">Cliente</th>
+              <th class="n" data-key="procesos">Procesos</th>
+              <th class="n" data-key="facturado">Precio (facturado)</th>
+              <th class="n" data-key="costoEstimado">Costo estimado</th>
+              <th class="n" data-key="costoReal">Costo real</th>
+              <th class="n" data-key="utilidadEstimada">Utilidad estimada</th>
+              <th class="n" data-key="utilidadReal">Utilidad real</th>
+              <th class="n" data-key="efectividadEstimada">Efectividad est.</th>
+              <th class="n" data-key="efectividadReal">Efectividad real</th>
+            </tr>
+          </thead>
+          <tbody id="clientBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="tab-panel" id="panel-ong">
+
+    <section>
+      <h2>Indicadores de rentabilidad &mdash; ONG</h2>
+      <p class="section-sub">Organizaciones sin fines de lucro (todos los clientes excepto Maurell, Inprocca y M&amp;P).</p>
+      <div class="kpi-grid" id="ongKpiGrid"></div>
+    </section>
+
+    <section>
+      <div class="card">
+        <h2>Evolución de la tasa de rentabilidad</h2>
+        <p class="section-sub">Utilidad real / (base imponible + exento) por mes de factura.</p>
+        <div class="chart-wrap" id="ongChartRentabilidad"></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Detalle por cliente</h2>
+      <div class="toolbar">
+        <input type="search" id="ongSearchBox" placeholder="Buscar cliente&hellip;">
+        <span class="count-tag" id="ongRowCount"></span>
+      </div>
+      <div class="table-scroll card" style="padding:0">
+        <table id="ongClientTable">
+          <thead>
+            <tr>
+              <th data-key="cliente">Cliente</th>
+              <th class="n" data-key="procesos">Procesos</th>
+              <th class="n" data-key="facturado">Precio (facturado)</th>
+              <th class="n" data-key="costoEstimado">Costo estimado</th>
+              <th class="n" data-key="costoReal">Costo real</th>
+              <th class="n" data-key="utilidadEstimada">Utilidad estimada</th>
+              <th class="n" data-key="utilidadReal">Utilidad real</th>
+              <th class="n" data-key="efectividadEstimada">Efectividad est.</th>
+              <th class="n" data-key="efectividadReal">Efectividad real</th>
+            </tr>
+          </thead>
+          <tbody id="ongClientBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="tab-panel" id="panel-petroleo">
+
+    <section>
+      <h2>Indicadores de rentabilidad &mdash; Petróleo</h2>
+      <p class="section-sub">Clientes del sector petróleo: Maurell, Inprocca y M&amp;P.</p>
+      <div class="kpi-grid" id="petroleoKpiGrid"></div>
+    </section>
+
+    <section>
+      <div class="card">
+        <h2>Evolución de la tasa de rentabilidad</h2>
+        <p class="section-sub">Utilidad real / (base imponible + exento) por mes de factura.</p>
+        <div class="chart-wrap" id="petroleoChartRentabilidad"></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Detalle por cliente</h2>
+      <div class="toolbar">
+        <input type="search" id="petroleoSearchBox" placeholder="Buscar cliente&hellip;">
+        <span class="count-tag" id="petroleoRowCount"></span>
+      </div>
+      <div class="table-scroll card" style="padding:0">
+        <table id="petroleoClientTable">
+          <thead>
+            <tr>
+              <th data-key="cliente">Cliente</th>
+              <th class="n" data-key="procesos">Procesos</th>
+              <th class="n" data-key="facturado">Precio (facturado)</th>
+              <th class="n" data-key="costoEstimado">Costo estimado</th>
+              <th class="n" data-key="costoReal">Costo real</th>
+              <th class="n" data-key="utilidadEstimada">Utilidad estimada</th>
+              <th class="n" data-key="utilidadReal">Utilidad real</th>
+              <th class="n" data-key="efectividadEstimada">Efectividad est.</th>
+              <th class="n" data-key="efectividadReal">Efectividad real</th>
+            </tr>
+          </thead>
+          <tbody id="petroleoClientBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>Fuente: hoja &ldquo;Resumen&rdquo; publicada en Google Sheets &middot; los totales se recalculan a partir de las columnas base para evitar errores de fórmula (#REF!, #DIV/0!) en la hoja original.</footer>
+</div>
+
+<script>
+const SHEETS = {
+  resumen: {
+    label: 'Resumen',
+    url: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSWsjhk2Z-9F8D_2RBoygrfSI4tOr0q35sQQdMNcoHB50kktQ5FY3XIpZKvN1jhZQ/pub?gid=869447006&single=true&output=csv'
+  }
+};
+const REFRESH_MS = 5 * 60 * 1000;
+const LOW_MARGIN_THRESHOLD = 0.20;
+
+const fmtMoney = new Intl.NumberFormat('es-VE', {minimumFractionDigits:2, maximumFractionDigits:2});
+const fmtInt = new Intl.NumberFormat('es-VE');
+function money(n){ return (n<0?'-$ ':'$ ') + fmtMoney.format(Math.abs(n)); }
+function pct(n){ return n==null || isNaN(n) ? '&mdash;' : (n*100).toFixed(1).replace('.', ',') + '%'; }
+
+function parseCSV(text){
+  const rows = []; let row = []; let field = ''; let inQuotes = false;
+  for (let i=0;i<text.length;i++){
+    const c = text[i];
+    if (inQuotes){
+      if (c === '"'){
+        if (text[i+1] === '"'){ field += '"'; i++; } else { inQuotes = false; }
+      } else field += c;
+    } else {
+      if (c === '"') inQuotes = true;
+      else if (c === ',') { row.push(field); field=''; }
+      else if (c === '\r') { /* ignore */ }
+      else if (c === '\n') { row.push(field); rows.push(row); row=[]; field=''; }
+      else field += c;
+    }
+  }
+  if (field.length || row.length){ row.push(field); rows.push(row); }
+  return rows;
+}
+
+function normalizeHeader(s){
+  return (s||'').toString().normalize('NFD').replace(/[̀-ͯ]/g,'').trim().toUpperCase().replace(/\s+/g,' ');
+}
+
+function segmentOf(cliente){
+  const n = normalizeHeader(cliente);
+  if (n.includes('MAURELL') || n.includes('INPROCCA') || n.includes('M&P')) return 'petroleo';
+  return 'ong';
+}
+
+function parseMoney(raw){
+  if (raw == null) return 0;
+  let s = String(raw).trim();
+  if (!s) return 0;
+  if (/#REF!|#DIV\/0!|#N\/A|#VALUE!|#NAME\?/i.test(s)) return null;
+  s = s.replace(/\$/g,'').trim();
+  if (s === '-' || s === '') return 0;
+  let neg = s.startsWith('-');
+  if (neg) s = s.slice(1).trim();
+  s = s.replace(/\./g,'').replace(/,/g,'.');
+  const n = parseFloat(s);
+  if (isNaN(n)) return null;
+  return neg ? -n : n;
+}
+
+function parseDateDMY(raw){
+  if (!raw) return null;
+  const s = String(raw).trim();
+  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (!m) return null;
+  const d = new Date(Number(m[3]), Number(m[2])-1, Number(m[1]));
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function buildColumnIndex(headerRow){
+  const idx = {};
+  headerRow.forEach((h,i)=>{
+    const n = normalizeHeader(h);
+    if (n === 'ITMS') idx.itms = i;
+    else if (n === 'CLIENTE') idx.cliente = i;
+    else if (n.startsWith('PROCESO')) idx.proceso = i;
+    else if (n.startsWith('FACTURA')) idx.factura = i;
+    else if (n.startsWith('FECHA')) idx.fecha = i;
+    else if (n.startsWith('BASE IMPONIBLE')) idx.baseImponible = i;
+    else if (n.startsWith('EXENTO')) idx.exento = i;
+    else if (n === 'IVA') idx.iva = i;
+    else if (n === 'IGTF') idx.igtf = i;
+    else if (n.startsWith('TOTAL COSTO ESTIMADO')) idx.costoEstimado = i;
+    else if (n.startsWith('TOTAL COSTO REAL')) idx.costoReal = i;
+    else if (n.startsWith('TOTAL OTROS COSTOS')) idx.otrosCostos = i;
+    else if (n.startsWith('TOTAL UTILIDAD ESTIMADA')) idx.utilidadEstimada = i;
+    else if (n.startsWith('TOTAL UTILIDAD REAL')) idx.utilidadReal = i;
+    else if (n.startsWith('PROYECTO ASIGNADO')) idx.proyecto = i;
+    else if (n.startsWith('ESTATUS')) idx.estatus = i;
+  });
+  return idx;
+}
+
+function parseResumenCSV(text){
+  const rows = parseCSV(text);
+  const headerIdx = rows.findIndex(r => normalizeHeader(r[0]) === 'ITMS');
+  if (headerIdx === -1) throw new Error('No se encontró la fila de encabezados (ITMS).');
+  const col = buildColumnIndex(rows[headerIdx]);
+  const items = [];
+  for (let i = headerIdx+1; i < rows.length; i++){
+    const r = rows[i];
+    const itmsRaw = (r[col.itms]||'').trim();
+    const facturaRaw = (r[col.factura]||'').trim();
+    if (!/^\d+$/.test(itmsRaw) || !facturaRaw) continue;
+
+    const cliente = (r[col.cliente]||'').trim();
+    const baseImponible = parseMoney(r[col.baseImponible]) || 0;
+    const exento = parseMoney(r[col.exento]) || 0;
+    const iva = parseMoney(r[col.iva]) || 0;
+    const igtf = parseMoney(r[col.igtf]) || 0;
+    const costoEstimado = parseMoney(r[col.costoEstimado]) || 0;
+    const costoReal = parseMoney(r[col.costoReal]) || 0;
+    const otrosCostos = parseMoney(r[col.otrosCostos]) || 0;
+    const utilidadEstimada = parseMoney(r[col.utilidadEstimada]) || 0;
+    const utilidadReal = parseMoney(r[col.utilidadReal]) || 0;
+    const netoGravable = baseImponible + exento;
+    const facturado = baseImponible + exento + iva + igtf;
+
+    const isCreditNote = normalizeHeader(cliente) === 'NOTA DE CREDITO';
+    const isEmptyClient = cliente === '';
+
+    items.push({
+      itms: Number(itmsRaw),
+      cliente: cliente || '(sin cliente)',
+      proceso: (r[col.proceso]||'').trim(),
+      factura: facturaRaw,
+      fecha: parseDateDMY(r[col.fecha]),
+      baseImponible, exento, iva, igtf,
+      costoEstimado, costoReal, otrosCostos,
+      utilidadEstimada, utilidadReal,
+      facturado, netoGravable,
+      efectividad: netoGravable > 0 ? utilidadReal / netoGravable : null,
+      proyecto: (r[col.proyecto]||'').trim(),
+      estatus: (r[col.estatus]||'').trim(),
+      segmento: segmentOf(cliente),
+      isCreditNote, isEmptyClient,
+      isValid: !isCreditNote && !isEmptyClient && netoGravable > 0
+    });
+  }
+  return items;
+}
+
+let ALL_ITEMS = [];
+
+async function fetchSheet(url){
+  const bust = (url.includes('?') ? '&' : '?') + '_=' + Date.now();
+  const res = await fetch(url + bust, { cache: 'no-store' });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.text();
+}
+
+async function loadAll(manual){
+  const btn = document.getElementById('refreshBtn');
+  const banner = document.getElementById('errorBanner');
+  if (manual) btn.disabled = true;
+  try {
+    const text = await fetchSheet(SHEETS.resumen.url);
+    ALL_ITEMS = parseResumenCSV(text);
+    banner.classList.remove('show');
+    renderAll();
+    document.getElementById('lastUpdated').textContent =
+      'Actualizado ' + new Date().toLocaleTimeString('es-VE', {hour:'2-digit', minute:'2-digit'});
+  } catch (err) {
+    console.error(err);
+    banner.classList.add('show');
+    document.getElementById('lastUpdated').textContent = 'Sin datos recientes';
+  } finally {
+    if (manual) btn.disabled = false;
+  }
+}
+
+function renderAll(){
+  const valid = ALL_ITEMS.filter(d => d.isValid);
+  const ongValid = valid.filter(d => d.segmento === 'ong');
+  const petroleoValid = valid.filter(d => d.segmento === 'petroleo');
+
+  renderKPIs(valid);
+  renderMonthlyChart(valid);
+  renderAlerts(valid);
+  renderProfitChart(valid);
+  clientTableCtrl.setRows(buildClientSummary(valid));
+
+  renderSegmentKPIs(ongValid, 'ongKpiGrid');
+  renderRentabilityChart(ongValid, 'ongChartRentabilidad');
+  ongTableCtrl.setRows(buildClientSummary(ongValid));
+
+  renderSegmentKPIs(petroleoValid, 'petroleoKpiGrid');
+  renderRentabilityChart(petroleoValid, 'petroleoChartRentabilidad');
+  petroleoTableCtrl.setRows(buildClientSummary(petroleoValid));
+}
+
+function renderKPIs(valid){
+  const sum = (k) => valid.reduce((a,d)=>a+(d[k]||0),0);
+  const facturado = sum('facturado');
+  const costoReal = sum('costoReal');
+  const utilidadReal = sum('utilidadReal');
+  const utilidadEstimada = sum('utilidadEstimada');
+  const netoGravable = sum('netoGravable');
+  const efectividad = netoGravable > 0 ? utilidadReal / netoGravable : null;
+  const delta = utilidadEstimada !== 0 ? (utilidadReal - utilidadEstimada) / Math.abs(utilidadEstimada) : null;
+  const creditNotes = ALL_ITEMS.filter(d => d.isCreditNote).length;
+
+  const cards = [
+    {lbl:'Total facturado', val: money(facturado), cls:'teal', sub: fmtInt.format(valid.length) + ' procesos facturados'},
+    {lbl:'Costo real total', val: money(costoReal), cls:'slate', sub: facturado>0 ? pct(costoReal/facturado) + ' del facturado' : ''},
+    {lbl:'Utilidad real', val: money(utilidadReal), cls: utilidadReal>=0?'green':'red', sub: delta==null?'':(delta>=0?'+':'') + (delta*100).toFixed(1).replace('.',',') + '% vs. estimada'},
+    {lbl:'Efectividad (margen real)', val: pct(efectividad), cls: efectividad==null?'slate':(efectividad>=0.20?'green':efectividad>=0?'amber':'red'), sub:'Utilidad real / base + exento'},
+    {lbl:'Utilidad estimada', val: money(utilidadEstimada), cls:'slate', sub:'Proyectada para el período'},
+    {lbl:'Notas de crédito', val: fmtInt.format(creditNotes), cls:'amber', sub:'Excluidas de los totales'}
+  ];
+  document.getElementById('kpiGrid').innerHTML = cards.map(c => `
+    <div class="kpi">
+      <div class="lbl">${c.lbl}</div>
+      <div class="val ${c.cls}">${c.val}</div>
+      <div class="sub">${c.sub}</div>
+    </div>`).join('');
+}
+
+function monthLabel(d){
+  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return meses[d.getMonth()] + ' ' + String(d.getFullYear()).slice(2);
+}
+
+function renderMonthlyChart(valid){
+  const el = document.getElementById('chartMonthly');
+  const withDate = valid.filter(d => d.fecha);
+  if (!withDate.length){ el.innerHTML = '<p class="empty-note">Sin fechas válidas para agrupar por mes.</p>'; return; }
+  const byMonth = new Map();
+  withDate.forEach(d => {
+    const key = d.fecha.getFullYear() + '-' + String(d.fecha.getMonth()).padStart(2,'0');
+    if (!byMonth.has(key)) byMonth.set(key, {label: monthLabel(d.fecha), facturado:0, costoReal:0, utilidadReal:0, sortKey: key});
+    const m = byMonth.get(key);
+    m.facturado += d.facturado; m.costoReal += d.costoReal; m.utilidadReal += d.utilidadReal;
+  });
+  const months = Array.from(byMonth.values()).sort((a,b)=>a.sortKey.localeCompare(b.sortKey));
+  const series = [
+    {key:'facturado', color:'var(--brand-teal)'},
+    {key:'costoReal', color:'var(--amber-600)'},
+    {key:'utilidadReal', color:'var(--green-600)'}
+  ];
+  const W = 640, H = 260, padL = 55, padB = 34, padT = 14, padR = 10;
+  const innerW = W - padL - padR, innerH = H - padT - padB;
+  const maxVal = Math.max(1, ...months.flatMap(m => series.map(s => m[s.key])));
+  const groupW = innerW / months.length;
+  const barW = Math.min(16, groupW / (series.length + 1.5));
+  let svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px">`;
+  for (let g=0; g<=4; g++){
+    const y = padT + innerH - (g/4)*innerH;
+    svg += `<line class="chart-axis" x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}"/>`;
+    svg += `<text class="chart-label" x="${padL-8}" y="${y+3}" text-anchor="end">${fmtInt.format(Math.round(maxVal*g/4/1000))}k</text>`;
+  }
+  months.forEach((m, gi) => {
+    const gx = padL + gi*groupW + groupW/2;
+    series.forEach((s, si) => {
+      const val = m[s.key];
+      const h = (val/maxVal)*innerH;
+      const x = gx - (series.length*barW)/2 + si*barW;
+      const y = padT + innerH - h;
+      svg += `<rect class="chart-bar" x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${(barW-2).toFixed(1)}" height="${Math.max(0,h).toFixed(1)}" fill="${s.color}" rx="1.5"><title>${m.label} &middot; ${s.key}: ${money(val)}</title></rect>`;
+    });
+    svg += `<text class="chart-label" x="${gx}" y="${H-12}" text-anchor="middle">${m.label}</text>`;
+  });
+  svg += '</svg>';
+  svg += `<div style="display:flex;gap:16px;margin-top:6px;flex-wrap:wrap">
+    ${series.map(s=>`<span style="font-size:11px;color:var(--slate-600)"><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${s.color};margin-right:5px"></span>${s.key==='facturado'?'Facturado':s.key==='costoReal'?'Costo real':'Utilidad real'}</span>`).join('')}
+  </div>`;
+  el.innerHTML = svg;
+}
+
+function renderAlerts(valid){
+  const el = document.getElementById('alertList');
+  const alerts = valid
+    .filter(d => d.efectividad != null && d.efectividad < LOW_MARGIN_THRESHOLD)
+    .sort((a,b) => a.efectividad - b.efectividad)
+    .slice(0, 8);
+  if (!alerts.length){ el.innerHTML = '<p class="empty-note">No hay procesos con efectividad por debajo del 20%.</p>'; return; }
+  el.innerHTML = alerts.map(a => `
+    <div class="alert-item">
+      <div>
+        <div class="who">${escapeHtml(a.cliente)}</div>
+        <div class="what">${escapeHtml(a.proceso || 'Proceso sin nombre')} &middot; Factura ${escapeHtml(a.factura)}</div>
+      </div>
+      <div class="pct">${pct(a.efectividad)}</div>
+    </div>`).join('');
+}
+
+function renderProfitChart(valid){
+  const el = document.getElementById('chartProfit');
+  const estimada = valid.reduce((a,d)=>a+d.utilidadEstimada,0);
+  const real = valid.reduce((a,d)=>a+d.utilidadReal,0);
+  const W = 420, H = 160, padL = 100, padR = 20, padT = 10, padB = 30;
+  const innerW = W - padL - padR;
+  const maxVal = Math.max(1, estimada, real);
+  const rows = [
+    {label:'Estimada', val: estimada, color:'var(--slate-400)'},
+    {label:'Real', val: real, color: real>=estimada ? 'var(--green-600)' : 'var(--amber-600)'}
+  ];
+  let svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px">`;
+  rows.forEach((r,i) => {
+    const y = padT + i*55;
+    const w = (r.val/maxVal)*innerW;
+    svg += `<text class="chart-label" x="${padL-10}" y="${y+18}" text-anchor="end">${r.label}</text>`;
+    svg += `<rect class="chart-bar" x="${padL}" y="${y}" width="${Math.max(2,w).toFixed(1)}" height="26" fill="${r.color}" rx="4"><title>${r.label}: ${money(r.val)}</title></rect>`;
+    svg += `<text class="chart-value" x="${padL + w + 8}" y="${y+18}" text-anchor="start">${money(r.val)}</text>`;
+  });
+  svg += '</svg>';
+  el.innerHTML = svg;
+}
+
+function renderSegmentKPIs(valid, gridId){
+  const sum = (k) => valid.reduce((a,d)=>a+(d[k]||0),0);
+  const facturado = sum('facturado');
+  const costoEstimado = sum('costoEstimado');
+  const costoReal = sum('costoReal');
+  const utilidadEstimada = sum('utilidadEstimada');
+  const utilidadReal = sum('utilidadReal');
+  const netoGravable = sum('netoGravable');
+  const efectividadReal = netoGravable > 0 ? utilidadReal / netoGravable : null;
+  const efectividadEstimada = netoGravable > 0 ? utilidadEstimada / netoGravable : null;
+  const delta = utilidadEstimada !== 0 ? (utilidadReal - utilidadEstimada) / Math.abs(utilidadEstimada) : null;
+
+  const cards = [
+    {lbl:'Total facturado', val: money(facturado), cls:'teal', sub: fmtInt.format(valid.length) + ' procesos facturados'},
+    {lbl:'Costo real total', val: money(costoReal), cls:'slate', sub: facturado>0 ? pct(costoReal/facturado) + ' del facturado' : ''},
+    {lbl:'Utilidad real', val: money(utilidadReal), cls: utilidadReal>=0?'green':'red', sub: delta==null?'':(delta>=0?'+':'') + (delta*100).toFixed(1).replace('.',',') + '% vs. estimada'},
+    {lbl:'Tasa de rentabilidad (real)', val: pct(efectividadReal), cls: efectividadReal==null?'slate':(efectividadReal>=0.20?'green':efectividadReal>=0?'amber':'red'), sub:'Utilidad real / base + exento'},
+    {lbl:'Tasa de rentabilidad (estimada)', val: pct(efectividadEstimada), cls:'slate', sub:'Utilidad estimada / base + exento'},
+    {lbl:'Utilidad estimada', val: money(utilidadEstimada), cls:'slate', sub:'Proyectada para el período'}
+  ];
+  document.getElementById(gridId).innerHTML = cards.map(c => `
+    <div class="kpi">
+      <div class="lbl">${c.lbl}</div>
+      <div class="val ${c.cls}">${c.val}</div>
+      <div class="sub">${c.sub}</div>
+    </div>`).join('');
+}
+
+function renderRentabilityChart(valid, elId){
+  const el = document.getElementById(elId);
+  const withDate = valid.filter(d => d.fecha);
+  if (!withDate.length){ el.innerHTML = '<p class="empty-note">Sin fechas válidas para agrupar por mes.</p>'; return; }
+  const byMonth = new Map();
+  withDate.forEach(d => {
+    const key = d.fecha.getFullYear() + '-' + String(d.fecha.getMonth()).padStart(2,'0');
+    if (!byMonth.has(key)) byMonth.set(key, {label: monthLabel(d.fecha), utilidadReal:0, netoGravable:0, sortKey: key});
+    const m = byMonth.get(key);
+    m.utilidadReal += d.utilidadReal; m.netoGravable += d.netoGravable;
+  });
+  const months = Array.from(byMonth.values()).sort((a,b)=>a.sortKey.localeCompare(b.sortKey))
+    .map(m => ({...m, efectividad: m.netoGravable > 0 ? m.utilidadReal / m.netoGravable : 0}));
+
+  const W = 640, H = 240, padL = 50, padR = 10, padT = 14, padB = 32;
+  const innerW = W - padL - padR, innerH = H - padT - padB;
+  const maxAbs = Math.max(0.3, ...months.map(m => Math.abs(m.efectividad)));
+  const zeroY = padT + innerH/2;
+  const scale = (innerH/2) / maxAbs;
+  const groupW = innerW / months.length;
+  const barW = Math.min(24, groupW * 0.5);
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px">`;
+  svg += `<line class="chart-axis" x1="${padL}" y1="${zeroY.toFixed(1)}" x2="${W-padR}" y2="${zeroY.toFixed(1)}"/>`;
+  [maxAbs, maxAbs/2, -maxAbs/2, -maxAbs].forEach(v => {
+    const y = zeroY - v*scale;
+    svg += `<text class="chart-label" x="${padL-8}" y="${(y+3).toFixed(1)}" text-anchor="end">${(v*100).toFixed(0)}%</text>`;
+  });
+  months.forEach((m, gi) => {
+    const gx = padL + gi*groupW + groupW/2;
+    const h = Math.abs(m.efectividad) * scale;
+    const y = m.efectividad >= 0 ? zeroY - h : zeroY;
+    const color = m.efectividad >= 0.20 ? 'var(--green-600)' : m.efectividad >= 0 ? 'var(--amber-600)' : 'var(--red-600)';
+    svg += `<rect class="chart-bar" x="${(gx-barW/2).toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(0,h).toFixed(1)}" fill="${color}" rx="2"><title>${m.label}: ${pct(m.efectividad)}</title></rect>`;
+    svg += `<text class="chart-label" x="${gx.toFixed(1)}" y="${H-12}" text-anchor="middle">${m.label}</text>`;
+  });
+  svg += '</svg>';
+  el.innerHTML = svg;
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+function buildClientSummary(valid){
+  const map = new Map();
+  valid.forEach(d => {
+    if (!map.has(d.cliente)) map.set(d.cliente, {
+      cliente: d.cliente, procesos: 0, facturado: 0, costoEstimado: 0, costoReal: 0,
+      utilidadEstimada: 0, utilidadReal: 0, netoGravable: 0
+    });
+    const c = map.get(d.cliente);
+    c.procesos += 1;
+    c.facturado += d.facturado;
+    c.costoEstimado += d.costoEstimado;
+    c.costoReal += d.costoReal;
+    c.utilidadEstimada += d.utilidadEstimada;
+    c.utilidadReal += d.utilidadReal;
+    c.netoGravable += d.netoGravable;
+  });
+  return Array.from(map.values()).map(c => ({
+    ...c,
+    efectividadEstimada: c.netoGravable > 0 ? c.utilidadEstimada / c.netoGravable : null,
+    efectividadReal: c.netoGravable > 0 ? c.utilidadReal / c.netoGravable : null
+  }));
+}
+
+function createClientTableController(cfg){
+  const state = { key: 'facturado', dir: -1 };
+  let rows = [];
+
+  function render(){
+    const q = document.getElementById(cfg.searchId).value.trim().toLowerCase();
+    let filtered = q ? rows.filter(c => c.cliente.toLowerCase().includes(q)) : rows.slice();
+
+    filtered.sort((a,b) => {
+      let av = a[state.key], bv = b[state.key];
+      if (av == null) av = -Infinity; if (bv == null) bv = -Infinity;
+      if (typeof av === 'string') return av.localeCompare(bv) * state.dir;
+      return (av - bv) * state.dir;
+    });
+
+    document.getElementById(cfg.countId).textContent = fmtInt.format(filtered.length) + ' clientes';
+    document.getElementById(cfg.bodyId).innerHTML = filtered.map(c => `
+      <tr>
+        <td>${escapeHtml(c.cliente)}</td>
+        <td class="n mono">${fmtInt.format(c.procesos)}</td>
+        <td class="n mono">${money(c.facturado)}</td>
+        <td class="n mono">${money(c.costoEstimado)}</td>
+        <td class="n mono">${money(c.costoReal)}</td>
+        <td class="n mono">${money(c.utilidadEstimada)}</td>
+        <td class="n mono">${money(c.utilidadReal)}</td>
+        <td class="n">${pct(c.efectividadEstimada)}</td>
+        <td class="n">${pct(c.efectividadReal)}</td>
+      </tr>`).join('');
+  }
+
+  document.querySelectorAll(`#${cfg.tableId} th[data-key]`).forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.key;
+      state.dir = (state.key === key) ? -state.dir : 1;
+      state.key = key;
+      render();
+    });
+  });
+  document.getElementById(cfg.searchId).addEventListener('input', render);
+
+  return { setRows(newRows){ rows = newRows; render(); } };
+}
+
+const clientTableCtrl = createClientTableController({tableId:'clientTable', searchId:'clientSearchBox', countId:'clientRowCount', bodyId:'clientBody'});
+const ongTableCtrl = createClientTableController({tableId:'ongClientTable', searchId:'ongSearchBox', countId:'ongRowCount', bodyId:'ongClientBody'});
+const petroleoTableCtrl = createClientTableController({tableId:'petroleoClientTable', searchId:'petroleoSearchBox', countId:'petroleoRowCount', bodyId:'petroleoClientBody'});
+
+loadAll(false);
+setInterval(() => loadAll(false), REFRESH_MS);
+</script>
+</body></html>
