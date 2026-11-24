@@ -147,7 +147,7 @@ td.bar{width:80px}
 <div class="header-right">
 <div class="corte-label">Corte al 24/11/2026</div>
 <div class="refresh-row">
-<span class="refresh-ts">Actualizado 24/11/2026 08:17</span>
+<span class="refresh-ts">Actualizado 24/11/2026 08:24</span>
 <button class="refresh-btn" onclick="actualizarDashboard(this)" title="Vuelve a cargar la &uacute;ltima versi&oacute;n publicada de este dashboard">
 <span class="refresh-ic">&#8635;</span> Actualizar
 </button>
@@ -172,15 +172,15 @@ td.bar{width:80px}
 <div class="kpis">
 <div class="kpi featured"><div class="lbl">Ventas totales (con IVA e IGTF)</div><div class="val teal">2.705.200</div><div class="sub">167 operaciones · ticket promedio 16.199</div></div>
 <div class="kpi"><div class="lbl">Base imponible + exento</div><div class="val teal">2.352.338</div><div class="sub">Ingreso neto de impuestos</div></div>
-<div class="kpi"><div class="lbl">Facturado y cobrado</div><div class="val green">1.602.993</div><div class="sub">59,3% de las ventas</div></div>
-<div class="kpi"><div class="lbl">Facturado por cobrar</div><div class="val amber">368.506</div><div class="sub">13,6% de las ventas</div></div>
+<div class="kpi"><div class="lbl">Facturado y cobrado</div><div class="val green">1.606.327</div><div class="sub">59,4% de las ventas</div></div>
+<div class="kpi"><div class="lbl">Facturado por cobrar</div><div class="val amber">365.172</div><div class="sub">13,5% de las ventas</div></div>
 <div class="kpi"><div class="lbl">Pendiente de facturar</div><div class="val red">733.701</div><div class="sub">27,1% de las ventas</div></div>
 <div class="kpi"><div class="lbl">Impuestos gestionados</div><div class="val slate">352.862</div><div class="sub">IVA 317.627 · IGTF 35.235</div></div>
 </div>
 <div class="panel-head"><div class="eyebrow">S&iacute;ntesis</div><h2>Resumen ejecutivo</h2><p class="panel-desc">Lectura general de ventas, cobranza y concentraci&oacute;n de cartera.</p></div>
 <div class="note"><ul>
 <li>Las ventas acumuladas del ejercicio 2026 alcanzan <b>USD 2.705.200</b> distribuidas en <b>167 operaciones</b>, de las cuales <b>138</b> ya est&aacute;n facturadas (<b>1.971.499</b>, 72,9%).</li>
-<li>La conversi&oacute;n a caja es el punto cr&iacute;tico: solo <b>59,3%</b> de la venta est&aacute; efectivamente cobrada. Entre cuentas por cobrar (368.506) y ventas sin facturar (733.701) hay <b>USD 1.102.208</b> pendientes de convertir en efectivo (40,7% del total).</li>
+<li>La conversi&oacute;n a caja es el punto cr&iacute;tico: solo <b>59,4%</b> de la venta est&aacute; efectivamente cobrada. Entre cuentas por cobrar (365.172) y ventas sin facturar (733.701) hay <b>USD 1.098.873</b> pendientes de convertir en efectivo (40,6% del total).</li>
 <li>Concentraci&oacute;n de cartera: <b>UNICEF</b> representa 43,9% de la facturaci&oacute;n y los tres primeros clientes concentran <b>68,8%</b>.</li>
 <li>El mes de mayor actividad fue <b>Jul 2026</b> con 860.320 (31,8% del a&ntilde;o).</li>
 <li>La estructura tributaria muestra <b>317.627</b> de IVA y <b>35.235</b> de IGTF; el rubro exento asciende a 91.510 (3,4%).</li>
@@ -310,16 +310,16 @@ td.bar{width:80px}
 <div class="table-scroll">
 <table><thead><tr><th>Estado</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% del total</th></tr></thead>
 <tbody>
-<tr><td><span class='badge badge-amber'>Por cobrar</span></td><td class=n>22</td><td class=n>368.506</td><td class=n>13,6%</td></tr>
+<tr><td><span class='badge badge-amber'>Por cobrar</span></td><td class=n>20</td><td class=n>365.172</td><td class=n>13,5%</td></tr>
 <tr><td><span class='badge badge-red'>Sin facturar</span></td><td class=n>29</td><td class=n>733.701</td><td class=n>27,1%</td></tr>
 </tbody>
-<tfoot><tr><td>TOTAL PENDIENTE</td><td class=n>51</td><td class=n>1.102.208</td><td class=n>40,7%</td></tr></tfoot></table>
+<tfoot><tr><td>TOTAL PENDIENTE</td><td class=n>49</td><td class=n>1.098.873</td><td class=n>40,6%</td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">Cobranza · ONG</div><h2>Cartera pendiente — ONG</h2><p class="panel-desc">Saldo cobrado, por cobrar y sin facturar de clientes ONG.</p></div>
 <div class="table-scroll">
 <table><thead><tr><th>Cliente</th><th class=n>Cobrado</th><th class=n>Por cobrar</th><th class=n>Sin facturar</th><th class=n>Total pendiente</th></tr></thead>
 <tbody>
-<tr class='cliente-row' onclick="toggleCliente('cxc-ong-UNICEF', this)"><td><b><span class='expand-ic'>&#9656;</span> UNICEF</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF-cob')">643.979</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF-pc')">68.731</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF-sf')">474.228</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF')">542.959</span></td></tr>
+<tr class='cliente-row' onclick="toggleCliente('cxc-ong-UNICEF', this)"><td><b><span class='expand-ic'>&#9656;</span> UNICEF</b></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF-cob')">647.313</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF-pc')">65.396</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF-sf')">474.228</span></td><td class=n><span class='monto-click' onclick="event.stopPropagation();toggleMonto('cxc-ong-UNICEF')">539.625</span></td></tr>
 <tr id='cxc-ong-UNICEF-cob' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
 <tr><td><span class=mono>00000678</span></td><td class=ctr>21/01/2026</td><td>FLETE</td><td class=n>1.100</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
 <tr><td><span class=mono>00000677</span></td><td class=ctr>21/01/2026</td><td>KIT DE HIGIENE REPOSICION</td><td class=n>41.390</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
@@ -357,11 +357,11 @@ td.bar{width:80px}
 <tr><td><span class=mono>00000809</span></td><td class=ctr>30/09/2026</td><td>KIT DE AULA REGULAR</td><td class=n>22.880</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
 <tr><td><span class=mono>00000810</span></td><td class=ctr>30/09/2026</td><td>FLETES PO 81158050</td><td class=n>3.140</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
 <tr><td><span class=mono>00000811</span></td><td class=ctr>30/09/2026</td><td>FLETES KIT FERRETERÍA SAN JUAN PAYARA APURE</td><td class=n>550</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000823</span></td><td class=ctr>06/10/2026</td><td>MATERIAL PAPELERÍA CLUSTERS ADR</td><td class=n>350</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
+<tr><td><span class=mono>00000821</span></td><td class=ctr>06/10/2026</td><td>MATERIAL PAPELERÍA CLUSTERS ADR</td><td class=n>2.985</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
 <tr><td><span class=mono>00000827</span></td><td class=ctr>16/10/2026</td><td>Ferretería San Juan de Payara Apure</td><td class=n>1.317</td><td class=ctr><span class='badge badge-green'>Cobrado</span></td></tr>
 </tbody></table></div></td></tr>
 <tr id='cxc-ong-UNICEF-pc' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
-<tr><td><span class=mono>00000823</span></td><td class=ctr>06/10/2026</td><td>MATERIAL PAPELERÍA CLUSTERS ADR</td><td class=n>350</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000821</span></td><td class=ctr>06/10/2026</td><td>MATERIAL PAPELERÍA CLUSTERS ADR</td><td class=n>2.985</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><span class=mono>00000858</span></td><td class=ctr>16/11/2026</td><td>KIT VARIOS</td><td class=n>65.396</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 </tbody></table></div></td></tr>
 <tr id='cxc-ong-UNICEF-sf' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
@@ -388,18 +388,16 @@ td.bar{width:80px}
 </tbody></table></div></td></tr>
 <tr id='cxc-ong-UNICEF' class='cliente-detalle'><td colspan=5><div class="table-scroll"><table><thead><tr><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
 <tr><td><i>por facturar</i></td><td class=ctr>28/08/2026</td><td>FLETES PO 81155123</td><td class=n>4.513</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
-<tr><td><span class=mono>00000823</span></td><td class=ctr>06/10/2026</td><td>MATERIAL PAPELERÍA CLUSTERS ADR</td><td class=n>350</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><span class=mono>00000821</span></td><td class=ctr>06/10/2026</td><td>MATERIAL PAPELERÍA CLUSTERS ADR</td><td class=n>2.985</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><i>por facturar</i></td><td class=ctr>03/11/2026</td><td>MATERIALES DE FERRETERÍA PTO. AYACUCHO</td><td class=n>5.660</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
 <tr><td><i>por facturar</i></td><td class=ctr>13/11/2026</td><td>KIT ESCOLARES, SUCRE Y DELTA AMAC</td><td class=n>9.118</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
 <tr><td><i>por facturar</i></td><td class=ctr>13/11/2026</td><td>KIT ESCOLARES, DELTA AMACURO</td><td class=n>17.879</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
-<tr><td><i>por facturar</i></td><td class=ctr>13/11/2026</td><td>KIT ESCOLARES, ZULIA</td><td class=n>132.131</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
 <tr><td><i>por facturar</i></td><td class=ctr>13/11/2026</td><td>KIT ESCOLARES, GUAIRA, CAPITAL, M IRANDA</td><td class=n>44.227</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
-<tr><td><i>por facturar</i></td><td class=ctr>13/11/2026</td><td>KIT ESCOLARES, GUAIRA, CAPITAL MIRANDA CARABOBO</td><td class=n>93.967</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
-<tr><td><i>por facturar</i></td><td class=ctr>13/11/2026</td><td>KIT DE OFICINA, LA GUAIRA</td><td class=n>36.827</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
-<tr><td><i>por facturar</i></td><td class=ctr>13/11/2026</td><td>KIT DE AULA REGULAR, LA GUAIRA</td><td class=n>28.418</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+<tr><td><i>por facturar</i></td><td class=ctr>13/11/2026</td><td>KIT ESCOLARES, ZULIA</td><td class=n>132.131</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
 <tr><td><i>por facturar</i></td><td class=ctr>13/11/2026</td><td>KIT DE AULA REGULAR, LA GUAIRA</td><td class=n>44.811</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+<tr><td><i>por facturar</i></td><td class=ctr>13/11/2026</td><td>KIT DE AULA REGULAR, LA GUAIRA</td><td class=n>28.418</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+<tr><td><i>por facturar</i></td><td class=ctr>13/11/2026</td><td>KIT ESCOLARES, GUAIRA, CAPITAL MIRANDA CARABOBO</td><td class=n>93.967</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
 <tr><td><i>por facturar</i></td><td class=ctr>13/11/2026</td><td>KIT AULA REGULAR, LA GUAIRA</td><td class=n>22.261</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
+<tr><td><i>por facturar</i></td><td class=ctr>13/11/2026</td><td>KIT DE OFICINA, LA GUAIRA</td><td class=n>36.827</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
 <tr><td><i>por facturar</i></td><td class=ctr>16/11/2026</td><td>FLETES KIT ESCOLARES PO-81161884</td><td class=n>3.394</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
 <tr><td><i>por facturar</i></td><td class=ctr>16/11/2026</td><td>FLETES KIT ESCOLARES PO-81161889</td><td class=n>5.558</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
 <tr><td><i>por facturar</i></td><td class=ctr>16/11/2026</td><td>FLETES KIT ESCOLARES PO-81161885</td><td class=n>3.870</td><td class=ctr><span class='badge badge-red'>Sin facturar</span></td></tr>
@@ -600,7 +598,7 @@ td.bar{width:80px}
 
 
 </tbody>
-<tfoot><tr><td>TOTAL</td><td class=n>1.552.166</td><td class=n>102.305</td><td class=n>493.050</td><td class=n>595.355</td></tr></tfoot></table>
+<tfoot><tr><td>TOTAL</td><td class=n>1.555.500</td><td class=n>98.970</td><td class=n>493.050</td><td class=n>592.021</td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">Cobranza · Petr&oacute;leo</div><h2>Cartera pendiente — Petr&oacute;leo</h2><p class="panel-desc">Saldo cobrado, por cobrar y sin facturar de clientes del sector petrolero.</p></div>
 <div class="table-scroll">
@@ -675,7 +673,7 @@ td.bar{width:80px}
 <div class="table-scroll">
 <table><thead><tr><th>Tramo (d&iacute;as desde la factura)</th><th class=n>Monto USD</th><th class=n>% de la cartera</th></tr></thead>
 <tbody>
-<tr><td>0-30 dias</td><td class=n><span class='monto-click' onclick="toggleMonto('aging-030dias')">172.755</span></td><td class=n>46,9%</td></tr>
+<tr><td>0-30 dias</td><td class=n><span class='monto-click' onclick="toggleMonto('aging-030dias')">172.755</span></td><td class=n>47,3%</td></tr>
 <tr id='aging-030dias' class='cliente-detalle'><td colspan=3><div class="table-scroll"><table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
 <tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE-020-2026</span></td><td class=ctr>30/10/2026</td><td>INSUMOS DE SEG. INDUSTRIAL</td><td class=n>23.999</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE-019-2027</span></td><td class=ctr>30/10/2026</td><td>400 BRAGAS AZULES</td><td class=n>19.948</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
@@ -691,26 +689,24 @@ td.bar{width:80px}
 <tr><td><b>OIM</b></td><td><span class=mono>00000862-63</span></td><td class=ctr>20/11/2026</td><td>INSUMOS DE HIGIENE</td><td class=n>24.199</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><b>OIM</b></td><td><span class=mono>00000865</span></td><td class=ctr>24/11/2026</td><td>SÁBANAS Y ALMOHADAS</td><td class=n>4.202</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 </tbody></table></div></td></tr>
-<tr><td>31-60 dias</td><td class=n><span class='monto-click' onclick="toggleMonto('aging-3160dias')">3.467</span></td><td class=n>0,9%</td></tr>
+<tr><td>31-60 dias</td><td class=n><span class='monto-click' onclick="toggleMonto('aging-3160dias')">132</span></td><td class=n>0,0%</td></tr>
 <tr id='aging-3160dias' class='cliente-detalle'><td colspan=3><div class="table-scroll"><table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
 <tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE -016-2026</span></td><td class=ctr>02/10/2026</td><td>GUANTES ANTI-IMPACTO</td><td class=n>132</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000823</span></td><td class=ctr>06/10/2026</td><td>MATERIAL PAPELERÍA CLUSTERS ADR</td><td class=n>350</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000821</span></td><td class=ctr>06/10/2026</td><td>MATERIAL PAPELERÍA CLUSTERS ADR</td><td class=n>2.985</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 </tbody></table></div></td></tr>
-<tr><td>61-90 dias</td><td class=n><span class='monto-click' onclick="toggleMonto('aging-6190dias')">71.959</span></td><td class=n>19,5%</td></tr>
+<tr><td>61-90 dias</td><td class=n><span class='monto-click' onclick="toggleMonto('aging-6190dias')">71.959</span></td><td class=n>19,7%</td></tr>
 <tr id='aging-6190dias' class='cliente-detalle'><td colspan=3><div class="table-scroll"><table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
 <tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE-012-2026</span></td><td class=ctr>03/09/2026</td><td>BRAGAS Y BORDADOS DE LOGO 391 UNIDADES</td><td class=n>19.346</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><b>MAURELL</b></td><td><span class=mono>00000794</span></td><td class=ctr>17/09/2026</td><td>ADQ. MAT. FERROSOS PTEROREGIONAL DEL LAGO</td><td class=n>46.617</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE -014-2026</span></td><td class=ctr>17/09/2026</td><td>BRAGAS ROJAS 121 UNIDADES</td><td class=n>4.945</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE -015-2026</span></td><td class=ctr>24/09/2026</td><td>INSUMOS PETROLEROS</td><td class=n>1.051</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 </tbody></table></div></td></tr>
-<tr><td>+90 dias</td><td class=n><span class='monto-click' onclick="toggleMonto('aging-90dias')">120.325</span></td><td class=n>32,7%</td></tr>
+<tr><td>+90 dias</td><td class=n><span class='monto-click' onclick="toggleMonto('aging-90dias')">120.325</span></td><td class=n>33,0%</td></tr>
 <tr id='aging-90dias' class='cliente-detalle'><td colspan=3><div class="table-scroll"><table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha</th><th>Descripci&oacute;n</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead><tbody>
 <tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE-011-2026</span></td><td class=ctr>19/08/2026</td><td>INSUMOS PETROLEROS</td><td class=n>109.555</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 <tr><td><b>INPROCCA</b></td><td><span class=mono>INVOICE-010-2026</span></td><td class=ctr>19/08/2026</td><td>GUANTES</td><td class=n>10.770</td><td class=ctr><span class='badge badge-amber'>Por cobrar</span></td></tr>
 </tbody></table></div></td></tr>
 </tbody>
-<tfoot><tr><td>TOTAL POR COBRAR</td><td class=n>368.506</td><td class=n>100,0%</td></tr></tfoot></table>
+<tfoot><tr><td>TOTAL POR COBRAR</td><td class=n>365.172</td><td class=n>100,0%</td></tr></tfoot></table>
 </div>
 </div>
 
@@ -905,20 +901,18 @@ td.bar{width:80px}
 <div class="table-scroll">
 <table><thead><tr><th>Rango</th><th class=n>Docs.</th><th class=n>Monto USD</th><th class=n>% del pendiente</th></tr></thead>
 <tbody>
-<tr class='resumen'><td>Vencidas</td><td class=n>8</td><td class=n>149.134</td><td class=n>40,5%</td></tr>
-<tr><td>Vence en 0-30 dias</td><td class=n>14</td><td class=n>219.372</td><td class=n>59,5%</td></tr>
+<tr class='resumen'><td>Vencidas</td><td class=n>6</td><td class=n>145.799</td><td class=n>39,9%</td></tr>
+<tr><td>Vence en 0-30 dias</td><td class=n>14</td><td class=n>219.372</td><td class=n>60,1%</td></tr>
 <tr><td>Vence en 31-60 dias</td><td class=n>0</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
 <tr><td>Vence en 61-90 dias</td><td class=n>0</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
 <tr><td>Vence en +90 dias</td><td class=n>0</td><td class=n><span class='zero'>&mdash;</span></td><td class=n>0,0%</td></tr>
 </tbody>
-<tfoot><tr><td>TOTAL</td><td class=n>22</td><td class=n>368.506</td><td class=n>100,0%</td></tr></tfoot></table>
+<tfoot><tr><td>TOTAL</td><td class=n>20</td><td class=n>365.172</td><td class=n>100,0%</td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">ONG</div><h2>Cuentas por cobrar &mdash; ONG</h2></div>
 <div class="table-scroll">
 <table><thead><tr><th>Cliente</th><th>Documento</th><th class=ctr>Fecha factura</th><th class=ctr>Plazo</th><th class=ctr>Fecha esperada de cobro</th><th class=n>Monto USD</th><th class=ctr>Estado</th></tr></thead>
 <tbody>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000823</span></td><td class=ctr>06/10/2026</td><td class=ctr>30 d</td><td class=ctr>05/11/2026</td><td class=n>350</td><td class=ctr><span class='badge badge-red'>Vencida (19 d)</span></td></tr>
-<tr><td><b>UNICEF</b></td><td><span class=mono>00000821</span></td><td class=ctr>06/10/2026</td><td class=ctr>30 d</td><td class=ctr>05/11/2026</td><td class=n>2.985</td><td class=ctr><span class='badge badge-red'>Vencida (19 d)</span></td></tr>
 <tr><td><b>CNR</b></td><td><span class=mono>00000852-853-854</span></td><td class=ctr>04/11/2026</td><td class=ctr>30 d</td><td class=ctr>04/12/2026</td><td class=n>1.699</td><td class=ctr><span class='badge badge-green'>Vence en 10 d</span></td></tr>
 <tr><td><b>CNR</b></td><td><span class=mono>00000856</span></td><td class=ctr>04/11/2026</td><td class=ctr>30 d</td><td class=ctr>04/12/2026</td><td class=n>2.201</td><td class=ctr><span class='badge badge-green'>Vence en 10 d</span></td></tr>
 <tr><td><b>IRC</b></td><td><span class=mono>00000850</span></td><td class=ctr>04/11/2026</td><td class=ctr>30 d</td><td class=ctr>04/12/2026</td><td class=n>50</td><td class=ctr><span class='badge badge-green'>Vence en 10 d</span></td></tr>
@@ -929,7 +923,7 @@ td.bar{width:80px}
 <tr><td><b>OIM</b></td><td><span class=mono>00000862-63</span></td><td class=ctr>20/11/2026</td><td class=ctr>30 d</td><td class=ctr>20/12/2026</td><td class=n>24.199</td><td class=ctr><span class='badge badge-green'>Vence en 26 d</span></td></tr>
 <tr><td><b>OIM</b></td><td><span class=mono>00000865</span></td><td class=ctr>24/11/2026</td><td class=ctr>30 d</td><td class=ctr>24/12/2026</td><td class=n>4.202</td><td class=ctr><span class='badge badge-green'>Vence en 30 d</span></td></tr>
 </tbody>
-<tfoot><tr><td colspan=5>TOTAL ONG</td><td class=n>102.305</td><td></td></tr></tfoot></table>
+<tfoot><tr><td colspan=5>TOTAL ONG</td><td class=n>98.970</td><td></td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">Petr&oacute;leo</div><h2>Cuentas por cobrar &mdash; Petr&oacute;leo</h2></div>
 <div class="table-scroll">
@@ -965,9 +959,7 @@ td.bar{width:80px}
 <tr><td><span class=mono>INVOICE-019-2027</span></td><td class=ctr>30/10/2026</td><td class=ctr>30 d</td><td class=ctr>29/11/2026</td><td class=n>19.948</td><td class=ctr><span class='badge badge-amber'>Vence en 5 d</span></td></tr>
 <tr><td><span class=mono>INVOICE-018-2026</span></td><td class=ctr>30/10/2026</td><td class=ctr>30 d</td><td class=ctr>29/11/2026</td><td class=n>9.891</td><td class=ctr><span class='badge badge-amber'>Vence en 5 d</span></td></tr>
 <tr><td><span class=mono>INVOICE-021-2026</span></td><td class=ctr>09/11/2026</td><td class=ctr>30 d</td><td class=ctr>09/12/2026</td><td class=n>19.948</td><td class=ctr><span class='badge badge-green'>Vence en 15 d</span></td></tr>
-<tr class='resumen'><td colspan=6><b>UNICEF</b> &middot; 3 factura(s) pendiente(s) &middot; total 68.731</td></tr>
-<tr><td><span class=mono>00000823</span></td><td class=ctr>06/10/2026</td><td class=ctr>30 d</td><td class=ctr>05/11/2026</td><td class=n>350</td><td class=ctr><span class='badge badge-red'>Vencida (19 d)</span></td></tr>
-<tr><td><span class=mono>00000821</span></td><td class=ctr>06/10/2026</td><td class=ctr>30 d</td><td class=ctr>05/11/2026</td><td class=n>2.985</td><td class=ctr><span class='badge badge-red'>Vencida (19 d)</span></td></tr>
+<tr class='resumen'><td colspan=6><b>UNICEF</b> &middot; 1 factura(s) pendiente(s) &middot; total 65.396</td></tr>
 <tr><td><span class=mono>00000858</span></td><td class=ctr>16/11/2026</td><td class=ctr>30 d</td><td class=ctr>16/12/2026</td><td class=n>65.396</td><td class=ctr><span class='badge badge-green'>Vence en 22 d</span></td></tr>
 <tr class='resumen'><td colspan=6><b>MAURELL</b> &middot; 1 factura(s) pendiente(s) &middot; total 46.617</td></tr>
 <tr><td><span class=mono>00000794</span></td><td class=ctr>17/09/2026</td><td class=ctr>90 d</td><td class=ctr>16/12/2026</td><td class=n>46.617</td><td class=ctr><span class='badge badge-green'>Vence en 22 d</span></td></tr>
@@ -984,7 +976,7 @@ td.bar{width:80px}
 <tr><td><span class=mono>00000851</span></td><td class=ctr>04/11/2026</td><td class=ctr>30 d</td><td class=ctr>04/12/2026</td><td class=n>66</td><td class=ctr><span class='badge badge-green'>Vence en 10 d</span></td></tr>
 <tr><td><span class=mono>00000850</span></td><td class=ctr>04/11/2026</td><td class=ctr>30 d</td><td class=ctr>04/12/2026</td><td class=n>50</td><td class=ctr><span class='badge badge-green'>Vence en 10 d</span></td></tr>
 </tbody>
-<tfoot><tr><td colspan=4>TOTAL (22 facturas)</td><td class=n>368.506</td><td></td></tr></tfoot></table>
+<tfoot><tr><td colspan=4>TOTAL (20 facturas)</td><td class=n>365.172</td><td></td></tr></tfoot></table>
 </div>
 <div class="panel-head"><div class="eyebrow">INPROCCA</div><h2>INPROCCA &mdash; facturas con m&aacute;s de 30 d&iacute;as</h2><p class="panel-desc">Subconjunto de la cartera Petr&oacute;leo: facturas de INPROCCA que superan su cr&eacute;dito de 30 d&iacute;as sin cobrar.</p></div>
 <div class="table-scroll">
@@ -1233,7 +1225,7 @@ td.bar{width:80px}
 </div>
 </div>
 
-<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 24/11/2026 08:17</footer>
+<footer>Informe generado autom&aacute;ticamente a partir de "2026.08.19_reporte de ventas.xlsx" — hoja VENTAS 2026. · 24/11/2026 08:24</footer>
 </div>
 <script>
 function actualizarDashboard(btn) {
